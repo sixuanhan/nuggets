@@ -1,8 +1,7 @@
 # CS50 Nuggets
 ## Design Spec
-### Team name, term, year
+### THEOhioStateUniversity, Spring, 2023
 
-> This **template** includes some gray text meant to explain how to use the template; delete all of them in your document!
 
 According to the [Requirements Spec](REQUIREMENTS.md), the Nuggets game requires two standalone programs: a client and a server.
 Our design also includes x, y, z modules.
@@ -10,106 +9,257 @@ We describe each program and module separately.
 We do not describe the `support` library nor the modules that enable features that go beyond the spec.
 We avoid repeating information that is provided in the requirements spec.
 
+
 ## Player
 
-> Teams of 3 students should delete this section.
 
 The *client* acts in one of two modes:
 
- 1. *spectator*, the passive spectator mode described in the requirements spec.
- 2. *player*, the interactive game-playing mode described in the requirements spec.
+1. *spectator*, the passive spectator mode described in the requirements spec.
+2. *player*, the interactive game-playing mode described in the requirements spec.
+
 
 ### User interface
 
+
 See the requirements spec for both the command-line and interactive UI.
 
-> You may not need much more.
 
 ### Inputs and outputs
 
-> Briefly describe the inputs (keystrokes) and outputs (display).
-> If you write to log files, or log to stderr, describe that here.
-> Command-line arguments are not 'input'.
+
+The user will input keystrokes that the function will use to determine how to update the client’s information. This will be used to change the display on the server side.
+
+
+So that the user can access error messages, there will be an additional file or the option to use `stderr` that will store the error messages from failed inputs. In order to do that, the user can simply call:
+`./server 2>server.log map.txt`
+
 
 ### Functional decomposition into modules
 
-> List and briefly describe any modules that comprise your client, other than the main module.
- 
+
+`parseArgs`: This function will be responsible for ensuring the number of inputs and the type of inputs matches what is specified in the `Requirements Spec`. This includes a hostname that must be a string, typically `localhost`, a port that must be an integer, and a potential third argument that must be a string: `playername`. If any of the arguments do not meet these specifications, a relevant error message will be provided and the exit code will be non-zero.
+
+
+`handleInput`: This function will be responsible for reading keystrokes from stdin with the help of ncurse and processing them.
+
+
+`handleMessage`: This function will be responsible for taking the string that is passed between the client and the server and  It will parse messages it receives from the message module per the requirement spec that can be employed through various action functions, including `handleOK`, `handleGRID`, `handleGOLD`, `handleDISPLAY`, `handleQUIT`, and `handleERROR`.
+
+
+`handleOK`: This function is called by handleMessage. It connects the client and passes the letter that corresponds to their player.
+
+
+`handleGRID`: This function is called by handleMessage. It notifies the client of the size of the grid as a constant integer.
+
+
+`handleGOLD`: This function is called by handleMessage. It notifies the client of three variables, `n`: the number of gold nuggets collected, `p`: the number of gold nuggets in the client’s purse, and `r`: the number of remaining gold nuggets on the map. 
+
+
+`handleDISPLAY`: This function is called by handleMessage. It passes a string to a client that corresponds to the physical depiction of the map.
+
+
+`handleQUIT`: This function is called by handleMessage. It removes a client from the server, it outputs the message corresponding to the removal, and exits the program.
+
+
+`handleERROR`: This function is called by handleMessage. It is employed when the client attempts an invalid action and stores it in the stderr or log file.
+
+
+
+
 ### Pseudo code for logic/algorithmic flow
 
-> For each function write pseudocode indented by a tab, which in Markdown will cause it to be rendered in literal form (like a code block).
-> Much easier than writing as a bulleted list!
-> See the Server section for an example.
+#### main
+The client will run as follows:
 
-> Then briefly describe each of the major functions, perhaps with level-4 #### headers.
+	execute from a command line per the requirement spec
+	parse the command line, validate parameters
+	initialize the 'message' module
+	send a message to the server, requesting connection
+	call message_loop(), to await the server
+	shut down when the client tells it to
+	clean up
+
+
+#### handleInput
+	read the keystroke from stdin
+	check the validity of the keystroke
+	send a corresponding message to the server
+	return a boolean that indicates whether to exit the loop
+
+
+#### handleMessage
+	parse the first part of the message to identify which type of message it is
+	call the `handleXYZ` function that handles that type of message specifically
+	return a boolean that indicates whether to exit the loop
+
+#### handleOK
+
+#### handleGRID
+
+#### handleGOLD
+
+#### handleDISPLAY
+
+#### handleQUIT
+
+#### handleERROR
+
+
 
 ### Major data structures
+The client shall use the `ncurses` library to arrange its interactive display and allow the program to read one character from the keyboard when told that stdin has input ready.
 
-> A language-independent description of the major data structure(s) in this program.
-> Mention, but do not describe, any libcs50 data structures you plan to use.
 
 ---
+
 
 ## Server
 ### User interface
 
+
 See the requirements spec for the command-line interface.
 There is no interaction with the user.
 
-> You may not need much more.
 
 ### Inputs and outputs
 
-> Briefly describe the inputs (map file) and outputs (to terminal).
-> If you write to log files, or log to stderr, describe that here.
-> Command-line arguments are not 'input'.
+
+The input for the server is a map file (of type .txt) that we assume to be valid. Additionally, it can optionally take a seed for randomization. The outputs are the strings that are passed to the clients.
+
+So that the user can access error messages, there will be an additional file or the option to use `stderr` that will store the error messages from failed inputs on the server side as well. In order to do that, the user can simply call:
+./server 2>server.log map.txt
+
 
 ### Functional decomposition into modules
+**server.c**
 
-> List and briefly describe any modules that comprise your server, other than the main module.
+
+`parseArgs`: Verifies that the user inputs a string that corresponds to the filename of a readable map file and that the seed is a positive integer after random number generation.
+
+
+`initializeGame`: Calls `game_new` to create a new `game` data structure, calls grid_load, and randomizes the location of gold pile drops. It calls initializeMessage.
+
+
+`handleMessage`: Processes the message sent from the client and determines what the server should do based on the type of input received from the message. It will parse messages it receives from the message module per the requirement spec.
+
+
+`handlePLAY`: This function is called by handleMessage. Initializes a player game with the name given by the client message.
+
+
+`handleSPECTATE`: This function is called by handleMessage. Initializes a spectator game.
+
+
+`handleKEY`: This function is called by handleMessage. It will process any client messages representing keystrokes (KEY k).
+
+
+`gameOver`: Prints “Game Over” to all clients and prints the score table.
+
+
 
 ### Pseudo code for logic/algorithmic flow
 
-> For each function write pseudocode indented by a tab, which in Markdown will cause it to be rendered in literal form (like a code block).
-> Much easier than writing as a bulleted list!
-> For example:
 
+#### main
 The server will run as follows:
 
-	execute from a command line per the requirement spec
-	parse the command line, validate parameters
-	call initializeGame() to set up data structures
-	initialize the 'message' module
-	print the port number on which we wait
-	call message_loop(), to await clients
-	call gameOver() to inform all clients the game has ended
-	clean up
+
+   execute from a command line per the requirement spec
+   parse the command line, validate parameters
+   call initializeGame() to set up data structures
+   initialize the 'message' module
+   print the port number on which we wait
+   call message_loop(), to await clients
+   call gameOver() to inform all clients the game has ended
+   clean up
 
 
-> Then briefly describe each of the major functions, perhaps with level-4 #### headers.
+
+#### initializeGame
+
+#### handleMessage
+
+#### handlePLAY
+
+#### handleSPECTATE
+
+#### handleKEY
+
+#### gameOver
+
 
 ### Major data structures
 
-> Describe each major data structure in this program: what information does it represent, how does it represent the data, and what are its members.
-> This description should be independent of the programming language.
-> Mention, but do not describe, data structures implemented by other modules (such as the new modules you detail below, or any libcs50 data structures you plan to use).
+
+There will be a static global data structure, `game`, which stores important variables corresponding to information relevant to the game in both the client and the server. The `game` will hold:
+
+grid_t* `grid`: the game grid
+
+hashtable `usernames`: we will leverage the hashtable module in `libcs50` to store the real name for each player
+
+addr_t `spectator`: the address of the spectator, if there is one
+
+int `goldRemaining`: how many nuggets there are remaining in the game
+
+hashtable `locEachPlayer`: we will leverage the hashtable module in `libcs50` to store how the coordinate of each player at the moment
+
+hashtable `nuggetsEachPlayer`: we will leverage the hashtable module in `libcs50` to store how many nuggets each player has at the moment
+
+
+The `grid` struct is a two-dimensional array of size NRxNC. Each entry of the array is a `gridcell` struct. 
+
 
 ---
 
-## XYZ module
 
-> Repeat this section for each module that is included in either the client or server.
+## the Grid module
+
+**grid.c** provides a module that helps with the grid part for both the client and the server. There will be a `grid` struct that is a two-dimensional array of size NRxNC. Each entry of the array is a `gridcell` struct. 
 
 ### Functional decomposition
 
-> List each of the main functions implemented by this module, with a phrase or sentence description of each.
+`gridcell_new`:  this function initializes a new gridcell.
+
+`grid_new`: this function initializes a new grid of the given size.
+
+`grid_load`: this function takes the map file and loads the information into a `grid` struct.
+
+`grid_getLoc`: this function takes a coordinate (i, j) and returns the gridcell on the coordinate in the grid.
+
+`grid_setLoc`: this function takes a coordinate (i, j) and a character, and replaces the gridcell on the coordinate in the grid.
+
+`grid_out`: this function takes a `grid` as an input and outputs a string representing the `grid`. This function should also implement visibility. It should utilize line-tracing algorithms (e.g. Bresenham) in order to calculate and help update the set of which grid cells are visible to the player. 
+
 
 ### Pseudo code for logic/algorithmic flow
 
-> For any non-trivial function, add a level-4 #### header and provide tab-indented pseudocode.
-> This pseudocode should be independent of the programming language.
+#### grid_load
+
+	reads the input file line by line
+	for each line
+		for each character
+			initialize a gridcell for that coordinate
+			stores the character in the gridcell
+
+#### grid_out
+
+	initialize a string buffer for output
+	for each coordinate in the grid
+		if the gridcell is visible to the player
+			write the character of the gridcell to the string
+		else
+			if the gridcell is an empty room spot or an occupant character
+				write an empty room spot to the string
+			else
+				write a solid rock spot to the string
+	return the string
+
 
 ### Major data structures
 
-> Describe each major data structure in this module: what information does it represent, how does it represent the data, and what are its members.
-> This description should be independent of the programming language.
+The `grid` struct is basically a wrapper for a two-dimensional array of `gridcell` structs. 
+The `gridcell` struct contains the following information:
+
+the character of the spot
+the amount of gold value of the spot
+the visibility of the spot
