@@ -41,7 +41,7 @@ So that the user can access error messages, there will be an additional file or 
 `parseArgs`: This function will be responsible for ensuring the number of inputs and the type of inputs matches what is specified in the `Requirements Spec`. This includes a hostname that must be a string, typically `localhost`, a port that must be an integer, and a potential third argument that must be a string: `playername`. If any of the arguments do not meet these specifications, a relevant error message will be provided and the exit code will be non-zero.
 
 
-`handleInput`: This function will be responsible for reading keystrokes from stdin with the help of ncurse and processing them.
+`handleInput`: This function will be responsible for reading keystrokes from stdin with the help of ncurses and processing them.
 
 
 `handleMessage`: This function will be responsible for taking the string that is passed between the client and the server and  It will parse messages it receives from the message module per the requirement spec that can be employed through various action functions, including `handleOK`, `handleGRID`, `handleGOLD`, `handleDISPLAY`, `handleQUIT`, and `handleERROR`.
@@ -132,7 +132,6 @@ So that the user can access error messages, there will be an additional file or 
 
 
 ### Functional decomposition into modules
-**server.c**
 
 
 `parseArgs`: Verifies that the user inputs a string that corresponds to the filename of a readable map file and that the seed is a positive integer after random number generation.
@@ -193,17 +192,19 @@ The server will run as follows:
 
 There will be a static global data structure, `game`, which stores important variables corresponding to information relevant to the game in both the client and the server. The `game` will hold:
 
-grid_t* `grid`: the game grid
+`grid`: the game grid
 
-hashtable `usernames`: we will leverage the hashtable module in `libcs50` to store the real name for each player
+`numPlayers`: the number of players who have joined
 
-addr_t `spectator`: the address of the spectator, if there is one
+`usernames`: an array, to store the real name for each player
 
-int `goldRemaining`: how many nuggets there are remaining in the game
+`spectator`: the address of the spectator, if there is one
 
-hashtable `locEachPlayer`: we will leverage the hashtable module in `libcs50` to store how the coordinate of each player at the moment
+`goldRemaining`: how many nuggets there are remaining in the game
 
-hashtable `nuggetsEachPlayer`: we will leverage the hashtable module in `libcs50` to store how many nuggets each player has at the moment
+`locEachPlayer`: an array, to store how the coordinate of each player at the moment
+
+`nuggetsEachPlayer`: an array, to store how many nuggets each player has at the moment
 
 
 The `grid` struct is a two-dimensional array of size NRxNC. Each entry of the array is a `gridcell` struct. 
@@ -228,7 +229,7 @@ The `grid` struct is a two-dimensional array of size NRxNC. Each entry of the ar
 
 `grid_setLoc`: this function takes a coordinate (i, j) and a character, and replaces the gridcell on the coordinate in the grid.
 
-`grid_out`: this function takes a `grid` as an input and outputs a string representing the `grid`. This function should also implement visibility. It should utilize line-tracing algorithms (e.g. Bresenham) in order to calculate and help update the set of which grid cells are visible to the player. 
+`grid_out`: this function takes a `grid` and a client as input and outputs a string representing the `grid` that the client should display. This function should also implement visibility. It should utilize line-tracing algorithms (e.g. Bresenham) in order to calculate and help update the set of which grid cells are visible to the player. 
 
 
 ### Pseudo code for logic/algorithmic flow
@@ -260,6 +261,6 @@ The `grid` struct is a two-dimensional array of size NRxNC. Each entry of the ar
 The `grid` struct is basically a wrapper for a two-dimensional array of `gridcell` structs. 
 The `gridcell` struct contains the following information:
 
-the character of the spot
-the amount of gold value of the spot
-the visibility of the spot
+`spot`: the character of the spot
+`gold`: the amount of gold value of the spot
+`vis`: an array the visibility of the spot for each player
