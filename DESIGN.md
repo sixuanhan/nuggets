@@ -162,15 +162,14 @@ So that the user can access error messages, there will be an additional file or 
 #### main
 The server will run as follows:
 
-
-   execute from a command line per the requirement spec
-   parse the command line, validate parameters
-   call initializeGame() to set up data structures
-   initialize the 'message' module
-   print the port number on which we wait
-   call message_loop(), to await clients
-   call gameOver() to inform all clients the game has ended
-   clean up
+   	execute from a command line per the requirement spec
+	parse the command line, validate parameters
+	call initializeGame() to set up data structures
+	initialize the 'message' module
+	print the port number on which we wait
+	call message_loop(), to await clients
+	call gameOver() to inform all clients the game has ended
+	clean up
 
 
 
@@ -225,9 +224,17 @@ The `grid` struct is a two-dimensional array of size NRxNC. Each entry of the ar
 
 `grid_load`: this function takes the map file and loads the information into a `grid` struct.
 
-`grid_getLoc`: this function takes a coordinate (i, j) and returns the gridcell on the coordinate in the grid.
+`grid_get_location_spot`: this function takes a coordinate (i, j) and returns the spot type on the coordinate in the grid.
 
-`grid_setLoc`: this function takes a coordinate (i, j) and a character, and replaces the gridcell on the coordinate in the grid.
+`grid_get_location_nuggets`: this function takes a coordinate (i, j) and returns the number of nuggets on the coordinate in the grid.
+
+`grid_get_location_vis`: this function takes a coordinate (i, j) and returns the visibility on the coordinate in the grid.
+
+`grid_set_location_spot`: this function takes a coordinate (i, j) and a spot type, and replaces the gridcell on the coordinate in the grid.
+
+`grid_set_location_nuggets`: this function takes a coordinate (i, j) and a spot type, and replaces the gridcell on the coordinate in the grid.
+
+`grid_set_location_vis`: this function takes a coordinate (i, j) and a spot type, and replaces the gridcell on the coordinate in the grid.
 
 `grid_out`: this function takes a `grid` and a client as input and outputs a string representing the `grid` that the client should display. This function should also implement visibility. It should utilize line-tracing algorithms (e.g. Bresenham) in order to calculate and help update the set of which grid cells are visible to the player. 
 
@@ -262,5 +269,5 @@ The `grid` struct is basically a wrapper for a two-dimensional array of `gridcel
 The `gridcell` struct contains the following information:
 
 `spot`: the character of the spot
-`gold`: the amount of gold value of the spot
+`nugs`: the amount of gold value of the spot
 `vis`: an array the visibility of the spot for each player
