@@ -1,7 +1,6 @@
 # CS50 Nuggets
 ## Design Spec
-### THEOhioStateUniversity, Spring, 2023
-
+### THEOhioStateUniversity, Spring 2023
 
 According to the [Requirements Spec](REQUIREMENTS.md), the Nuggets game requires two standalone programs: a client and a server.
 Our design also includes x, y, z modules.
@@ -10,8 +9,7 @@ We do not describe the `support` library nor the modules that enable features th
 We avoid repeating information that is provided in the requirements spec.
 
 
-## Player
-
+## Client
 
 The *client* acts in one of two modes:
 
@@ -21,15 +19,12 @@ The *client* acts in one of two modes:
 
 ### User interface
 
-
 See the requirements spec for both the command-line and interactive UI.
 
 
 ### Inputs and outputs
 
-
 The user will input keystrokes that the function will use to determine how to update the client’s information. This will be used to change the display on the server side.
-
 
 So that the user can access error messages, there will be an additional file or the option to use `stderr` that will store the error messages from failed inputs. In order to do that, the user can simply call:
 `./server 2>server.log map.txt`
@@ -117,22 +112,19 @@ The client shall use the `ncurses` library to arrange its interactive display an
 ## Server
 ### User interface
 
-
 See the requirements spec for the command-line interface.
-There is no interaction with the user.
-
+Any other interactions with the user is done indirectly through client messages. 
 
 ### Inputs and outputs
 
+The input for the server is a map file (of type .txt) that we assume to be valid. It can optionally take a seed for randomization. Moreover, outside of the command-line, the server should also receive messages from the clients. 
 
-The input for the server is a map file (of type .txt) that we assume to be valid. Additionally, it can optionally take a seed for randomization. The outputs are the strings that are passed to the clients.
+The outputs are the strings that are passed to the clients. There should be no output directly to the terminal coming from the server.
 
 So that the user can access error messages, there will be an additional file or the option to use `stderr` that will store the error messages from failed inputs on the server side as well. In order to do that, the user can simply call:
 ./server 2>server.log map.txt
 
-
 ### Functional decomposition into modules
-
 
 `parseArgs`: Verifies that the user inputs a string that corresponds to the filename of a readable map file and that the seed is a positive integer after random number generation.
 
