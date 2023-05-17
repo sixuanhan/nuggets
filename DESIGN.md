@@ -288,6 +288,7 @@ The `grid` struct is a two-dimensional array of size NRxNC. Each entry of the ar
 ### Major data structures
 
 The `grid` struct is basically a wrapper for a two-dimensional array of `gridcell` structs. 
+
 The `gridcell` struct contains the following information:
 
 `spot`: the character of the spot
