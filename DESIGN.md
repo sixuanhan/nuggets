@@ -118,8 +118,6 @@ The client will run as follows:
 ### Major data structures
 The client shall use the `ncurses` library to arrange its interactive display and allow the program to read one character from the keyboard when told that stdin has input ready.
 
-> A language-independent description of the major data structure(s) in this program.
-> Mention, but do not describe, any libcs50 data structures you plan to use.
 
 ---
 
