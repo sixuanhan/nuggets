@@ -246,19 +246,25 @@ The `grid` struct is a two-dimensional array of size NRxNC. Each entry of the ar
 
 `grid_load`: this function takes the map file and loads the information into a `grid` struct.
 
-`grid_get_location_spot`: this function takes a coordinate (i, j) and returns the spot type on the coordinate in the grid.
+`grid_get_location_spot`: this function takes a coordinate (x, y) and returns the spot type on the coordinate in the grid.
 
-`grid_get_location_nuggets`: this function takes a coordinate (i, j) and returns the number of nuggets on the coordinate in the grid.
+`grid_get_location_nuggets`: this function takes a coordinate (x, y) and returns the number of nuggets on the coordinate in the grid.
 
-`grid_get_location_vis`: this function takes a coordinate (i, j) and returns the visibility on the coordinate in the grid.
+`grid_get_location_vis`: this function takes a coordinate (x, y) and returns the visibility on the coordinate in the grid.
 
-`grid_set_location_spot`: this function takes a coordinate (i, j) and a spot type, and replaces the gridcell on the coordinate in the grid.
+`grid_set_location_spot`: this function takes a coordinate (x, y) and a spot type, and replaces the gridcell on the coordinate in the grid.
 
-`grid_set_location_nuggets`: this function takes a coordinate (i, j) and a spot type, and replaces the gridcell on the coordinate in the grid.
+`grid_set_location_nuggets`: this function takes a coordinate (x, y) and a spot type, and replaces the gridcell on the coordinate in the grid.
 
-`grid_set_location_vis`: this function takes a coordinate (i, j) and a spot type, and replaces the gridcell on the coordinate in the grid.
+`grid_set_location_vis_for_player`: this function takes a coordinate (x, y) and a spot type, and replaces the visibility for that player on the coordinate in the grid.
 
-`grid_out`: this function takes a `grid` and a client as input and outputs a string representing the `grid` that the client should display. This function should also implement visibility. It should utilize line-tracing algorithms (e.g. Bresenham) in order to calculate and help update the set of which grid cells are visible to the player. 
+`grid_update_vis_for_player`:this function is called when a player's visibility changes, which is when they take a step. It takes a coordinate (x, y) and a player, and updates the visibility for that player. It should utilize line-tracing algorithms (e.g. Bresenham) in order to calculate and help update the set of which grid cells are visible to the player. 
+
+`grid_out`: this function takes a `grid` and a client as input and outputs a string representing the `grid` that the client should display. This function should also implement visibility. 
+
+`grid_iterate`: this function is the iterate helper function that loops over each gridcell in it.
+
+`grid_delete`: this function deletes the entire grid and all gridcells for clean up.
 
 
 ### Pseudo code for logic/algorithmic flow
