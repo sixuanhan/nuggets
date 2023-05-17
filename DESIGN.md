@@ -285,3 +285,15 @@ The `gridcell` struct contains the following information:
 `spot`: the character of the spot
 `nugs`: the amount of gold value of the spot
 `vis`: an array the visibility of the spot for each player
+
+
+## testing
+
+### unit testing
+We will test the grid module independently at first. We will unit test small functions in both the client and the server to make sure they work.
+
+### integration testing
+We will test our client with the given server, and then test our server with the given client.
+
+### system testing
+We run the client and server together on the same device and on different devices and test all functions and edge cases.
