@@ -202,6 +202,20 @@ The server will run as follows:
 
 ### Major data structures
 
+There will be a static data structure, `player`, that holds:
+
+`username`: their username
+
+`ID`: their numerical ID
+
+`letter`: their letter ID
+
+`gold`: how many gold nuggets they have
+
+`locX`: their x coordinate
+
+`locY`: their y coordinate
+
 
 There will be a static global data structure, `game`, which stores important variables corresponding to information relevant to the game in both the client and the server. The `game` will hold:
 
@@ -209,18 +223,12 @@ There will be a static global data structure, `game`, which stores important var
 
 `numPlayers`: the number of players who have joined
 
-`usernames`: an array, to store the real name for each player
-
-`spectator`: the address of the spectator, if there is one
-
 `goldRemaining`: how many nuggets there are remaining in the game
 
-`locEachPlayer`: an array, to store how the coordinate of each player at the moment
-
-`nuggetsEachPlayer`: an array, to store how many nuggets each player has at the moment
+`players`: an array of `player` structs
 
 
-The `grid` struct is a two-dimensional array of size NRxNC. Each entry of the array is a `gridcell` struct. 
+The `grid` struct is a two-dimensional array of size NRxNC. Each entry of the array is a `gridcell` struct. Find details in the grid module.
 
 
 ---
@@ -283,7 +291,9 @@ The `grid` struct is basically a wrapper for a two-dimensional array of `gridcel
 The `gridcell` struct contains the following information:
 
 `spot`: the character of the spot
+
 `nugs`: the amount of gold value of the spot
+
 `vis`: an array the visibility of the spot for each player
 
 
