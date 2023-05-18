@@ -1,8 +1,6 @@
 # CS50 Nuggets
 ## Implementation Spec
-### Team name, term, year
-
-> This **template** includes some gray text meant to explain how to use the template; delete all of them in your document!
+### THE Ohio State University, Spring 2023
 
 According to the [Requirements Spec](REQUIREMENTS.md), the Nuggets game requires two standalone programs: a client and a server.
 Our design also includes x, y, z modules.
@@ -18,28 +16,33 @@ We avoid repeating information that is provided in the requirements spec.
 
 ## Player
 
-> Teams of 3 students should delete this section.
+This is the outline of the data structures, functional breakdown, and pseudo code for the `player` module.
 
 ### Data structures
 
-> For each new data structure, describe it briefly and provide a code block listing the `struct` definition(s).
-> No need to provide `struct` for existing CS50 data structures like `hashtable`.
+This program will implement a new `player` structure corresponding to each client.
+
+```c
+typedef struct player {
+    char* username;
+	int ID;
+	char letter;
+	int gold;
+	int locX;
+	int locY;
+	char* localMap;
+} player_t;
+```
 
 ### Definition of function prototypes
 
-> For function, provide a brief description and then a code block with its function prototype.
-> For example:
-
-A function to parse the command-line arguments, initialize the game struct, initialize the message module, and (BEYOND SPEC) initialize analytics module.
+A function to parse the command-line arguments, initialize the game struct, and initialize the message module.
 
 ```c
 static int parseArgs(const int argc, char* argv[]);
 ```
 ### Detailed pseudo code
 
-> For each function write pseudocode indented by a tab, which in Markdown will cause it to be rendered in literal form (like a code block).
-> Much easier than writing as a bulleted list!
-> For example:
 
 #### `parseArgs`:
 
@@ -50,12 +53,72 @@ static int parseArgs(const int argc, char* argv[]);
 
 ---
 
+A function that reads and processes keystrokes from stdin using `ncurses`.
+
+```c
+bool handleInput(char keystroke);
+```
+### Detailed pseudo code
+
+
+#### `handleInput`:
+
+	read the keystroke from stdin
+	check the validity of the keystroke
+	send a corresponding message to the server
+	return a boolean that indicates whether to exit the loop
+
+---
+
+A function that passes the message that is received from the server to the relevant function.
+
+```c
+bool handleMessage(char* message);
+```
+### Detailed pseudo code
+
+
+#### `handleMessage`:
+
+	parse the first part of the message to identify which type of message it is
+	call the `handleXYZ` function that handles that type of message specifically
+	return a boolean that indicates whether to exit the loop
+
+---
+
 ## Server
 
 ### Data structures
 
-> For each new data structure, describe it briefly and provide a code block listing the `struct` definition(s).
-> No need to provide `struct` for existing CS50 data structures like `hashtable`.
+There will be a `gridcell` structure, which contains the information relevant to each location on the grid.
+
+```c
+typedef struct gridcell {
+    char spot;
+	int nugs;
+	char** vis;
+} gridcell_t;
+```
+
+It will also define a new `grid` structure, which stores the position of each coordinate on the game as a 2D array.
+
+```c
+typedef struct grid {
+    int NR;
+	int NC;
+} grid_t;
+```
+
+The `game` structure will implement the `grid` structure and store variables that provide information about each location on the grid.
+
+```c
+typedef struct game {
+    grid_t* grid;
+	int numPlayers;
+	int goldRemaining;
+	player_t** players;
+} game_t;
+```
 
 ### Definition of function prototypes
 
