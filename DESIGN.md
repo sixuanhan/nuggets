@@ -259,9 +259,11 @@ There will be a static data structure, `player`, that holds:
 
 `locY`: their y coordinate
 
+`localMap`: the grid that this player sees
+
 There will be a static global data structure, `game`, which stores important variables corresponding to information relevant to the game in both the client and the server. The `game` will hold:
 
-`grid`: the game grid
+`mainGrid`: the main game grid that sees everything
 
 `numPlayers`: the number of players who have joined
 
@@ -269,78 +271,43 @@ There will be a static global data structure, `game`, which stores important var
 
 `players`: an array of `player` structs
 
-The `grid` struct is a two-dimensional array of size NRxNC. Each entry of the array is a `gridcell` struct. Find details in the grid module.
-
 ---
 
 ## the Grid module
 
-**grid.c** provides a module that helps with the grid part for both the client and the server. There will be a `grid` struct that is a two-dimensional array of size NRxNC. Each entry of the array is a `gridcell` struct. 
+**grid.c** provides a module that helps with the grid part for both the client and the server. 
+
 
 ### Functional decomposition
 
-`gridcell_new`:  this function initializes a new gridcell.
+`grid_load`: this function takes the map file and loads the information into a grid.
 
-`grid_new`: this function initializes a new grid of the given size.
+`grid_1dto2d`: this function takes a one dimensional coordinate and transforms it to a two dimensional coordinate according to the size of the grid.
 
-`grid_load`: this function takes the map file and loads the information into a `grid` struct.
+`grid_2dto1d`: this function takes a two dimensional coordinate and transforms it to a one dimensional coordinate according to the size of the grid.
 
-`grid_get_location_spot`: this function takes a coordinate (x, y) and returns the spot type on the coordinate in the grid.
+`grid_get_loc`: this function takes a coordinate (x, y) and returns the character on the coordinate in the grid.
 
-`grid_get_location_nuggets`: this function takes a coordinate (x, y) and returns the number of nuggets on the coordinate in the grid.
+`grid_set_loc`: this function takes a coordinate (x, y) and a character, and replaces the character on the coordinate in the grid.
 
-`grid_get_location_vis`: this function takes a coordinate (x, y) and returns the visibility on the coordinate in the grid.
 
-`grid_set_location_spot`: this function takes a coordinate (x, y) and a spot type, and replaces the gridcell on the coordinate in the grid.
-
-`grid_set_location_nuggets`: this function takes a coordinate (x, y) and a spot type, and replaces the gridcell on the coordinate in the grid.
-
-`grid_set_location_vis_for_player`: this function takes a coordinate (x, y) and a spot type, and replaces the visibility for that player on the coordinate in the grid.
-
-`grid_update_vis_for_player`:this function is called when a player's visibility changes, which is when they take a step. It takes a coordinate (x, y) and a player, and updates the visibility for that player. It should utilize line-tracing algorithms (e.g. Bresenham) in order to calculate and help update the set of which grid cells are visible to the player. 
-
-`grid_out`: this function takes a `grid` and a client as input and outputs a string representing the `grid` that the client should display. This function should also implement visibility. 
-
-`grid_iterate`: this function is the iterate helper function that loops over each gridcell in it.
-
-`grid_delete`: this function deletes the entire grid and all gridcells for clean up.
 
 
 ### Pseudo code for logic/algorithmic flow
 
 #### grid_load
 
-	reads the input file line by line
+	read the input file line by line
 	for each line
 		for each character
-			initialize a gridcell for that coordinate
-			stores the character in the gridcell
+			store the character in the string
 
-#### grid_out
-
-	initialize a string buffer for output
-	for each coordinate in the grid
-		if the gridcell is visible to the player
-			write the character of the gridcell to the string
-		else
-			if the gridcell is an empty room spot or an occupant character
-				write an empty room spot to the string
-			else
-				write a solid rock spot to the string
-	return the string
 
 
 ### Major data structures
 
-The `grid` struct is basically a wrapper for a two-dimensional array of `gridcell` structs. 
+The grid itself is just a string with NRxNC characters represending the map.
 
-The `gridcell` struct contains the following information:
-
-`spot`: the character of the spot
-
-`nugs`: the amount of gold value of the spot
-
-`vis`: an array the visibility of the spot for each player
 
 ## Testing
 
