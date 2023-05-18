@@ -2,6 +2,12 @@
 ## Design Spec
 ### THEOhioStateUniversity, Spring 2023
 
+**Group Members**:
+* Kevin Cao
+* James Quirk
+* Selena Han
+* Steven Mendley
+
 According to the [Requirements Spec](REQUIREMENTS.md), the Nuggets game requires two standalone programs: a client and a server.
 Our design also includes x, y, z modules.
 We describe each program and module separately.
@@ -16,6 +22,8 @@ In this DESIGN.md, we focus on the following for both the client and server:
 * Pseudocode for logic/algorithmic flow
 * Major data structures
 * Testing plan
+
+In addition, at the end we also provide insight about group roles and the division of work for this project.
 
 ## Client
 
@@ -44,7 +52,7 @@ The user will input keystrokes that the function will use to determine how to up
 The client will have the map displayed to them (the parts of the map the client can see depends on whether they are a player or a spectator). The information regarding the map's details will reach the client from a message sent from the server, which is responsible for processing the map.
 
 So that the user can access error messages, there will be an additional file or the option to use `stderr` that will store the error messages from failed inputs. In order to do that, the user can simply call:
-`./server 2>server.log map.txt` 
+`./client 2>player.log hostname port playername` or `./client 2>spectator.log hostname port` 
 
 ### Functional decomposition into modules
 
@@ -86,38 +94,40 @@ The client will run as follows:
 	send a corresponding message to the server
 	return a boolean that indicates whether to exit the loop
 
-
 #### handleMessage
 	parse the first part of the message to identify which type of message it is
 	call the `handleXYZ` function that handles that type of message specifically
 	return a boolean that indicates whether to exit the loop
 
 #### handleOK
-	
+	prints out the OK message
 
 #### handleGRID
-	parse through the message that the client receives from the server
+	parse through the GRID message that the client receives from the server
 	extract the grid size from the message
-	adjust the window size
+	if the current window size is too small
+		inform the user to about the minimum required window size
+		wait for the user to enlarge the window 
 
 #### handleGOLD
-	parse through the message that the client receives from the server
+	parse through the GOLD message that the client receives from the server
 	extract `n`, `p`, and `r`, as denoted in the functional decomposition
 	update the top line of display regarding the game status
 
 #### handleDISPLAY
-	parse through the message that the client receives from the server
-	find the part of the message string that denotes the part of the map the player should see
+	parse through the DISPLAY message that the client receives from the server
+	output the updated map that is displayed to the client 
 
 #### handleQUIT
+	take the QUIT message and inform the user of the quit and the reason for the quit
+	break out of the message_loop() (break command may appear outside of function but called immediately after this function is called)
 
 #### handleERROR
-
-
+	print out the ERROR message received from the client
+	log the error 
 
 ### Major data structures
 The client shall use the `ncurses` library to arrange its interactive display and allow the program to read one character from the keyboard when told that stdin has input ready.
-
 
 ---
 
@@ -161,7 +171,6 @@ So that the user can access error messages, there will be an additional file or 
 
 ### Pseudo code for logic/algorithmic flow
 
-
 #### main
 The server will run as follows:
 
@@ -182,26 +191,70 @@ The server will run as follows:
 #### handleMessage
 	listen for messages sent from the clients that are connected by the server
 	update the `game` data structure accordingly from the contents of the message
+	if none of handleXYZ functions are able to process the client message
+		log an error
+		send back an ERROR message to the client 
 
 #### handlePLAY
 	check the validity of the player's name and whether there is still space for another player given *MaxPlayers* players
 	if there is not enough space or the player's real name is invalid
 		server should respond with a quit message and terminate the initialization of a new player
 	else
-		initialize a new `player` data structure 
-		add the new `player` data struture to the array of players in the overarching `game datastructure
+		initialize a new `player` data structure with a random room spot location in the grid
+		add the new `player` data struture to the array of players in the overarching `game` data structure
+		send ok message, grid message, gold message, and display message to the new player
 
 #### handleSPECTATE
+	if there already is a spectator spectating the game
+		send a a quit message to the current spectator 
+		replace the current spectator with the new spectator
+	else
+		initialize a new `player` data structure with NULL username
+		add this new `player` data structure to the array of players in the overarching `game` data structure
+		send grid message, gold message, and display message to the new player
 
 #### handleKEY
+	if the keystroke came from a player
+		if the keystroke is a valid keystroke for a player
+			if the keystroke is a movement command
+				if the player is allowed to move to the desired location
+					move the player to the location
+					check if there is gold and update the `game` accordingly if there is gold
+					send a message updating all clients including the spectator
+					if the goldRemaining in the game is 0
+						call gameOver
+			else the keystroke is to quit `Q`
+				send quit message to the player
+				close their port and handle their exit accordingly
+		else
+			send ERROR message to client 
+	else the keystroke came from the spectator
+		if the keystroke is `Q` (the only valid spectator keystroke)
+			send quit message to the spectator 
+			close spectator's port and handle spectator's exit accordingly
+		else
+			send ERROR message to client
 
 #### gameOver
-	
-
-
+	server should prepare a tabular summary of the end results of the game
+	send a quit message to all clients
+	close the server connection
 
 ### Major data structures
 
+There will be a static data structure, `player`, that holds:
+
+`username`: their username
+
+`ID`: their numerical ID
+
+`letter`: their letter ID
+
+`gold`: how many gold nuggets they have
+
+`locX`: their x coordinate
+
+`locY`: their y coordinate
 
 There will be a static global data structure, `game`, which stores important variables corresponding to information relevant to the game in both the client and the server. The `game` will hold:
 
@@ -209,22 +262,13 @@ There will be a static global data structure, `game`, which stores important var
 
 `numPlayers`: the number of players who have joined
 
-`usernames`: an array, to store the real name for each player
-
-`spectator`: the address of the spectator, if there is one
-
 `goldRemaining`: how many nuggets there are remaining in the game
 
-`locEachPlayer`: an array, to store how the coordinate of each player at the moment
+`players`: an array of `player` structs
 
-`nuggetsEachPlayer`: an array, to store how many nuggets each player has at the moment
-
-
-The `grid` struct is a two-dimensional array of size NRxNC. Each entry of the array is a `gridcell` struct. 
-
+The `grid` struct is a two-dimensional array of size NRxNC. Each entry of the array is a `gridcell` struct. Find details in the grid module.
 
 ---
-
 
 ## the Grid module
 
@@ -238,19 +282,25 @@ The `grid` struct is a two-dimensional array of size NRxNC. Each entry of the ar
 
 `grid_load`: this function takes the map file and loads the information into a `grid` struct.
 
-`grid_get_location_spot`: this function takes a coordinate (i, j) and returns the spot type on the coordinate in the grid.
+`grid_get_location_spot`: this function takes a coordinate (x, y) and returns the spot type on the coordinate in the grid.
 
-`grid_get_location_nuggets`: this function takes a coordinate (i, j) and returns the number of nuggets on the coordinate in the grid.
+`grid_get_location_nuggets`: this function takes a coordinate (x, y) and returns the number of nuggets on the coordinate in the grid.
 
-`grid_get_location_vis`: this function takes a coordinate (i, j) and returns the visibility on the coordinate in the grid.
+`grid_get_location_vis`: this function takes a coordinate (x, y) and returns the visibility on the coordinate in the grid.
 
-`grid_set_location_spot`: this function takes a coordinate (i, j) and a spot type, and replaces the gridcell on the coordinate in the grid.
+`grid_set_location_spot`: this function takes a coordinate (x, y) and a spot type, and replaces the gridcell on the coordinate in the grid.
 
-`grid_set_location_nuggets`: this function takes a coordinate (i, j) and a spot type, and replaces the gridcell on the coordinate in the grid.
+`grid_set_location_nuggets`: this function takes a coordinate (x, y) and a spot type, and replaces the gridcell on the coordinate in the grid.
 
-`grid_set_location_vis`: this function takes a coordinate (i, j) and a spot type, and replaces the gridcell on the coordinate in the grid.
+`grid_set_location_vis_for_player`: this function takes a coordinate (x, y) and a spot type, and replaces the visibility for that player on the coordinate in the grid.
 
-`grid_out`: this function takes a `grid` and a client as input and outputs a string representing the `grid` that the client should display. This function should also implement visibility. It should utilize line-tracing algorithms (e.g. Bresenham) in order to calculate and help update the set of which grid cells are visible to the player. 
+`grid_update_vis_for_player`:this function is called when a player's visibility changes, which is when they take a step. It takes a coordinate (x, y) and a player, and updates the visibility for that player. It should utilize line-tracing algorithms (e.g. Bresenham) in order to calculate and help update the set of which grid cells are visible to the player. 
+
+`grid_out`: this function takes a `grid` and a client as input and outputs a string representing the `grid` that the client should display. This function should also implement visibility. 
+
+`grid_iterate`: this function is the iterate helper function that loops over each gridcell in it.
+
+`grid_delete`: this function deletes the entire grid and all gridcells for clean up.
 
 
 ### Pseudo code for logic/algorithmic flow
@@ -280,8 +330,32 @@ The `grid` struct is a two-dimensional array of size NRxNC. Each entry of the ar
 ### Major data structures
 
 The `grid` struct is basically a wrapper for a two-dimensional array of `gridcell` structs. 
+
 The `gridcell` struct contains the following information:
 
 `spot`: the character of the spot
+
 `nugs`: the amount of gold value of the spot
+
 `vis`: an array the visibility of the spot for each player
+
+
+## Testing
+
+### Unit Testing
+We will test the grid module independently at first. We will unit test small functions in both the client and the server to make sure they work.
+
+### Integration Testing
+We will test our client with the given server, and then test our server with the given client.
+
+### System Testing
+We run the client and server together on the same device and on different devices and test all functions and edge cases. The game will be played and tested to ensure that not only do all the desired game mechanics work as intended, but also the game behaves properly in special edge cases. 
+
+## Group Roles & Division of Work
+While all group members are responsible for the entirety of the project, we assign certain tasks for certain group members to prioritize and complete first:
+* Kevin - Server module + Bresenham algorithm in Grid module
+* James - Client module
+* Selena - Grid module
+* Steven - Server module & Grid module (particularly where both modules intersect)
+
+We will be responsible for unit testing our individual modules in order to ensure that they function as intended, but we will conduct integration and system tests together in order to check aggregate performance. Even though we are dividing up the code, each group member should be available to help another group member on their code if necessary. 
