@@ -226,10 +226,14 @@ The server will run as follows:
 			else the keystroke is to quit `Q`
 				send quit message to the player
 				close their port and handle their exit accordingly
+		else
+			send ERROR message to client 
 	else the keystroke came from the spectator
 		if the keystroke is `Q` (the only valid spectator keystroke)
 			send quit message to the spectator 
 			close spectator's port and handle spectator's exit accordingly
+		else
+			send ERROR message to client
 
 #### gameOver
 	server should prepare a tabular summary of the end results of the game
