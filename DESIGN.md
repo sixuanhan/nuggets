@@ -81,12 +81,14 @@ The client will run as follows:
 
 	execute from a command line per the requirement spec
 	parse the command line, validate parameters
+		if they are invalid, send error message and exit
 	initialize the 'message' module
 	send a message to the server, requesting connection
 	call message_loop(), to await the server
+		handleInput()
+		handleMessage()
 	shut down when the client tells it to
 	clean up
-
 
 #### handleInput
 	read the keystroke from stdin
@@ -176,10 +178,12 @@ The server will run as follows:
 
    	execute from a command line per the requirement spec
 	parse the command line, validate parameters
+		if invalid, then send an error message and exit
 	call initializeGame() to set up data structures
 	initialize the 'message' module
 	print the port number on which we wait
 	call message_loop(), to await clients
+		handleMessage() to continuously listen for message sent by clients
 	call gameOver() to inform all clients the game has ended
 	clean up
 
@@ -218,8 +222,7 @@ The server will run as follows:
 		if the keystroke is a valid keystroke for a player
 			if the keystroke is a movement command
 				if the player is allowed to move to the desired location
-					move the player to the location
-					check if there is gold and update the `game` accordingly if there is gold
+					move the player to the location and update the game accordingly (which includes updating the stored `grid` and the amount of gold remaining if the player finds a nugget)
 					send a message updating all clients including the spectator
 					if the goldRemaining in the game is 0
 						call gameOver
@@ -339,17 +342,26 @@ The `gridcell` struct contains the following information:
 
 `vis`: an array the visibility of the spot for each player
 
-
 ## Testing
 
 ### Unit Testing
-We will test the grid module independently at first. We will unit test small functions in both the client and the server to make sure they work.
+Each unit/module will be tested independently at first before being aggregated together. The grid module will be tested independently first, and then client and the server will be tested. Individual functions within each unit/module will be tested to ensure that they work properly. 
 
 ### Integration Testing
-We will test our client with the given server, and then test our server with the given client.
+We will test our client with the given server, and then test our server with the given client. We can again log the messages being sent back and forth between the client and the server to ensure that the messages are being sent properly. 
 
 ### System Testing
-We run the client and server together on the same device and on different devices and test all functions and edge cases. The game will be played and tested to ensure that not only do all the desired game mechanics work as intended, but also the game behaves properly in special edge cases. 
+We run the client and server together on the same device and on different devices and test all functions and edge cases. The game will be played and tested numerous times to ensure that not only do all the desired game mechanics work as intended, but also the game behaves properly in special edge cases. 
+
+The following are some examples of "special" cases that we consider testing:
+* Invalid keystrokes
+* Collisions between players and with walls 
+* Having too many players join 
+* Initializing a spectator session with an already existing specator 
+* Players leaving/rejoining 
+* Starting with too small of a window
+
+Moreover, it should be noted that we also use valgrind to test for memory leaks throughout testing to ensure that there are no problems memory-wise.
 
 ## Group Roles & Division of Work
 While all group members are responsible for the entirety of the project, we assign certain tasks for certain group members to prioritize and complete first:
