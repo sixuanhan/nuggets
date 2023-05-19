@@ -250,13 +250,11 @@ There will be a static data structure, `player`, that holds:
 
 `ID`: their numerical ID
 
-`letter`: their letter ID
+`letterID`: their letter ID
 
 `gold`: how many gold nuggets they have
 
-`locX`: their x coordinate
-
-`locY`: their y coordinate
+`loc`: their one dimensional coordinate
 
 `localMap`: the grid that this player sees
 
@@ -289,20 +287,12 @@ There will be a static global data structure, `game`, which stores important var
 
 `grid_2dto1d`: this function takes a two dimensional coordinate and transforms it to a one dimensional coordinate according to the size of the grid.
 
-
 `grid_update_vis`: this function is called when a player moves. It takes a coordinate, a player's local grid, and the main game grid, and rewrites the player's new local grid given their updated position.
-
-
 
 
 ### Pseudo code for logic/algorithmic flow
 
-#### grid_load
-
-	read the input file line by line
-	for each line
-		for each character
-			store the character in the string
+See [Implementation Spec](IMPLEMENTATION.md).
 
 
 
