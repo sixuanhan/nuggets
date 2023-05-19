@@ -188,8 +188,6 @@ static player_t* player_new(void);
 ```
 
 
-
-
 ### Detailed pseudo code
 
 #### `game_new`:
