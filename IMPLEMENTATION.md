@@ -90,7 +90,7 @@ bool handleMessage(char* message);
 
 ### Data structures
 
-The `game` structure will implement the `grid` structure and store variables that provide information about each location on the grid.
+The `game` structure will store variables that provide information about each location on the grid.
 
 ```c
 typedef struct game {
