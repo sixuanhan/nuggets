@@ -3,7 +3,7 @@
 ### THE Ohio State University, Spring 2023
 
 According to the [Requirements Spec](REQUIREMENTS.md), the Nuggets game requires two standalone programs: a client and a server.
-Our design also includes x, y, z modules.
+Our design also includes the grid module.
 We describe each program and module separately.
 We do not describe the `support` library nor the modules that enable features that go beyond the spec.
 We avoid repeating information that is provided in the requirements spec.
@@ -16,7 +16,7 @@ We avoid repeating information that is provided in the requirements spec.
 
 ## Player
 
-This is the outline of the data structures, functional breakdown, and pseudo code for the `player` module.
+This is the outline of the data structures, functional breakdown, and pseudo code for the `player` program.
 
 ### Data structures
 
@@ -40,7 +40,11 @@ A function to parse the command-line arguments, initialize the game struct, and 
 
 ```c
 static int parseArgs(const int argc, char* argv[]);
+bool handleInput(char keystroke);
+bool handleMessage(char* message);
+
 ```
+
 ### Detailed pseudo code
 
 
@@ -55,12 +59,6 @@ static int parseArgs(const int argc, char* argv[]);
 
 A function that reads and processes keystrokes from stdin using `ncurses`.
 
-```c
-bool handleInput(char keystroke);
-```
-### Detailed pseudo code
-
-
 #### `handleInput`:
 
 	read the keystroke from stdin
@@ -71,12 +69,6 @@ bool handleInput(char keystroke);
 ---
 
 A function that passes the message that is received from the server to the relevant function.
-
-```c
-bool handleMessage(char* message);
-```
-### Detailed pseudo code
-
 
 #### `handleMessage`:
 
@@ -148,7 +140,7 @@ void grid_update_vis(char** mainGrid, char** localMap, int loc);
 
 ### Detailed pseudo code
 
-*grid_load*:
+#### `grid_load`:
 
 	initialize a variable int i to 0
 	as long as i is less than NRxNC
@@ -157,37 +149,43 @@ void grid_update_vis(char** mainGrid, char** localMap, int loc);
 			set grid[i] to be that character
 			increment i by 1
 
-*grid_1dto2d_x*:
+#### `grid_1dto2d_x`:
 
 	return loc/NR
 
-*grid_1dto2d_y*:
+#### `grid_1dto2d_y`:
 
 	return loc%NR
 
-*grid_2dto1d*:
+#### `grid_2dto1d`:
 
 	return NC*x+y
 
-*grid_update_vis*:
-
+#### `grid_update_vis`:
 	
 
 ---
 
-## Testing plan
+## Testing
 
-### unit testing
+### Unit Testing
+Each unit/module will be tested independently at first before being aggregated together. The grid module will be tested independently first, and then client and the server will be tested. Individual functions within each unit/module will be tested to ensure that they work properly. 
 
-> How will you test each unit (module) before integrating them with a main program (client or server)?
+### Integration Testing
+We will test our client with the given server, and then test our server with the given client. We can again log the messages being sent back and forth between the client and the server to ensure that the messages are being sent properly. 
 
-### integration testing
+### System Testing
+We run the client and server together on the same device and on different devices and test all functions and edge cases. The game will be played and tested numerous times to ensure that not only do all the desired game mechanics work as intended, but also the game behaves properly in special edge cases. 
 
-> How will you test the complete main programs: the server, and for teams of 4, the client?
+The following are some examples of "special" cases that we consider testing:
+* Invalid keystrokes
+* Collisions between players and with walls 
+* Having too many players join 
+* Initializing a spectator session with an already existing specator 
+* Players leaving/rejoining 
+* Starting with too small of a window
 
-### system testing
-
-> For teams of 4: How will you test your client and server together?
+Moreover, it should be noted that we also use valgrind to test for memory leaks throughout testing to ensure that there are no problems memory-wise.
 
 ---
 
