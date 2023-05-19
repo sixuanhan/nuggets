@@ -20,19 +20,6 @@ This is the outline of the data structures, functional breakdown, and pseudo cod
 
 ### Data structures
 
-This program will implement a new `player` structure corresponding to each client.
-
-```c
-typedef struct player {
-    char* username;
-	int ID;
-	char letter;
-	int gold;
-	int locX;
-	int locY;
-	char* localMap;
-} player_t;
-```
 
 ### Definition of function prototypes
 
@@ -149,7 +136,7 @@ static bool handleMessage(void* arg, const addr_t from, const char* message)
 
 ## game module
 
-The game module implements the `game` struct as well as related functions. Note that the module will be implemented directly in `server.c` instead of an independent file such as `game.c`. For clarity purpose, we will explain its implementation here in an independent section.
+The game module implements the `game` struct, the `player` struct, as well as related functions. Note that the module will be implemented directly in `server.c` instead of an independent file such as `game.c`. For clarity purpose, we will explain its implementation here in an independent section.
 
 ### Data structures
 
@@ -157,30 +144,50 @@ The `game` structure will store variables that provide information about each lo
 
 ```c
 typedef struct game {
-    char* mainGrid;
-	int numPlayers;
-	int goldRemaining;
-	player_t** players;
-	hashtable nuggetsInPile;
+    char* mainGrid;  // the grid that contains all information (spectator's view)
+	int numPlayers;  // the number of players that have joined the games
+	int goldRemaining;  // the number of unclaimed nuggets
+	player_t** players;  // an array of players
+	hashtable nuggetsInPile;  // where all the gold is and how many nuggets there are in each pile
 } game_t;
+```
+
+The `player` structure corresponds to each client, storing information about them.
+
+```c
+typedef struct player {
+    char* username;
+	int ID;
+	char letterID;
+	int gold;  // how many nuggets they have
+	int loc;
+	char* localMap;  // the grid that this player can see
+} player_t;
 ```
 
 ### Definition of function prototypes
 
 This function will initialize a new game struct and return its pointer.
 ```c
-game_t* game_new(void);
+static game_t* game_new(void);
 ```
 
 This function will drop at least GoldMinNumPiles and at most GoldMaxNumPiles gold piles on random room spots; each pile shall have a random number of nuggets. It will store the information in nuggetsInPile and also update the mainGrid in the game struct.
 ```c
-void game_scatter_gold(game_t* game, int randSeed);
+static void game_scatter_gold(game_t* game, int randSeed);
 ```
 
 This function will clean up a game struct and everything within it.
 ```c
-void game_delete(game_t* game);
+static void game_delete(game_t* game);
 ```
+
+This function will initialize a new player struct and return its pointer.
+```c
+static player_t* player_new(void);
+```
+
+
 
 
 ### Detailed pseudo code
@@ -210,16 +217,27 @@ void game_delete(game_t* game);
 			decrement numPilesRemaining by 1
 
 
-
-
-
 #### `game_delete`:
 
 	free the mainGrid string
-	delete each player in the array
-	free the array
+	free each player_t* in the players array
+	free the players array
 	call hashtable_delete on the nuggetsInPile hashtable
 	free the game struct itself
+
+
+#### `player_new`:
+
+	allocate memory for player_t* and exit error if failure to allocate memory with mem_malloc_assert
+	initialize localMap to all ' '
+	initialize ID to the numPlayers
+	initialize letterID to 'A'+ID
+	initialize gold to 0
+	initialize loc to a random number in [0, NRxNC-1]
+	while the coordinate does not represent an empty room spot in mainGrid
+		set loc to a random number in [0, NRxNC-1] to be the gold drop coordinate again
+	call grid_update_vis
+
 
 
 ## grid module
