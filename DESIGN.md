@@ -271,6 +271,8 @@ There will be a static global data structure, `game`, which stores important var
 
 `players`: an array of `player` structs
 
+`nuggetsInPile`: a hashtable that holds the one dimensional coordinate of all piles and the number of nuggets in each pile
+
 ---
 
 ## the Grid module
@@ -282,13 +284,14 @@ There will be a static global data structure, `game`, which stores important var
 
 `grid_load`: this function takes the map file and loads the information into a grid.
 
-`grid_1dto2d`: this function takes a one dimensional coordinate and transforms it to a two dimensional coordinate according to the size of the grid.
+`grid_1dto2d_x`: this function takes a one dimensional coordinate, transforms it to a two dimensional coordinate according to the size of the grid, and returns the x value.
+
+`grid_1dto2d_y`: this function takes a one dimensional coordinate, transforms it to a two dimensional coordinate according to the size of the grid, and returns the y value.
 
 `grid_2dto1d`: this function takes a two dimensional coordinate and transforms it to a one dimensional coordinate according to the size of the grid.
 
-`grid_get_loc`: this function takes a coordinate (x, y) and returns the character on the coordinate in the grid.
 
-`grid_set_loc`: this function takes a coordinate (x, y) and a character, and replaces the character on the coordinate in the grid.
+`grid_update_vis`: this function is called when a player moves. It takes a coordinate, a player's local grid, and the main game grid, and rewrites the player's new local grid given their updated position.
 
 
 

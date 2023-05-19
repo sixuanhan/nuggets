@@ -90,33 +90,15 @@ bool handleMessage(char* message);
 
 ### Data structures
 
-There will be a `gridcell` structure, which contains the information relevant to each location on the grid.
-
-```c
-typedef struct gridcell {
-    char spot;
-	int nugs;
-	char** vis;
-} gridcell_t;
-```
-
-It will also define a new `grid` structure, which stores the position of each coordinate on the game as a 2D array.
-
-```c
-typedef struct grid {
-    int NR;
-	int NC;
-} grid_t;
-```
-
 The `game` structure will implement the `grid` structure and store variables that provide information about each location on the grid.
 
 ```c
 typedef struct game {
-    grid_t* grid;
+    char* grid;
 	int numPlayers;
 	int goldRemaining;
 	player_t** players;
+	hashtable nuggetsInPile;
 } game_t;
 ```
 
@@ -148,15 +130,48 @@ static int parseArgs(const int argc, char* argv[]);
 
 ---
 
-## XYZ module
-
-> For each module, repeat the same framework above.
+## grid module
 
 ### Data structures
 
+This module implements a grid, which is a string with NRxNC characters represending the map.
+
 ### Definition of function prototypes
 
+``` c
+void grid_load(FILE* fp, char* grid);
+int grid_1dto2d_x(int loc);
+int grid_1dto2d_y(int loc);
+int grid_2dto1d(int x, int y);
+void grid_update_vis(char** mainGrid, char** localMap, int loc);
+```
+
 ### Detailed pseudo code
+
+*grid_load*:
+
+	initialize a variable int i to 0
+	as long as i is less than NRxNC
+		we read a character from fp
+		if the character is not '\n'
+			set grid[i] to be that character
+			increment i by 1
+
+*grid_1dto2d_x*:
+
+	return loc/NR
+
+*grid_1dto2d_y*:
+
+	return loc%NR
+
+*grid_2dto1d*:
+
+	return NC*x+y
+
+*grid_update_vis*:
+
+	
 
 ---
 
