@@ -9,7 +9,7 @@
 * Steven Mendley
 
 According to the [Requirements Spec](REQUIREMENTS.md), the Nuggets game requires two standalone programs: a client and a server.
-Our design also includes x, y, z modules.
+Our design also includes the grid module.
 We describe each program and module separately.
 We do not describe the `support` library nor the modules that enable features that go beyond the spec.
 We avoid repeating information that is provided in the requirements spec.
@@ -92,7 +92,6 @@ The client will run as follows:
 
 #### handleInput
 	read the keystroke from stdin
-	check the validity of the keystroke
 	send a corresponding message to the server
 	return a boolean that indicates whether to exit the loop
 
