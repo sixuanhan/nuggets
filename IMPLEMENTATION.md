@@ -20,19 +20,6 @@ This is the outline of the data structures, functional breakdown, and pseudo cod
 
 ### Data structures
 
-This program will implement a new `player` structure corresponding to each client.
-
-```c
-typedef struct player {
-    char* username;
-	int ID;
-	char letter;
-	int gold;
-	int locX;
-	int locY;
-	char* localMap;
-} player_t;
-```
 
 ### Definition of function prototypes
 
@@ -66,7 +53,6 @@ A function that reads and processes keystrokes from stdin using `ncurses`.
 	send a corresponding message to the server
 	return a boolean that indicates whether to exit the loop
 
----
 
 A function that passes the message that is received from the server to the relevant function.
 
@@ -82,45 +68,177 @@ A function that passes the message that is received from the server to the relev
 
 ### Data structures
 
-The `game` structure will store variables that provide information about each location on the grid.
-
-```c
-typedef struct game {
-    char* grid;
-	int numPlayers;
-	int goldRemaining;
-	player_t** players;
-	hashtable nuggetsInPile;
-} game_t;
-```
 
 ### Definition of function prototypes
-
-> For function, provide a brief description and then a code block with its function prototype.
-> For example:
 
 A function to parse the command-line arguments, initialize the game struct, initialize the message module, and (BEYOND SPEC) initialize analytics module.
 
 ```c
 static int parseArgs(const int argc, char* argv[]);
 ```
-### Detailed pseudo code
 
-> For each function write pseudocode indented by a tab, which in Markdown will cause it to be rendered in literal form (like a code block).
-> Much easier than writing as a bulleted list!
-> For example:
+A function to create a new `game` data structure, initialize data, and randomize the location of gold pile drops. 
+
+```c
+static game_t* initializeGame();
+```
+
+
+An overarching function to handle incoming messages from a client and call specific handleXYZ functions to do the jobs.
+```c
+static bool handleMessage(void* arg, const addr_t from, const char* message)
+```
+
+### Detailed pseudo code
 
 #### `parseArgs`:
 
-	validate commandline
-	verify map file can be opened for reading
-	if seed provided
-		verify it is a valid seed number
-		seed the random-number generator with that seed
+	if the number of arguments is not 2 or 3
+		print error message to stderr
+		exit non-zero
+	store the path to the map file
+	if we cannot open the file for reading
+		print error message to stderr
+		exit non-zero
+	if the number of arguments is 3
+		if the third argument (the seed) is not an int
+			print error message to stderr
+			exit non-zero
+		store the seed in a variable
 	else
 		seed the random-number generator with getpid()
 
+
+#### `initializeGame`:
+
+	call game_new and store the game struct in a variable
+	call game_scatter_gold
+	return the game_t pointer
+
+
+#### `handleMessage`:
+
+	if the first word of the message is the same as "PLAY "
+		extract the message part
+		call handlePLAY
+	else if the first word of the message is the same as "SPECTATE "
+		call handleSPECTATE
+	else if the first word of the message is the same as "KEY "
+		extract the message part
+		call handleKEY
+	else
+		log error
+		send an ERROR message to the client
+
+
+
 ---
+
+## game module
+
+The game module implements the `game` struct, the `player` struct, as well as related functions. Note that the module will be implemented directly in `server.c` instead of an independent file such as `game.c`. For clarity purpose, we will explain its implementation here in an independent section.
+
+### Data structures
+
+The `game` structure will store variables that provide information about each location on the grid.
+
+```c
+typedef struct game {
+    char* mainGrid;  // the grid that contains all information (spectator's view)
+	int numPlayers;  // the number of players that have joined the games
+	int goldRemaining;  // the number of unclaimed nuggets
+	player_t** players;  // an array of players
+	hashtable nuggetsInPile;  // where all the gold is and how many nuggets there are in each pile
+} game_t;
+```
+
+The `player` structure corresponds to each client, storing information about them.
+
+```c
+typedef struct player {
+    char* username;
+	int ID;
+	char letterID;
+	int gold;  // how many nuggets they have
+	int loc;
+	char* localMap;  // the grid that this player can see
+} player_t;
+```
+
+### Definition of function prototypes
+
+This function will initialize a new game struct and return its pointer.
+```c
+static game_t* game_new(void);
+```
+
+This function will drop at least GoldMinNumPiles and at most GoldMaxNumPiles gold piles on random room spots; each pile shall have a random number of nuggets. It will store the information in nuggetsInPile and also update the mainGrid in the game struct.
+```c
+static void game_scatter_gold(game_t* game, int randSeed);
+```
+
+This function will clean up a game struct and everything within it.
+```c
+static void game_delete(game_t* game);
+```
+
+This function will initialize a new player struct and return its pointer.
+```c
+static player_t* player_new(void);
+```
+
+
+
+
+### Detailed pseudo code
+
+#### `game_new`:
+
+	allocate memory for game_t* and exit error if failure to allocate memory with mem_malloc_assert
+	allocate memory for mainGrid and exit error if failure to allocate memory with mem_malloc_assert
+	allocate memory for players and exit error if failure to allocate memory with mem_malloc_assert
+	initialize nuggetsInPile with hashtable_new
+	intialize numPlayers to 0
+	intialize goldRemaining to GoldTotal
+
+
+#### `game_scatter_gold`:
+
+	create a variable int goldRemaining and initialize it to GoldTotal
+	initialize a variable int numPilesRemaining by randomly picking a number in [GoldMinNumPiles, GoldMaxNumPiles]
+	while numPilesRemaining is greater than 0
+		randomly pick a number in [0, NRxNC-1] to be the gold drop coordinate
+		if the coordinate does not represent an empty room spot in mainGrid
+			continue
+		randomly pick a number in [1, goldRemaining/2] to be the number of nuggets dropped on that coordinate
+		store the (coordinate, numberOfNuggets) information in nuggetsInPile
+		change the empty room spot in mainGrid to '*'
+			decrement goldRemaining by numberOfNuggets
+			decrement numPilesRemaining by 1
+
+
+#### `game_delete`:
+
+	free the mainGrid string
+	free each player_t* in the players array
+	free the players array
+	call hashtable_delete on the nuggetsInPile hashtable
+	free the game struct itself
+
+
+#### `player_new`:
+
+	allocate memory for player_t* and exit error if failure to allocate memory with mem_malloc_assert
+	initialize localMap to all ' '
+	initialize ID to the numPlayers
+	initialize letterID to 'A'+ID
+	initialize gold to 0
+	initialize loc to a random number in [0, NRxNC-1]
+	while the coordinate does not represent an empty room spot in mainGrid
+		set loc to a random number in [0, NRxNC-1] to be the gold drop coordinate again
+	call grid_update_vis
+
+
 
 ## grid module
 
