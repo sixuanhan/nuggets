@@ -97,13 +97,13 @@ A function to parse the command-line arguments, initialize the game struct, and 
 #### `handleMessage`:
 
 	parse the first part of the message to identify which type of message it is
-	call the `handleXYZ` function that handles that type of message specifically
+	return the `handleXYZ` function that handles that type of message specifically
 	return a boolean that indicates whether to exit the loop
 
 
 #### `handleOK`:
 	prints out the OK message
-	returns false
+	return false
 
 
 #### `handleGRID`:
@@ -112,38 +112,39 @@ A function to parse the command-line arguments, initialize the game struct, and 
 	if the current window size is too small
 		inform the user to about the minimum required window size
 		wait for the user to enlarge the window
-	returns false
+	return false
 
 
 #### `handleGOLD`:
 	parse through the GOLD message that the client receives from the server
 	extract `n`, `p`, and `r`, as denoted in the functional decomposition
 	update the top line of display regarding the game status
-	returns false
+	return false
 
 
 #### `handleDISPLAY`:
 	parse through the DISPLAY message that the client receives from the server
 	output the updated map that is displayed to the client 
-	returns false
+	return false
 
 
 #### `handleQUIT`:
 	take the QUIT message and inform the user of the quit and the reason for the quit
 	break out of the message_loop() (break command may appear outside of function but called immediately after this function is called)
-	returns true
+	return true
 
 
 #### `handleERROR`:
 	print out the ERROR message received from the client
 	log the error 
-	returns false
+	return false
 
 
 ## Server
 
 ### Data structures
 
+There is a static global `game` struct and a `player` struct in *server.c*. They will be explained in the next section: "the game module". Note that this is not an individual module like a `game.c`.
 
 ### Definition of function prototypes
 
@@ -158,7 +159,6 @@ A function to create a new `game` data structure, initialize data, and randomize
 ```c
 static game_t* initializeGame();
 ```
-
 
 An overarching function to handle incoming messages from a client and call specific handleXYZ functions to do the jobs.
 ```c
@@ -215,15 +215,16 @@ static bool gameOver();
 
 	if the first word of the message is the same as "PLAY "
 		extract the message part
-		call handlePLAY
+		return handlePLAY
 	else if the first word of the message is the same as "SPECTATE "
-		call handleSPECTATE
+		return handleSPECTATE
 	else if the first word of the message is the same as "KEY "
 		extract the message part
-		call handleKEY
+		return handleKEY
 	else
 		log error
 		send an ERROR message to the client
+		return false
 
 #### `handlePLAY`:
 
@@ -233,6 +234,7 @@ static bool gameOver();
 	else
 		log error
 		send an ERROR message to the client
+	return false
 
 #### `handleSPECTATE`:
 
@@ -251,7 +253,7 @@ static bool gameOver();
 			update the grid for the player
 			send updated DISPLAY message back to all players (not sure if this is correct)
 			if goldRemaining == 0
-				gameOver()
+				return gameOver()
 		else if the keystroke is Q
 			send a QUIT message to the client 
 			close communication socket with client
@@ -265,12 +267,13 @@ static bool gameOver();
 			delete the corresponding player struct of the client
 		else
 			send an ERROR Message to the client 
+	return false
 
 #### `gameOver`:
 
-	loop through the player array
+	loop through the players array
 		send a QUIT message to every client with a scoreboard
-
+	return true
 
 
 ---
@@ -337,8 +340,8 @@ static player_t* player_new(void);
 	allocate memory for mainGrid and exit error if failure to allocate memory with mem_malloc_assert
 	allocate memory for players and exit error if failure to allocate memory with mem_malloc_assert
 	initialize nuggetsInPile with hashtable_new
-	intialize numPlayers to 0
-	intialize goldRemaining to GoldTotal
+	initialize numPlayers to 0
+	initialize goldRemaining to GoldTotal
 
 
 #### `game_scatter_gold`:
@@ -415,7 +418,7 @@ void grid_update_vis(char** mainGrid, char** localMap, int loc);
 
 #### `grid_2dto1d`:
 
-	return NC*x+y
+	return x+NC*y
 
 #### `grid_update_vis`:
 	
