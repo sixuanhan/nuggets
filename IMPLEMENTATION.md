@@ -25,6 +25,7 @@ REVISIT: Do we have a data structure here?
 ### Definition of function prototypes
 
 A function to parse the command-line arguments, initialize the game struct, and initialize the message module.
+
 ```c
 static int parseArgs(const int argc, char* argv[]);
 ```
@@ -72,6 +73,7 @@ bool handleERROR(char* message);
 
 ### Detailed pseudo code
 
+A function to parse the command-line arguments, initialize the game struct, and initialize the message module.
 
 #### `parseArgs`:
 
@@ -154,6 +156,20 @@ An overarching function to handle incoming messages from a client and call speci
 static bool handleMessage(void* arg, const addr_t from, const char* message)
 ```
 
+A function to handle PLAY messages and add a new player to the game, initializing the display for that client.
+```c
+static bool handlePLAY(void* arg, const addr_t from, const char* message)
+```
+
+A function to handle SPECTATE messages and add a spectator to the game, initializing the display for that client.
+```c
+static bool handleSPECTATE(void* arg, const addr_t from)
+```
+
+A function to handle the end of the game and sends a message to each client with a QUIT GAME OVER message.
+```c
+static bool gameOver()
+```
 ### Detailed pseudo code
 
 #### `parseArgs`:
@@ -194,6 +210,27 @@ static bool handleMessage(void* arg, const addr_t from, const char* message)
 	else
 		log error
 		send an ERROR message to the client
+
+#### `handlePLAY`:
+
+	if valid name
+		call player_new
+		send a DISPLAY message to client with a player display
+	else
+		log error
+		send an ERROR message to the client
+
+#### `handleSPECTATE`:
+
+	if message empty
+		send a DISPLAY message to client with spectator display
+	else
+		log error
+		send an ERROR message to the client
+
+#### `gameOver`:
+
+	send a QUIT message to every client with a scoreboard
 
 
 
