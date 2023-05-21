@@ -166,6 +166,11 @@ A function to handle SPECTATE messages and add a spectator to the game, initiali
 static bool handleSPECTATE(void* arg, const addr_t from)
 ```
 
+A function to handle KEY messages and updates the game based on the message that it receives from a client.
+```c
+static bool handleKEY(const addr_t from, const char* content)
+```
+
 A function to handle the end of the game and sends a message to each client with a QUIT GAME OVER message.
 ```c
 static bool gameOver()
@@ -228,11 +233,31 @@ static bool gameOver()
 		log error
 		send an ERROR message to the client
 
+### `handleKEY`:
+
+	if message came from player
+		if the keystroke is h, l, j, k, y, u, b, or n
+			update the grid for the player
+			send updated DISPLAY message back to all players (not sure if this is correct)
+			if goldRemaining == 0
+				gameOver()
+		else if the keystroke is Q
+			send a QUIT message to the client 
+			close communication socket with client
+			delete the corresponding player struct of the client
+		else
+			send an ERROR message to the client
+	else if message came from spectator
+		if the keystroke is Q
+			send a QUIT message to the client
+			close communication socket with the client
+			delete the corresponding player struct of the client
+		else
+			send an ERROR Message to the client 
+
 #### `gameOver`:
 
 	send a QUIT message to every client with a scoreboard
-
-
 
 ---
 
