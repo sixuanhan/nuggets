@@ -85,8 +85,6 @@ The client will run as follows:
 	initialize the 'message' module
 	send a message to the server, requesting connection
 	call message_loop(), to await the server
-		handleInput()
-		handleMessage()
 	shut down when the client tells it to
 	clean up
 
@@ -192,11 +190,18 @@ The server will run as follows:
 	sets up the server connection 
 
 #### handleMessage
-	listen for messages sent from the clients that are connected by the server
-	update the `game` data structure accordingly from the contents of the message
-	if none of handleXYZ functions are able to process the client message
-		log an error
-		send back an ERROR message to the client 
+	if the first word of the message is the same as "PLAY "
+		extract the message part
+		return handlePLAY
+	else if the first word of the message is the same as "SPECTATE "
+		return handleSPECTATE
+	else if the first word of the message is the same as "KEY "
+		extract the message part
+		return handleKEY
+	else
+		log error
+		send an ERROR message to the client
+		do not exit message loop
 
 #### handlePLAY
 	check the validity of the player's name and whether there is still space for another player given *MaxPlayers* players
@@ -248,8 +253,6 @@ There will be a static data structure, `player`, that holds:
 
 `username`: their username
 
-`ID`: their numerical ID
-
 `letterID`: their letter ID
 
 `gold`: how many gold nuggets they have
@@ -257,6 +260,8 @@ There will be a static data structure, `player`, that holds:
 `loc`: their one dimensional coordinate
 
 `localMap`: the grid that this player sees
+
+`address`: their address
 
 There will be a static global data structure, `game`, which stores important variables corresponding to information relevant to the game in both the client and the server. The `game` will hold:
 
