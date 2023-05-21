@@ -20,17 +20,55 @@ This is the outline of the data structures, functional breakdown, and pseudo cod
 
 ### Data structures
 
+REVISIT: Do we have a data structure here?
 
 ### Definition of function prototypes
 
 A function to parse the command-line arguments, initialize the game struct, and initialize the message module.
-
 ```c
 static int parseArgs(const int argc, char* argv[]);
-bool handleInput(char keystroke);
-bool handleMessage(char* message);
-
 ```
+
+A function that reads and processes keystrokes from stdin using `ncurses`.
+```c
+bool handleInput(char keystroke);
+```
+
+A function that passes the message that is received from the server to the relevant function.
+```c
+bool handleMessage(char* message);
+```
+
+A function that connects the client to the server and returns the letter that corresponds to their player.
+```c
+char handleOK(char* message);
+```
+
+A function that notifies the client of the size of the grid as a constant integer.
+```c
+int handleGRID(char* message); // does this have to return an integer?
+```
+
+A function that notifies the client of three variables, `n`: the number of gold nuggets collected, `p`: the number of gold nuggets in the client’s purse, and `r`: the number of remaining gold nuggets on the map.
+```c
+bool handleGOLD(char* message); // boolean?
+```
+
+A function that passes and prints out a string to a client that corresponds to the physical depiction of the map.
+```c
+bool handleDISPLAY(char* message);
+```
+
+A function that removes a client from the server, it outputs the message corresponding to the removal, and exits the program.
+```c
+bool handleQUIT(char* message);
+```
+
+A function that informs the client of an invalid action and stores it in the stderr or log file.
+```c
+bool handleERROR(char* message);
+```
+
 
 ### Detailed pseudo code
 
@@ -42,9 +80,6 @@ bool handleMessage(char* message);
 	print assigned port number
 	decide whether spectator or player
 
----
-
-A function that reads and processes keystrokes from stdin using `ncurses`.
 
 #### `handleInput`:
 
@@ -54,15 +89,45 @@ A function that reads and processes keystrokes from stdin using `ncurses`.
 	return a boolean that indicates whether to exit the loop
 
 
-A function that passes the message that is received from the server to the relevant function.
-
 #### `handleMessage`:
 
 	parse the first part of the message to identify which type of message it is
 	call the `handleXYZ` function that handles that type of message specifically
 	return a boolean that indicates whether to exit the loop
 
----
+
+#### `handleOK`:
+	prints out the OK message
+
+
+#### `handleGRID`:
+	parse through the GRID message that the client receives from the server
+	extract the grid size from the message
+	if the current window size is too small
+		inform the user to about the minimum required window size
+		wait for the user to enlarge the window 
+
+
+#### `handleGOLD`:
+	parse through the GOLD message that the client receives from the server
+	extract `n`, `p`, and `r`, as denoted in the functional decomposition
+	update the top line of display regarding the game status
+
+
+#### `handleDISPLAY`:
+	parse through the DISPLAY message that the client receives from the server
+	output the updated map that is displayed to the client 
+
+
+#### `handleQUIT`:
+	take the QUIT message and inform the user of the quit and the reason for the quit
+	break out of the message_loop() (break command may appear outside of function but called immediately after this function is called)
+
+
+#### `handleERROR`:
+	print out the ERROR message received from the client
+	log the error 
+
 
 ## Server
 
