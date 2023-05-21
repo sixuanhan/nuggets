@@ -10,64 +10,67 @@ We avoid repeating information that is provided in the requirements spec.
 
 ## Plan for division of labor
 
-> Update your plan for distributing the project work among your 3(4) team members.
-> Who writes the client program, the server program, each module?
-> Who is responsible for various aspects of testing, for documentation, etc?
+While all group members are responsible for the entirety of the project, we assign certain tasks for certain group members to prioritize and complete first:
+* Kevin - Server module + Bresenham algorithm in Grid module
+* James - Client module
+* Selena - Grid module
+* Steven - Server module & Grid module (particularly where both modules intersect)
 
-## Player
+We will be responsible for unit testing our individual modules in order to ensure that they function as intended, but we will conduct integration and system tests together in order to check aggregate performance. Even though we are dividing up the code, each group member should be available to help another group member on their code if necessary. 
 
-This is the outline of the data structures, functional breakdown, and pseudo code for the `player` program.
+## Client
+
+This is the outline of the data structures, functional breakdown, and pseudo code for the `client` program.
 
 ### Data structures
 
-REVISIT: Do we have a data structure here?
+The client is a bare-bones receiver and communicator of strings as inputs and ouputs, so no additional data structures are required.
 
 ### Definition of function prototypes
 
 A function to parse the command-line arguments, initialize the game struct, and initialize the message module.
-
 ```c
 static int parseArgs(const int argc, char* argv[]);
 ```
 
 A function that reads and processes keystrokes from stdin using `ncurses`.
 ```c
-bool handleInput(char keystroke);
+static bool handleInput(void* arg);
 ```
 
 A function that passes the message that is received from the server to the relevant function.
 ```c
-bool handleMessage(char* message);
+static bool handleMessage(void* arg, const addr_t from, const char* message);
 ```
 
 A function that connects the client to the server and returns the letter that corresponds to their player.
 ```c
-char handleOK(char* message);
+static bool handleOK(const char* message);
 ```
 
 A function that notifies the client of the size of the grid as a constant integer.
 ```c
-int handleGRID(char* message); // does this have to return an integer?
+static bool handleGRID(const char* message);
 ```
 
 A function that notifies the client of three variables, `n`: the number of gold nuggets collected, `p`: the number of gold nuggets in the client’s purse, and `r`: the number of remaining gold nuggets on the map.
 ```c
-bool handleGOLD(char* message); // boolean?
+static bool handleGOLD(const char* message);
 ```
 
 A function that passes and prints out a string to a client that corresponds to the physical depiction of the map.
 ```c
-bool handleDISPLAY(char* message);
+static bool handleDISPLAY(const char* message);
 ```
 
 A function that removes a client from the server, it outputs the message corresponding to the removal, and exits the program.
 ```c
-bool handleQUIT(char* message);
+static bool handleQUIT(const char* message);
 ```
 
 A function that informs the client of an invalid action and stores it in the stderr or log file.
 ```c
-bool handleERROR(char* message);
+static bool handleERROR(const char* message);
 ```
 
 
@@ -100,6 +103,7 @@ A function to parse the command-line arguments, initialize the game struct, and 
 
 #### `handleOK`:
 	prints out the OK message
+	returns false
 
 
 #### `handleGRID`:
@@ -107,28 +111,33 @@ A function to parse the command-line arguments, initialize the game struct, and 
 	extract the grid size from the message
 	if the current window size is too small
 		inform the user to about the minimum required window size
-		wait for the user to enlarge the window 
+		wait for the user to enlarge the window
+	returns false
 
 
 #### `handleGOLD`:
 	parse through the GOLD message that the client receives from the server
 	extract `n`, `p`, and `r`, as denoted in the functional decomposition
 	update the top line of display regarding the game status
+	returns false
 
 
 #### `handleDISPLAY`:
 	parse through the DISPLAY message that the client receives from the server
 	output the updated map that is displayed to the client 
+	returns false
 
 
 #### `handleQUIT`:
 	take the QUIT message and inform the user of the quit and the reason for the quit
 	break out of the message_loop() (break command may appear outside of function but called immediately after this function is called)
+	returns true
 
 
 #### `handleERROR`:
 	print out the ERROR message received from the client
 	log the error 
+	returns false
 
 
 ## Server
@@ -153,17 +162,17 @@ static game_t* initializeGame();
 
 An overarching function to handle incoming messages from a client and call specific handleXYZ functions to do the jobs.
 ```c
-static bool handleMessage(void* arg, const addr_t from, const char* message)
+static bool handleMessage(void* arg, const addr_t from, const char* message);
 ```
 
 A function to handle PLAY messages and add a new player to the game, initializing the display for that client.
 ```c
-static bool handlePLAY(void* arg, const addr_t from, const char* message)
+static bool handlePLAY(const addr_t from, const char* content);
 ```
 
 A function to handle SPECTATE messages and add a spectator to the game, initializing the display for that client.
 ```c
-static bool handleSPECTATE(void* arg, const addr_t from)
+static bool handleSPECTATE(const addr_t from, const char* content);
 ```
 
 A function to handle KEY messages and updates the game based on the message that it receives from a client.
@@ -173,7 +182,7 @@ static bool handleKEY(const addr_t from, const char* content)
 
 A function to handle the end of the game and sends a message to each client with a QUIT GAME OVER message.
 ```c
-static bool gameOver()
+static bool gameOver();
 ```
 ### Detailed pseudo code
 
@@ -220,7 +229,7 @@ static bool gameOver()
 
 	if valid name
 		call player_new
-		send a DISPLAY message to client with a player display
+		send an OK, GOLD, GRID, and DISPLAY message to client with player display
 	else
 		log error
 		send an ERROR message to the client
@@ -228,12 +237,14 @@ static bool gameOver()
 #### `handleSPECTATE`:
 
 	if message empty
-		send a DISPLAY message to client with spectator display
+		if there is another spectator
+			send a QUIT message to previous spectator
+		send an OK, GOLD, GRID, and DISPLAY message to new client with spectator display
 	else
 		log error
 		send an ERROR message to the client
 
-### `handleKEY`:
+#### `handleKEY`:
 
 	if message came from player
 		if the keystroke is h, l, j, k, y, u, b, or n
@@ -257,7 +268,10 @@ static bool gameOver()
 
 #### `gameOver`:
 
-	send a QUIT message to every client with a scoreboard
+	loop through the player array
+		send a QUIT message to every client with a scoreboard
+
+
 
 ---
 
@@ -274,7 +288,7 @@ typedef struct game {
     char* mainGrid;  // the grid that contains all information (spectator's view)
 	int numPlayers;  // the number of players that have joined the games
 	int goldRemaining;  // the number of unclaimed nuggets
-	player_t** players;  // an array of players
+	player_t* players[MaxPlayers+1];  // an array of players
 	hashtable nuggetsInPile;  // where all the gold is and how many nuggets there are in each pile
 } game_t;
 ```
@@ -284,11 +298,11 @@ The `player` structure corresponds to each client, storing information about the
 ```c
 typedef struct player {
     char* username;
-	int ID;
 	char letterID;
 	int gold;  // how many nuggets they have
 	int loc;
 	char* localMap;  // the grid that this player can see
+	addr_t* address;
 } player_t;
 ```
 
@@ -346,7 +360,6 @@ static player_t* player_new(void);
 
 	free the mainGrid string
 	free each player_t* in the players array
-	free the players array
 	call hashtable_delete on the nuggetsInPile hashtable
 	free the game struct itself
 
