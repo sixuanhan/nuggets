@@ -418,7 +418,7 @@ void grid_update_vis(char** mainGrid, char** localMap, int loc);
 
 #### `grid_2dto1d`:
 
-	return NC*x+y
+	return x+NC*y
 
 #### `grid_update_vis`:
 	
