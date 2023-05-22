@@ -24,7 +24,6 @@ static void game_delete(void);
 static player_t* player_new(void);
 
 static int parseArgs(const int argc, char* argv[], char* mapFile);
-static game_t* initializeGame(void);
 static bool handleMessage(void* arg, const addr_t from, const char* message);
 static bool handlePLAY(const addr_t from, const char* content);
 static bool handleSPECTATE(const addr_t from, const char* content);
@@ -44,11 +43,40 @@ static int NC; // number of columns in the grid
 static game_t* game; // stores variables that provide information about each location on the grid
 
 
-/**************** main ****************/
+/**************** main ***************
+ * Returns:
+ *  0: all good
+ *  1: fatal error occurred in message_loop
+ *  2: incorrect number of arguments
+ *  3: cannot read map file
+ *  4: seed argument is not int
+ *  5: memory allocation for the hashtable fails
+ *  6: failure to initialize message module
+*/
 int main(const int argc, char* argv[])
 {
     char* mapFile;
     unsigned int randSeed;
+
+    int parseArgsReturn = parseArgs(argc, argv, mapFile);
+    if (parseArgsReturn != 0) {
+        return parseArgsReturn;
+    }
+
+    FILE* logFP = fopen("server.log", "w");
+    int port = message_init(logFP);
+    if (port == 0) {
+        fprintf(stderr, "Failure to initialize message module. \n");
+        return 6;
+    }
+    printf("Server is ready at port %i. \n", port);
+
+    bool ok = message_loop(NULL, 0, NULL, NULL, handleMessage);
+
+    message_done();
+    game_delete();
+  
+    return ok? 0 : 1;
 }
 
 
@@ -79,7 +107,7 @@ typedef struct game {
 
 /* A function to initialize a new game struct and return its pointer.
  *
- * We exit 4 if memory allocation for the hashtable fails.
+ * We exit 5 if memory allocation for the hashtable fails.
  * 
  * Caller is responsible for:
  *   declaring the global game struct before calling this function.
@@ -94,7 +122,7 @@ static void game_new(void) {
     game->nuggetsInPile = hashtable_new(200); // 200 is the hashtable size by default
     if (game->nuggetsInPile == NULL) {
         fprintf(stderr, "Memory allocation failed. \n");
-        exit(4);
+        exit(5);
     }
 }
 
@@ -197,22 +225,25 @@ static player_t* player_new(void) {
  * initialize the message module, and initialize analytics module.
  *
  * We return:
- *   0, if we do not exit non-zero.
+ *   0: all good
+ *   2: incorrect number of arguments
+ *   3: cannot read map file
+ *   4: seed argument is not int
  * 
  * Caller is responsible for:
  *   initializing char* mapFile and int randSeed before calling this function.
  */
 static int parseArgs(const int argc, char* argv[], char* mapFile) {
     if (argc != 2 && argc != 3) {
-        fprintf(stderr, "Error: incorrect number of arguments. Usage: ./server map.txt [seed] \n");
-        exit(1);
+        fprintf(stderr, "Error: incorrect number of arguments. Usage: %s map.txt [seed] \n", argv[0]);
+        return 2;
     }
 
     mapFile = argv[1];
     FILE* fp = fopen(mapFile, "r");
     if (fp == NULL) {
-        fprintf(stderr, "Error: cannot open map file. \n");
-        exit(2);
+        fprintf(stderr, "Error: cannot read map file. \n");
+        return 3;
     }
 
     // user gives the randSeed
@@ -222,8 +253,8 @@ static int parseArgs(const int argc, char* argv[], char* mapFile) {
             srand(atoi(argv[2]));
         }
         else {
-            fprintf(stderr, "Error: seed argument must be int. \n");
-            exit(3);
+            fprintf(stderr, "Error: seed argument is not int. \n");
+            return 4;
         }
     }
     // user does not give the randSeed
@@ -231,20 +262,44 @@ static int parseArgs(const int argc, char* argv[], char* mapFile) {
         srand(getpid());
     }
     
-
     // find NR and NC
     NR = file_numLines(fp);
     NC = strlen(file_readLine(fp));
 
+    // initialize game
+    game_new();
+    grid_load(fp, game->mainGrid, NR, NC);
+    game_scatter_gold();
+
     return 0;
 }
 
-static game_t* initializeGame(void) {
 
-}
-
+/* An overarching function to handle incoming messages from a client
+ * and call specific handleXYZ functions to do the jobs.
+ *
+ * We return:
+ *   true if we want to exit message_loop; false otherwise
+ * 
+ * Caller is responsible for:
+ *   passing a valid address
+ */
 static bool handleMessage(void* arg, const addr_t from, const char* message) {
-
+    if (strncmp(message, "PLAY ", strlen("PLAY ")) == 0) {
+        const char* content = message + strlen("PLAY ");
+        return handlePLAY(from, content);
+    }
+    if (strncmp(message, "SPECTATE ", strlen("SPECTATE ")) == 0) {
+        const char* content = message + strlen("SPECTATE ");
+        return handleSPECTATE(from, content);
+    }
+    if (strncmp(message, "KEY ", strlen("KEY ")) == 0) {
+        const char* content = message + strlen("KEY ");
+        return handleKEY(from, content);
+    }
+    fprintf(stderr, "Error: cannot recognize message. \n");
+    message_send(from, "ERROR cannot recognize message");
+    return false;
 }
 
 static bool handlePLAY(const addr_t from, const char* content) {

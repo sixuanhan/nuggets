@@ -176,18 +176,12 @@ The server will run as follows:
    	execute from a command line per the requirement spec
 	parse the command line, validate parameters
 		if invalid, then send an error message and exit
-	call initializeGame() to set up data structures
+	set up data structures
 	initialize the 'message' module
 	print the port number on which we wait
 	call message_loop(), to await clients
 		handleMessage() to continuously listen for message sent by clients
-	call gameOver() to inform all clients the game has ended
 	clean up
-
-#### initializeGame
-	create the map with the desired gold drops
-	initializes a new `game` data structure and loads in the starting game data
-	sets up the server connection 
 
 #### handleMessage
 	if the first word of the message is the same as "PLAY "
@@ -273,6 +267,8 @@ There will be a static global data structure, `game`, which stores important var
 
 `players`: an array of `player` structs
 
+`spectator`: the address of the spectator
+
 `nuggetsInPile`: a hashtable that holds the one dimensional coordinate of all piles and the number of nuggets in each pile
 
 ---
@@ -291,6 +287,8 @@ There will be a static global data structure, `game`, which stores important var
 `grid_1dto2d_y`: this function takes a one dimensional coordinate, transforms it to a two dimensional coordinate according to the size of the grid, and returns the y value.
 
 `grid_2dto1d`: this function takes a two dimensional coordinate and transforms it to a one dimensional coordinate according to the size of the grid.
+
+`grid_isVisible`: This function checks if a point in the grid located at `end_loc` is visible from a player located at the `start_loc`.
 
 `grid_update_vis`: this function is called when a player moves. It takes a coordinate, a player's local grid, and the main game grid, and rewrites the player's new local grid given their updated position.
 

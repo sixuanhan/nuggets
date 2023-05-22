@@ -154,12 +154,6 @@ A function to parse the command-line arguments, initialize the game struct, init
 static int parseArgs(const int argc, char* argv[], char* mapFile);
 ```
 
-A function to create a new `game` data structure, initialize data, and randomize the location of gold pile drops. 
-
-```c
-static game_t* initializeGame(void);
-```
-
 An overarching function to handle incoming messages from a client and call specific handleXYZ functions to do the jobs.
 ```c
 static bool handleMessage(void* arg, const addr_t from, const char* message);
@@ -202,13 +196,11 @@ static bool gameOver();
 		store the seed in a variable
 	else
 		seed the random-number generator with getpid()
-
-
-#### `initializeGame`:
-
-	call game_new and store the game struct in a variable
+	find out how many lines there are and store it in NR
+	find out how many characters are in each line and store it in NC
+	call game_new
+	call grid_load on the mainGrid
 	call game_scatter_gold
-	return the game_t pointer
 
 
 #### `handleMessage`:
@@ -423,7 +415,7 @@ int grid_2dto1d(int x, int y);
 
 This function checks if a point in the grid located at `end_loc` is visible from a player located at the `start_loc`.
 ``` c
-bool isVisible(char** grid, int start_loc, int end_loc);
+bool grid_isVisible(char** grid, int start_loc, int end_loc);
 ```
 
 This function updates the visibility of a player according to the `mainGrid`, the previous `localMap` and the new location and updates the `localMap`.

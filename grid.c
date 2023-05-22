@@ -9,6 +9,7 @@ Sixuan Han and Kevin Cao, May 22 2023
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <stdbool.h>
 #include "file.h"
 
 
@@ -34,6 +35,10 @@ int grid_1dto2d_y(int loc, int NR, int NC) {
 
 int grid_2dto1d(int x, int y, int NR, int NC) {
     return x+NC*y;
+}
+
+bool grid_isVisible(char** grid, int start_loc, int end_loc) {
+
 }
 
 void grid_update_vis(char** mainGrid, char** localMap, int loc, int NR, int NC) {
