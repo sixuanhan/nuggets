@@ -28,47 +28,47 @@ The client is a bare-bones receiver and communicator of strings as inputs and ou
 
 ### Definition of function prototypes
 
-A function to parse the command-line arguments, initialize the game struct, and initialize the message module.
+A function to parse the command-line arguments, initialize the game struct, and initialize the message module. It returns 0.
 ```c
 static int parseArgs(const int argc, char* argv[]);
 ```
 
-A function that reads and processes keystrokes from stdin using `ncurses`.
+A function that reads and processes keystrokes from stdin using `ncurses`. It returns false.
 ```c
 static bool handleInput(void* arg);
 ```
 
-A function that passes the message that is received from the server to the relevant function.
+A function that passes the message that is received from the server to the relevant function. It returns a handleXYZ function's return.
 ```c
 static bool handleMessage(void* arg, const addr_t from, const char* message);
 ```
 
-A function that connects the client to the server and returns the letter that corresponds to their player.
+A function that connects the client to the server and returns the letter that corresponds to their player. It returns false.
 ```c
 static bool handleOK(const char* message);
 ```
 
-A function that notifies the client of the size of the grid as a constant integer.
+A function that notifies the client of the size of the grid as a constant integer. It returns false.
 ```c
 static bool handleGRID(const char* message);
 ```
 
-A function that notifies the client of three variables, `n`: the number of gold nuggets collected, `p`: the number of gold nuggets in the client’s purse, and `r`: the number of remaining gold nuggets on the map.
+A function that notifies the client of three variables, `n`: the number of gold nuggets collected, `p`: the number of gold nuggets in the client’s purse, and `r`: the number of remaining gold nuggets on the map. It returns false.
 ```c
 static bool handleGOLD(const char* message);
 ```
 
-A function that passes and prints out a string to a client that corresponds to the physical depiction of the map.
+A function that passes and prints out a string to a client that corresponds to the physical depiction of the map. It returns false.
 ```c
 static bool handleDISPLAY(const char* message);
 ```
 
-A function that removes a client from the server, it outputs the message corresponding to the removal, and exits the program.
+A function that removes a client from the server, it outputs the message corresponding to the removal, and exits the program. It returns true.
 ```c
 static bool handleQUIT(const char* message);
 ```
 
-A function that informs the client of an invalid action and stores it in the stderr or log file.
+A function that informs the client of an invalid action and stores it in the stderr or log file. It returns false.
 ```c
 static bool handleERROR(const char* message);
 ```
@@ -249,7 +249,7 @@ static bool gameOver();
 #### `handleKEY`:
 
 	if message came from player
-		if the keystroke is h, l, j, k, y, u, b, or n
+		if the keystroke denotes a valid movement command
 			update the grid for the player
 			send updated DISPLAY message back to all players (not sure if this is correct)
 			if goldRemaining == 0
@@ -389,12 +389,34 @@ This module implements a grid, which is a string with NRxNC characters represend
 
 ### Definition of function prototypes
 
+This function loads the information from a file (map.txt) to a grid.
+``` c
+void grid_load(FILE* fp, char* grid, int NR, int NC);
+```
+
+This function converts a one dimensional coordinate to a two dimensional coordinate and returns the x coordinate.
+``` c
+int grid_1dto2d_x(int loc, int NR, int NC);
+```
+
+This function converts a one dimensional coordinate to a two dimensional coordinate and returns the x coordinate.
+``` c
+int grid_1dto2d_y(int loc, int NR, int NC);
+```
+
+This function converts a two dimensional coordinate to a one dimensional coordinate and returns it.
 ``` c
 void grid_load(FILE* fp, char* grid);
 int grid_1dto2d_x(int loc);
 int grid_1dto2d_y(int loc);
 int grid_2dto1d(int x, int y);
+bool isVisible(char** grid, int start_loc, int end_loc);
 void grid_update_vis(char** mainGrid, char** localMap, int loc);
+```
+
+This function updates the visibility of a player according to the mainGrid, the previous localMap and the new location and updates the localMap.
+``` c
+void grid_update_vis(char** mainGrid, char** localMap, int loc, int NR, int NC);
 ```
 
 ### Detailed pseudo code
@@ -410,18 +432,45 @@ void grid_update_vis(char** mainGrid, char** localMap, int loc);
 
 #### `grid_1dto2d_x`:
 
-	return loc/NR
+	return loc%NC
 
 #### `grid_1dto2d_y`:
 
-	return loc%NR
+	return int(loc/NC)
 
 #### `grid_2dto1d`:
 
 	return x+NC*y
 
+#### `isVisible`:
+
+	start_x = grid_1dto2d_x(start_loc)
+	start_y = grid_1dto2d_y(start_loc)
+	end_x = grid_1dto2d_x(end_loc)
+	end_y = grid_1dto2d_y(end_loc)
+	set dx to the magnitude of the difference between the x coordinates
+	set dy to the magnitude of the difference between the y coordinates
+	sx = -1 if start_x > end_x; sx = 1 otherwise
+	sy = -1 if start_y > end_y; sy = 1 otherwise
+	error1 = dx - dy
+	loop continuously
+		if start_x reached end_x and start_y reached end_y
+			return true
+		if grid[grid_2dto1d(start_x, start_y)] is "-", "|", "+", " ", or "#"
+			return false 
+		error2 = 2 * error1
+		if error2 > -dy:
+			decrement error1 by dy
+			increment start_x by sx
+		if error2 < dx:
+			increment error1 by dx
+			decrement start_y by sy
+
 #### `grid_update_vis`:
-	
+
+	for each index in localMap
+		if isVisible(mainGrid, start_loc, index)
+			copy mainGrid[index] onto localMap[index]
 
 ---
 
