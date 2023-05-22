@@ -406,15 +406,15 @@ int grid_1dto2d_y(int loc, int NR, int NC);
 
 This function converts a two dimensional coordinate to a one dimensional coordinate and returns it.
 ``` c
-void grid_load(FILE* fp, char* grid);
-int grid_1dto2d_x(int loc);
-int grid_1dto2d_y(int loc);
 int grid_2dto1d(int x, int y);
-bool isVisible(char** grid, int start_loc, int end_loc);
-void grid_update_vis(char** mainGrid, char** localMap, int loc);
 ```
 
-This function updates the visibility of a player according to the mainGrid, the previous localMap and the new location and updates the localMap.
+This function checks if a point in the grid located at `end_loc` is visible from a player located at the `start_loc`.
+``` c
+bool isVisible(char** grid, int start_loc, int end_loc);
+```
+
+This function updates the visibility of a player according to the `mainGrid`, the previous `localMap` and the new location and updates the `localMap`.
 ``` c
 void grid_update_vis(char** mainGrid, char** localMap, int loc, int NR, int NC);
 ```
