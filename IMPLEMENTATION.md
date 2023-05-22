@@ -249,7 +249,7 @@ static bool gameOver();
 #### `handleKEY`:
 
 	if message came from player
-		if the keystroke is h, l, j, k, y, u, b, or n
+		if the keystroke denotes a valid movement command
 			update the grid for the player
 			send updated DISPLAY message back to all players (not sure if this is correct)
 			if goldRemaining == 0
@@ -406,14 +406,18 @@ int grid_1dto2d_y(int loc, int NR, int NC);
 
 This function converts a two dimensional coordinate to a one dimensional coordinate and returns it.
 ``` c
-int grid_2dto1d(int x, int y, int NR, int NC);
+void grid_load(FILE* fp, char* grid);
+int grid_1dto2d_x(int loc);
+int grid_1dto2d_y(int loc);
+int grid_2dto1d(int x, int y);
+bool isVisible(char** grid, int start_loc, int end_loc);
+void grid_update_vis(char** mainGrid, char** localMap, int loc);
 ```
 
 This function updates the visibility of a player according to the mainGrid, the previous localMap and the new location and updates the localMap.
 ``` c
 void grid_update_vis(char** mainGrid, char** localMap, int loc, int NR, int NC);
 ```
-
 
 ### Detailed pseudo code
 
@@ -428,18 +432,45 @@ void grid_update_vis(char** mainGrid, char** localMap, int loc, int NR, int NC);
 
 #### `grid_1dto2d_x`:
 
-    return loc%NC
+	return loc%NC
 
 #### `grid_1dto2d_y`:
 
-    return loc/NC
+	return int(loc/NC)
 
 #### `grid_2dto1d`:
 
 	return x+NC*y
 
+#### `isVisible`:
+
+	start_x = grid_1dto2d_x(start_loc)
+	start_y = grid_1dto2d_y(start_loc)
+	end_x = grid_1dto2d_x(end_loc)
+	end_y = grid_1dto2d_y(end_loc)
+	set dx to the magnitude of the difference between the x coordinates
+	set dy to the magnitude of the difference between the y coordinates
+	sx = -1 if start_x > end_x; sx = 1 otherwise
+	sy = -1 if start_y > end_y; sy = 1 otherwise
+	error1 = dx - dy
+	loop continuously
+		if start_x reached end_x and start_y reached end_y
+			return true
+		if grid[grid_2dto1d(start_x, start_y)] is "-", "|", "+", " ", or "#"
+			return false 
+		error2 = 2 * error1
+		if error2 > -dy:
+			decrement error1 by dy
+			increment start_x by sx
+		if error2 < dx:
+			increment error1 by dx
+			decrement start_y by sy
+
 #### `grid_update_vis`:
-	
+
+	for each index in localMap
+		if isVisible(mainGrid, start_loc, index)
+			copy mainGrid[index] onto localMap[index]
 
 ---
 
