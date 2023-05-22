@@ -177,7 +177,7 @@ static bool handleSPECTATE(const addr_t from, const char* content);
 
 A function to handle KEY messages and updates the game based on the message that it receives from a client.
 ```c
-static bool handleKEY(const addr_t from, const char* content)
+static bool handleKEY(const addr_t from, const char* content);
 ```
 
 A function to handle the end of the game and sends a message to each client with a QUIT GAME OVER message.
@@ -292,7 +292,7 @@ typedef struct game {
 	int numPlayers;  // the number of players that have joined the games
 	int goldRemaining;  // the number of unclaimed nuggets
 	player_t* players[MaxPlayers+1];  // an array of players
-	hashtable nuggetsInPile;  // where all the gold is and how many nuggets there are in each pile
+	hashtable_t* nuggetsInPile;  // where all the gold is and how many nuggets there are in each pile
 } game_t;
 ```
 

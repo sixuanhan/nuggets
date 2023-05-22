@@ -9,9 +9,6 @@ Sixuan Han and Kevin Cao, May 22 2023
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "hashtable.h"
-#include "counters.h"
-#include "mem.h"
 #include "file.h"
 
 
