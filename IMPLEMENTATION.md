@@ -151,13 +151,13 @@ There is a static global `game` struct and a `player` struct in *server.c*. They
 A function to parse the command-line arguments, initialize the game struct, initialize the message module, and (BEYOND SPEC) initialize analytics module.
 
 ```c
-static int parseArgs(const int argc, char* argv[]);
+static int parseArgs(const int argc, char* argv[], char* mapFile);
 ```
 
 A function to create a new `game` data structure, initialize data, and randomize the location of gold pile drops. 
 
 ```c
-static game_t* initializeGame();
+static game_t* initializeGame(void);
 ```
 
 An overarching function to handle incoming messages from a client and call specific handleXYZ functions to do the jobs.
@@ -291,7 +291,8 @@ typedef struct game {
     char* mainGrid;  // the grid that contains all information (spectator's view)
 	int numPlayers;  // the number of players that have joined the games
 	int goldRemaining;  // the number of unclaimed nuggets
-	player_t* players[MaxPlayers+1];  // an array of players
+	player_t* players[MaxPlayers];  // an array of players
+	addr_t* spectator; // the spectator's address
 	hashtable_t* nuggetsInPile;  // where all the gold is and how many nuggets there are in each pile
 } game_t;
 ```
@@ -316,9 +317,14 @@ This function will initialize a new game struct and return its pointer.
 static game_t* game_new(void);
 ```
 
+This function will generate a random number in the range [min, max].
+```c
+static int randRange(int min, int max);
+```
+
 This function will drop at least GoldMinNumPiles and at most GoldMaxNumPiles gold piles on random room spots; each pile shall have a random number of nuggets. It will store the information in nuggetsInPile and also update the mainGrid in the game struct.
 ```c
-static void game_scatter_gold(game_t* game, int randSeed);
+static void game_scatter_gold(void);
 ```
 
 This function will clean up a game struct and everything within it.
@@ -328,7 +334,7 @@ static void game_delete(game_t* game);
 
 This function will initialize a new player struct and return its pointer.
 ```c
-static player_t* player_new(void);
+static void game_delete();
 ```
 
 
@@ -338,10 +344,14 @@ static player_t* player_new(void);
 
 	allocate memory for game_t* and exit error if failure to allocate memory with mem_malloc_assert
 	allocate memory for mainGrid and exit error if failure to allocate memory with mem_malloc_assert
-	allocate memory for players and exit error if failure to allocate memory with mem_malloc_assert
 	initialize nuggetsInPile with hashtable_new
 	initialize numPlayers to 0
 	initialize goldRemaining to GoldTotal
+
+
+#### `randRange`:
+
+	return min + rand() % (max-min+1)
 
 
 #### `game_scatter_gold`:
@@ -352,11 +362,14 @@ static player_t* player_new(void);
 		randomly pick a number in [0, NRxNC-1] to be the gold drop coordinate
 		if the coordinate does not represent an empty room spot in mainGrid
 			continue
-		randomly pick a number in [1, goldRemaining/2] to be the number of nuggets dropped on that coordinate
+		if we are not down to the last pile
+			randomly pick a number in [1, goldRemaining/2] to be the number of nuggets dropped on that coordinate
+		else
+			drop all remaining nuggets
 		store the (coordinate, numberOfNuggets) information in nuggetsInPile
 		change the empty room spot in mainGrid to '*'
-			decrement goldRemaining by numberOfNuggets
-			decrement numPilesRemaining by 1
+		decrement goldRemaining by numberOfNuggets
+		decrement numPilesRemaining by 1
 
 
 #### `game_delete`:
@@ -371,7 +384,6 @@ static player_t* player_new(void);
 
 	allocate memory for player_t* and exit error if failure to allocate memory with mem_malloc_assert
 	initialize localMap to all ' '
-	initialize ID to the numPlayers
 	initialize letterID to 'A'+ID
 	initialize gold to 0
 	initialize loc to a random number in [0, NRxNC-1]
