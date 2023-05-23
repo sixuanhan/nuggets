@@ -97,8 +97,8 @@ int main(const int argc, char* argv[])
     printf("Server is ready at port %i. \n", port);
 
     bool ok = message_loop(NULL, 0, NULL, NULL, handleMessage);
-
     message_done();
+    gameOver();
     game_delete();
   
     return ok? 0 : 1;
@@ -305,7 +305,7 @@ static bool handleMessage(void* arg, const addr_t from, const char* message) {
     }
     if (strncmp(message, "SPECTATE", strlen("SPECTATE")) == 0) {
         const char* content = message + strlen("SPECTATE");
-        return handleSPECTATE(from);
+        return handleSPECTATE(from, content);
     }
     if (strncmp(message, "KEY ", strlen("KEY ")) == 0) {
         const char* content = message + strlen("KEY ");
@@ -330,9 +330,9 @@ static bool handlePLAY(const addr_t from, const char* content) {
     bool isempty = true;
     char* username = (char*)mem_malloc_assert((MaxNameLength) * sizeof(char), "Error: Memory allocation failed. \n");
     for (int i = 0; i < MaxNameLength; i++) {
-        if (i = strlen(content)) {
+        if (i == strlen(content)) {
             username[i] = '\0';
-            break
+            break;
         }
         if (!isspace(content[i])) {
             isempty = false;
@@ -350,21 +350,21 @@ static bool handlePLAY(const addr_t from, const char* content) {
         return false;
     }
 
-    if (game->numPlayers < MaxPlayers) {
-        game->players[game->numPlayers] = addr;
-        game->numPlayers++;
-        player_t* player = player_new();
-        player->username = username;
-        player->address = from;
-    } else {
+    if (game->numPlayers >= MaxPlayers) {
         message_send(from, "QUIT Game is full: no more players can join.");
         return true;
     }
 
+    game->numPlayers++;
+    player_t* player = player_new();
+    game->players[game->numPlayers-1] = player;
+    player->username = username;
+    player->address = &from;
+
     // allocate memory for message strings
     char* OKmessage = (char*)mem_malloc_assert(6 * sizeof(char), "Error: Memory allocation failed. \n");
     char* GRIDmessage = (char*)mem_malloc_assert((6 + ((int)(ceil(log10(NC))+1)) + ((int)(ceil(log10(NR))+1))) * sizeof(char), "Error: Memory allocation failed. \n");
-    char* GOLDmessage = (char*)mem_malloc_assert((6 + ((int)(ceil(log10(1))+1)) + ((int)(ceil(log10(1)))+1)) + ((int)(ceil(log10(game->goldRemaining))+1))) * sizeof(char), "Error: Memory allocation failed. \n");
+    char* GOLDmessage = (char*)mem_malloc_assert((6 + ((int)(ceil(log10(1))+1)) + ((int)(ceil(log10(1))+1)) + ((int)(ceil(log10(game->goldRemaining))+1))) * sizeof(char), "Error: Memory allocation failed. \n");
     char* DISPLAYmessage = (char*)mem_malloc_assert((9 + (strlen(player->localMap))) * sizeof(char), "Error: Memory allocation failed. \n");
 
     // write to message strings
@@ -397,13 +397,13 @@ static bool handleSPECTATE(const addr_t from, const char* content) {
         message_send(from, "ERROR improper SPECTATE message");
     }
     if (game->spectator != NULL) {
-        message_send(game->spectator, "QUIT You have been replaced by a new spectator.");
+        message_send(*game->spectator, "QUIT You have been replaced by a new spectator.");
     }
-    game->spectator = from;
+    game->spectator = &from;
 
     // allocate memory for message strings
     char* GRIDmessage = (char*)mem_malloc_assert((6 + ((int)(ceil(log10(NC))+1)) + ((int)(ceil(log10(NR))+1))) * sizeof(char), "Error: Memory allocation failed. \n");
-    char* GOLDmessage = (char*)mem_malloc_assert((6 + ((int)(ceil(log10(1))+1)) + ((int)(ceil(log10(1)))+1)) + ((int)(ceil(log10(game->goldRemaining))+1))) * sizeof(char), "Error: Memory allocation failed. \n");
+    char* GOLDmessage = (char*)mem_malloc_assert((6 + ((int)(ceil(log10(1))+1)) + ((int)(ceil(log10(1))+1)) + ((int)(ceil(log10(game->goldRemaining))+1))) * sizeof(char), "Error: Memory allocation failed. \n");
     char* DISPLAYmessage = (char*)mem_malloc_assert((9 + (strlen(game->mainGrid))) * sizeof(char), "Error: Memory allocation failed. \n");
 
     // write to message strings
@@ -430,19 +430,19 @@ static bool handleKEY(const addr_t from, const char* content) {
 *   true, as the loop should end after this
 */
 static bool gameOver() {
-    char* QUITmessage = (char*)mem_malloc_assert((17+numPlayers*(13+MaxNameLength)) * sizeof(char), "Error: Memory allocation failed. \n");
+    char* QUITmessage = (char*)mem_malloc_assert((17+game->numPlayers*(13+MaxNameLength)) * sizeof(char), "Error: Memory allocation failed. \n");
     strcpy(QUITmessage, "QUIT GAME OVER:\n");
 
-    for (int i = 0; i < numPlayers; i++) {
-        sprintf(QUITmessage, "%c %12d %s\n", players[i]->letterID, players[i]->gold, players[i]->username);
+    for (int i = 0; i < game->numPlayers; i++) {
+        sprintf(QUITmessage, "%c %12d %s\n", game->players[i]->letterID, game->players[i]->gold, game->players[i]->username);
     }
 
     if (game->spectator != NULL) {
-        message_send(game->spectator, QUITmessage);
+        message_send(*game->spectator, QUITmessage);
     }
 
-    for (int i = 0; i < numPlayers; i++) {
-        message_send(players[i]->address, QUITmessage);
+    for (int i = 0; i < game->numPlayers; i++) {
+        message_send(*game->players[i]->address, QUITmessage);
     }
 
     return true;
