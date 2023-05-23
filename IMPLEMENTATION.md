@@ -166,7 +166,7 @@ static bool handlePLAY(const addr_t from, const char* content);
 
 A function to handle SPECTATE messages and add a spectator to the game, initializing the display for that client.
 ```c
-static bool handleSPECTATE(const addr_t from, const char* content);
+static bool handleSPECTATE(const addr_t fromm, const char* content);
 ```
 
 A function to handle KEY messages and updates the game based on the message that it receives from a client.
@@ -220,23 +220,19 @@ static bool gameOver();
 
 #### `handlePLAY`:
 
-	if valid name
+	if non-empty name and have not reached maxPlayers
 		call player_new
 		send an OK, GOLD, GRID, and DISPLAY message to client with player display
 	else
-		log error
-		send an ERROR message to the client
+		send QUIT message to the client
+		return true
 	return false
 
 #### `handleSPECTATE`:
 
-	if message empty
-		if there is another spectator
-			send a QUIT message to previous spectator
-		send an OK, GOLD, GRID, and DISPLAY message to new client with spectator display
-	else
-		log error
-		send an ERROR message to the client
+	if there is another spectator
+		send a QUIT message to previous spectator
+	send an OK, GOLD, GRID, and DISPLAY message to new client with spectator display
 
 #### `handleKEY`:
 
