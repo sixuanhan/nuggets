@@ -35,7 +35,7 @@ server: $(OBJS) $(LLIBS)
 server.o: $S/grid.h $S/log.h $S/message.h $L/hashtable.h $L/file.h $L/mem.h
 
 client: $(OBJS) $(LLIBS)
-	$(CC) $(CFLAGS) client.o server.o $(LLIBS) $(LIBS) -o $@
+	$(CC) $(CFLAGS) client.o $(LLIBS) $(LIBS) -o $@
 
 client.o: client.c $L/hashtable.h $L/file.h $L/mem.h
 
