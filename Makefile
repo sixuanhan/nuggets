@@ -13,7 +13,7 @@ MAKE = make
 # TESTING=-DSERVERTEST
 
 CFLAGS = -Wall -pedantic -std=c11 -ggdb $(TESTING) -I$S -I$L
-OBJS = server.o
+OBJS = server.o player.o
 LIB = -lm
 LLIBS = $S/support.a $L/libcs50-given.a
 
@@ -34,6 +34,11 @@ server: $(OBJS) $(LLIBS)
 
 server.o: $S/grid.h $S/log.h $S/message.h $L/hashtable.h $L/file.h $L/mem.h
 
+player: $(OBJS) $(LLIBS)
+	$(CC) $(CFLAGS) player.o server.o $(LLIBS) $(LIBS) -o $@
+
+player.o: player.c $L/hashtable.h $L/file.h $L/mem.h
+
 
 # client: $(OBJS) $(LLIBS)
 # 	$(CC) $(CFLAGS) client.o $(LLIBS) $(LIBS) -o $@
@@ -46,6 +51,7 @@ clean:
 	rm -f *~ *.o
 	rm -f server
 	rm -f client
+	rm -f player
 	rm -f core
 	make -C libcs50 clean
 	make -C support clean
