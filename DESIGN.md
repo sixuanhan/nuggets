@@ -269,7 +269,7 @@ There will be a static global data structure, `game`, which stores important var
 
 `spectator`: the address of the spectator
 
-`nuggetsInPile`: a hashtable that holds the one dimensional coordinate of all piles and the number of nuggets in each pile
+`nuggetsInPile`: a counters that holds the one dimensional coordinate of all piles and the number of nuggets in each pile
 
 ---
 

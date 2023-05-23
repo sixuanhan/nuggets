@@ -6,6 +6,7 @@
  * Sixuan Han and Kevin Cao, May 22 2023
  */
 
+#include <stdbool.h>
 #include "file.h"
 
 /**************** functions ****************/
@@ -62,7 +63,7 @@ int grid_2dto1d(int x, int y, int NR, int NC);
  * Caller is responsible for:
  *   providing two one dimensional locations within the range of the grid.
  */
-bool grid_isVisible(char** grid, int start_loc, int end_loc);
+bool grid_isVisible(char* grid, int start_loc, int end_loc);
 
 
 /**************** grid_2dto1d ****************/
@@ -72,4 +73,4 @@ bool grid_isVisible(char** grid, int start_loc, int end_loc);
  * Caller is responsible for:
  *   providing a one dimensional location within the range of the grid.
  */
-void grid_update_vis(char** mainGrid, char** localMap, int loc, int NR, int NC);
+void grid_update_vis(char* mainGrid, char* localMap, int loc, int NR, int NC);

@@ -9,12 +9,34 @@ Sixuan Han, Steven Mendley, and Kevin Cao, May 22 2023
 #include <string.h>
 #include <ctype.h>
 #include <unistd.h>
+#include <stdbool.h>
 #include "grid.h"
-#include "hashtable.h"
+#include "counters.h"
 #include "file.h"
 #include "log.h"
 #include "message.h"
 #include "mem.h"
+
+/**************** structs ****************/
+typedef struct player {
+    char* username;
+	char letterID;
+	int gold;  // how many nuggets they have
+	int loc;
+	char* localMap;  // the grid that this player can see
+	addr_t* address;
+} player_t;
+
+
+typedef struct game {
+    char* mainGrid;  // the grid that contains all information (spectator's view)
+	int numPlayers;  // the number of players that have joined the games
+	int goldRemaining;  // the number of unclaimed nuggets
+	player_t** players;  // an array of players
+    addr_t* spectator; // the spectator's address
+	counters_t* nuggetsInPile;  // where all the gold is and how many nuggets there are in each pile
+} game_t;
+
 
 /**************** prototypes ****************/
 static void game_new(void);
@@ -50,13 +72,12 @@ static game_t* game; // stores variables that provide information about each loc
  *  2: incorrect number of arguments
  *  3: cannot read map file
  *  4: seed argument is not int
- *  5: memory allocation for the hashtable fails
+ *  5: memory allocation for the counters fails
  *  6: failure to initialize message module
 */
 int main(const int argc, char* argv[])
 {
-    char* mapFile;
-    unsigned int randSeed;
+    char* mapFile = NULL;
 
     int parseArgsReturn = parseArgs(argc, argv, mapFile);
     if (parseArgsReturn != 0) {
@@ -81,25 +102,6 @@ int main(const int argc, char* argv[])
 
 
 
-/**************** structs ****************/
-typedef struct player {
-    char* username;
-	char letterID;
-	int gold;  // how many nuggets they have
-	int loc;
-	char* localMap;  // the grid that this player can see
-	addr_t* address;
-} player_t;
-
-
-typedef struct game {
-    char* mainGrid;  // the grid that contains all information (spectator's view)
-	int numPlayers;  // the number of players that have joined the games
-	int goldRemaining;  // the number of unclaimed nuggets
-	player_t* players[MaxPlayers];  // an array of players
-    addr_t* spectator; // the spectator's address
-	hashtable_t* nuggetsInPile;  // where all the gold is and how many nuggets there are in each pile
-} game_t;
 
 
 
@@ -107,7 +109,7 @@ typedef struct game {
 
 /* A function to initialize a new game struct and return its pointer.
  *
- * We exit 5 if memory allocation for the hashtable fails.
+ * We exit 5 if memory allocation for the counters fails.
  * 
  * Caller is responsible for:
  *   declaring the global game struct before calling this function.
@@ -118,8 +120,9 @@ static void game_new(void) {
     game->mainGrid = 0;
     game->goldRemaining = GoldTotal;
     // I'm not sure if I nee to initialize players
+    game->players = mem_malloc_assert(sizeof(player_t)*26, "Error: Memory allocation failed. \n");
     game->spectator = NULL;
-    game->nuggetsInPile = hashtable_new(200); // 200 is the hashtable size by default
+    game->nuggetsInPile = counters_new();
     if (game->nuggetsInPile == NULL) {
         fprintf(stderr, "Memory allocation failed. \n");
         exit(5);
@@ -158,7 +161,7 @@ static void game_scatter_gold(void) {
             goldDropNuggets = goldRemaining;
         }
         
-        hashtable_insert(game->nuggetsInPile, goldDropCoordinate, goldDropNuggets);
+        counters_set(game->nuggetsInPile, goldDropCoordinate, goldDropNuggets);
         game->mainGrid[goldDropCoordinate] = '*';
         goldRemaining-=goldDropNuggets;
         numPilesRemaining--;
@@ -179,8 +182,8 @@ static void game_delete(void) {
     for (int i = 0; i < MaxPlayers+1; i++) {
         mem_free(game->players[i]);
     }
-    // delete the hashtable
-    hashtable_delete(game->nuggetsInPile, NULL);
+    // delete the counters
+    counters_delete(game->nuggetsInPile);
     // free the game struct
     mem_free(game);
 }
@@ -205,7 +208,7 @@ static player_t* player_new(void) {
         }
         player->localMap[NR*NC] = '\0';
 
-    char letterID = 'A' + game->numPlayers-1;
+    player->letterID = 'A' + game->numPlayers-1;
 
     player->gold = 0;
 
@@ -217,6 +220,8 @@ static player_t* player_new(void) {
 
     // update their local map according to their visibility
     grid_update_vis(game->mainGrid, player->localMap, player->loc, NR, NC);
+
+    return player;
 }
 
 
@@ -303,17 +308,17 @@ static bool handleMessage(void* arg, const addr_t from, const char* message) {
 }
 
 static bool handlePLAY(const addr_t from, const char* content) {
-
+    return false;
 }
 
 static bool handleSPECTATE(const addr_t from, const char* content) {
-
+    return false;
 }
 
 static bool handleKEY(const addr_t from, const char* content) {
-
+    return false;
 }
 
 static bool gameOver() {
-
+    return true;
 }

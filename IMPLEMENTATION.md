@@ -285,7 +285,7 @@ typedef struct game {
 	int goldRemaining;  // the number of unclaimed nuggets
 	player_t* players[MaxPlayers];  // an array of players
 	addr_t* spectator; // the spectator's address
-	hashtable_t* nuggetsInPile;  // where all the gold is and how many nuggets there are in each pile
+	counters_t* nuggetsInPile;  // where all the gold is and how many nuggets there are in each pile
 } game_t;
 ```
 
@@ -336,7 +336,7 @@ static void game_delete();
 
 	allocate memory for game_t* and exit error if failure to allocate memory with mem_malloc_assert
 	allocate memory for mainGrid and exit error if failure to allocate memory with mem_malloc_assert
-	initialize nuggetsInPile with hashtable_new
+	initialize nuggetsInPile with counters_new
 	initialize numPlayers to 0
 	initialize goldRemaining to GoldTotal
 
@@ -368,7 +368,7 @@ static void game_delete();
 
 	free the mainGrid string
 	free each player_t* in the players array
-	call hashtable_delete on the nuggetsInPile hashtable
+	call counters_delete on the nuggetsInPile counters
 	free the game struct itself
 
 

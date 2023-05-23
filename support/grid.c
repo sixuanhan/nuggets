@@ -10,7 +10,7 @@ Sixuan Han and Kevin Cao, May 22 2023
 #include <stdlib.h>
 #include <string.h>
 #include <stdbool.h>
-#include "file.h"
+#include "../libcs50/file.h"
 
 
 /**************** functions ****************/
@@ -37,10 +37,10 @@ int grid_2dto1d(int x, int y, int NR, int NC) {
     return x+NC*y;
 }
 
-bool grid_isVisible(char** grid, int start_loc, int end_loc) {
-
+bool grid_isVisible(char* grid, int start_loc, int end_loc) {
+    return true;
 }
 
-void grid_update_vis(char** mainGrid, char** localMap, int loc, int NR, int NC) {
+void grid_update_vis(char* mainGrid, char* localMap, int loc, int NR, int NC) {
 
 }
