@@ -220,7 +220,7 @@ static player_t* player_new(void) {
 
     // randomly drop the player on an empty room spot
     player->loc = randRange(0, NR*NC-1);
-    while (game->mainGrid[player->loc] != '.' && game->mainGrid[player->loc] != '*') {
+    while (game->mainGrid[player->loc] != '.') {
         player->loc = randRange(0, NR*NC-1);
     }
 
@@ -304,6 +304,7 @@ static bool handleMessage(void* arg, const addr_t from, const char* message) {
         return handlePLAY(from, content);
     }
     if (strncmp(message, "SPECTATE", strlen("SPECTATE")) == 0) {
+        const char* content = message + strlen("SPECTATE");
         return handleSPECTATE(from);
     }
     if (strncmp(message, "KEY ", strlen("KEY ")) == 0) {
@@ -367,10 +368,10 @@ static bool handlePLAY(const addr_t from, const char* content) {
     char* DISPLAYmessage = (char*)mem_malloc_assert((9 + (strlen(player->localMap))) * sizeof(char), "Error: Memory allocation failed. \n");
 
     // write to message strings
-    snprintf(OKmessage, "OK %d", player->letterID);
-    snprintf(GRIDmessage, "GRID %d %d", NC, NR);
-    snprintf(GOLDmessage, "GOLD 0 0 %d", game->goldRemaining);
-    snprintf(DISPLAYmessage, "DISPLAY\n%s", player->localMap);
+    sprintf(OKmessage, "OK %c", player->letterID);
+    sprintf(GRIDmessage, "GRID %d %d", NC, NR);
+    sprintf(GOLDmessage, "GOLD 0 0 %d", game->goldRemaining);
+    sprintf(DISPLAYmessage, "DISPLAY\n%s", player->localMap);
 
     // send messages
     message_send(from, OKmessage);
@@ -390,7 +391,11 @@ static bool handlePLAY(const addr_t from, const char* content) {
  * Caller is responsible for:
  *   passing a valid address
  */
-static bool handleSPECTATE(const addr_t from) {
+static bool handleSPECTATE(const addr_t from, const char* content) {
+    if (strlen(content)>1) {
+        fprintf(stderr, "Error: improper SPECTATE message. \n");
+        message_send(from, "ERROR improper SPECTATE message");
+    }
     if (game->spectator != NULL) {
         message_send(game->spectator, "QUIT You have been replaced by a new spectator.");
     }
@@ -402,9 +407,9 @@ static bool handleSPECTATE(const addr_t from) {
     char* DISPLAYmessage = (char*)mem_malloc_assert((9 + (strlen(game->mainGrid))) * sizeof(char), "Error: Memory allocation failed. \n");
 
     // write to message strings
-    snprintf(GRIDmessage, "GRID %d %d", NC, NR);
-    snprintf(GOLDmessage, "GOLD 0 0 %d", game->goldRemaining);
-    snprintf(DISPLAYmessage, "DISPLAY\n%s", game->mainGrid);
+    sprintf(GRIDmessage, "GRID %d %d", NC, NR);
+    sprintf(GOLDmessage, "GOLD 0 0 %d", game->goldRemaining);
+    sprintf(DISPLAYmessage, "DISPLAY\n%s", game->mainGrid);
 
     // send messages
     message_send(from, GRIDmessage);
@@ -425,5 +430,20 @@ static bool handleKEY(const addr_t from, const char* content) {
 *   true, as the loop should end after this
 */
 static bool gameOver() {
+    char* QUITmessage = (char*)mem_malloc_assert((17+numPlayers*(13+MaxNameLength)) * sizeof(char), "Error: Memory allocation failed. \n");
+    strcpy(QUITmessage, "QUIT GAME OVER:\n");
+
+    for (int i = 0; i < numPlayers; i++) {
+        sprintf(QUITmessage, "%c %12d %s\n", players[i]->letterID, players[i]->gold, players[i]->username);
+    }
+
+    if (game->spectator != NULL) {
+        message_send(game->spectator, QUITmessage);
+    }
+
+    for (int i = 0; i < numPlayers; i++) {
+        message_send(players[i]->address, QUITmessage);
+    }
+
     return true;
 }

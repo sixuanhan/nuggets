@@ -166,7 +166,7 @@ static bool handlePLAY(const addr_t from, const char* content);
 
 A function to handle SPECTATE messages and add a spectator to the game, initializing the display for that client.
 ```c
-static bool handleSPECTATE(const addr_t from);
+static bool handleSPECTATE(const addr_t fromm, const char* content);
 ```
 
 A function to handle KEY messages and updates the game based on the message that it receives from a client.
