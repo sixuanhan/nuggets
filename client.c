@@ -79,11 +79,12 @@ static int parseArgs(const int argc, char* argv[]) {
 
 static bool handleInput(void* arg) {
     int c;
+    printf("Enter handle input\n");
     initscr(); // initialize the screen
     cbreak();  // accept keystrokes immediately
     noecho();
-    printf("Enter handle input\n");
-    while ((c = getch()) != 'q') {    // read one 
+    
+    while ((c = getch()) != 'z') {    // read one 
     printf("Got input\n");
         switch(c) {
             case 'h':   printf("move left\n"); break; // move cursor left
@@ -91,6 +92,7 @@ static bool handleInput(void* arg) {
             case 'j':   printf("move up\n"); break; // move cursor up
             case 'k':   printf("move down\n"); break; // move cursor down
             case 'g':   printf("move far left\n"); break; // move cursor far left
+            case 'q':   return true; break; // move cursor far left
 
             default: if (isprint(c)) { printf("Idk\n"); }  // add character at cursor
         }
