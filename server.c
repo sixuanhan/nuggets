@@ -79,10 +79,14 @@ int main(const int argc, char* argv[])
 {
     char* mapFile = NULL;
 
+    
     int parseArgsReturn = parseArgs(argc, argv, mapFile);
+
     if (parseArgsReturn != 0) {
         return parseArgsReturn;
     }
+
+    printf("%s", game->mainGrid);
 
     FILE* logFP = fopen("server.log", "w");
     int port = message_init(logFP);
@@ -117,9 +121,8 @@ int main(const int argc, char* argv[])
 static void game_new(void) {
     game = mem_malloc_assert(sizeof(game_t), "Error: Memory allocation failed. \n");
     game->mainGrid = (char*)mem_malloc_assert((NR*NC + 1) * sizeof(char), "Error: Memory allocation failed. \n");
-    game->mainGrid = 0;
+    game->numPlayers = 0;
     game->goldRemaining = GoldTotal;
-    // I'm not sure if I nee to initialize players
     game->players = mem_malloc_assert(sizeof(player_t)*26, "Error: Memory allocation failed. \n");
     game->spectator = NULL;
     game->nuggetsInPile = counters_new();
@@ -143,7 +146,8 @@ static int randRange(int min, int max) {
  */
 static void game_scatter_gold(void) {
     int goldRemaining = GoldTotal;
-    int numPilesRemaining = randRange(GoldMinNumPiles, GoldMaxNumPiles);
+    int numPiles = randRange(GoldMinNumPiles, GoldMaxNumPiles);
+    int numPilesRemaining = numPiles;
     int goldDropCoordinate;
     int goldDropNuggets;
 
@@ -153,14 +157,14 @@ static void game_scatter_gold(void) {
             continue;
         }
         // grab a random amount of nuggets and drop until we're down to the last pile
-        if (numPilesRemaining != 0) {
-            goldDropNuggets = randRange(1, goldRemaining/2);
+        if (numPilesRemaining != 1) {
+            // the nuggets in a pile is 50%~150% the average size.
+            goldDropNuggets = randRange(GoldTotal/numPiles*0.5, GoldTotal/numPiles*1.5);
         }
         // drop all remaining nuggets when we are at the last pile
         else {
             goldDropNuggets = goldRemaining;
         }
-        
         counters_set(game->nuggetsInPile, goldDropCoordinate, goldDropNuggets);
         game->mainGrid[goldDropCoordinate] = '*';
         goldRemaining-=goldDropNuggets;
@@ -182,6 +186,8 @@ static void game_delete(void) {
     for (int i = 0; i < MaxPlayers+1; i++) {
         mem_free(game->players[i]);
     }
+    // free the players array
+    mem_free(game->players);
     // delete the counters
     counters_delete(game->nuggetsInPile);
     // free the game struct
@@ -270,11 +276,15 @@ static int parseArgs(const int argc, char* argv[], char* mapFile) {
     // find NR and NC
     NR = file_numLines(fp);
     NC = strlen(file_readLine(fp));
+    fclose(fp);
 
     // initialize game
     game_new();
+    fp = fopen(mapFile, "r");
     grid_load(fp, game->mainGrid, NR, NC);
+    fclose(fp);
     game_scatter_gold();
+    // printf("here\n");
 
     return 0;
 }

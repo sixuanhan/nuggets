@@ -355,7 +355,7 @@ static void game_delete();
 		if the coordinate does not represent an empty room spot in mainGrid
 			continue
 		if we are not down to the last pile
-			randomly pick a number in [1, goldRemaining/2] to be the number of nuggets dropped on that coordinate
+			randomly pick a number in [GoldTotal/numPiles*0.5, GoldTotal/numPiles*1.5] to be the number of nuggets dropped on that coordinate
 		else
 			drop all remaining nuggets
 		store the (coordinate, numberOfNuggets) information in nuggetsInPile
