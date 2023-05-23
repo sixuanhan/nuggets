@@ -79,7 +79,6 @@ int main(const int argc, char* argv[])
 {
     char* mapFile = NULL;
 
-    
     int parseArgsReturn = parseArgs(argc, argv, mapFile);
 
     if (parseArgsReturn != 0) {
@@ -260,13 +259,13 @@ static int parseArgs(const int argc, char* argv[], char* mapFile) {
     // user gives the randSeed
     if (argc == 3) {
         // if the seed argument is an int
-        if (atoi(argv[2]) == 0) {
-            srand(atoi(argv[2]));
+        for (int i = 0; i < strlen(argv[2]); i++) {
+            if (isdigit(argv[2][i]) == 0) {
+                fprintf(stderr, "Error: seed argument is not int. \n");
+                return 4;
+            }
         }
-        else {
-            fprintf(stderr, "Error: seed argument is not int. \n");
-            return 4;
-        }
+        srand(atoi(argv[2]));
     }
     // user does not give the randSeed
     else {
@@ -284,7 +283,6 @@ static int parseArgs(const int argc, char* argv[], char* mapFile) {
     grid_load(fp, game->mainGrid, NR, NC);
     fclose(fp);
     game_scatter_gold();
-    // printf("here\n");
 
     return 0;
 }
