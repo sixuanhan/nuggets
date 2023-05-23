@@ -13,7 +13,7 @@ MAKE = make
 # TESTING=-DSERVERTEST
 
 CFLAGS = -Wall -pedantic -std=c11 -ggdb $(TESTING) -I$S -I$L
-OBJS = server.o player.o
+OBJS = server.o client.o
 LIB = -lm
 LLIBS = $S/support.a $L/libcs50-given.a
 
