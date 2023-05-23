@@ -4,6 +4,7 @@ James Quirk, May 22, 2023
 
 */
 
+#include <curses.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -18,6 +19,7 @@ James Quirk, May 22, 2023
 #include "mem.h"
 
 static int parseArgs(const int argc, char* argv[]);
+static bool handleInput(void* arg);
 static bool handleMessage(void* arg, const addr_t from, const char* message);
 
 int main(const int argc, char* argv[]) {
@@ -25,23 +27,25 @@ int main(const int argc, char* argv[]) {
     char* serverPort;
     addr_t serverAddress;
     char* message;
+    int parsed = parseArgs(argc, argv);
     
-    if (parseArgs(argc, argv) == 1 || parseArgs(argc, argv) == 0) {
+    if (parsed == 1 || parsed == 0) {
         serverHost = argv[1]; // why not assign memory?
         serverPort = argv[2];
         
-        if (parseArgs(argc, argv) == 1) {
-            message = "SPECTATE this";
+        if (parsed == 0) {
+            message = "SPECTATE";
         }
 
-        if (parseArgs(argc, argv) == 0) {
+        if (parsed == 1) {
             message = "PLAY this";
         }
 
-        // message_setAddr(serverHost, serverPort, &serverAddress);
-        // message_send(serverAddress, message); // client speaks first
-        // message_loop(NULL, 0, NULL, NULL, handleMessage);
-        // message_done();
+        message_init(stderr);
+        message_setAddr(serverHost, serverPort, &serverAddress);
+        message_send(serverAddress, message); // client speaks first
+        message_loop(NULL, 0, NULL, handleInput, handleMessage);
+        message_done();
 
     }
 
@@ -73,12 +77,31 @@ static int parseArgs(const int argc, char* argv[]) {
     return 0;
 }
 
-// static bool handleInput(void* arg) {
+static bool handleInput(void* arg) {
+    int c;
+    initscr(); // initialize the screen
+    cbreak();  // accept keystrokes immediately
+    noecho();
+    printf("Enter handle input\n");
+    while ((c = getch()) != 'q') {    // read one 
+    printf("Got input\n");
+        switch(c) {
+            case 'h':   printf("move left\n"); break; // move cursor left
+            case 'l':   printf("move right\n"); break; // move cursor right
+            case 'j':   printf("move up\n"); break; // move cursor up
+            case 'k':   printf("move down\n"); break; // move cursor down
+            case 'g':   printf("move far left\n"); break; // move cursor far left
 
-// }
+            default: if (isprint(c)) { printf("Idk\n"); }  // add character at cursor
+        }
+    }
+
+    return false;
+}
 
 static bool handleMessage(void* arg, const addr_t from, const char* message) {
-    return true;
+    printf("Handled");
+    return false;
 }
 
 // static bool handleOK(const char* message) {
