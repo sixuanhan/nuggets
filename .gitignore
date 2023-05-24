@@ -1,5 +1,6 @@
 libcs50/libcs50.a
 server
+client
 support/support.a
 *.o
 client
