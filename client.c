@@ -18,9 +18,19 @@ James Quirk, May 22, 2023
 #include "message.h"
 #include "mem.h"
 
+/**************** prototypes ****************/
+
 static int parseArgs(const int argc, char* argv[]);
 static bool handleInput(void* arg);
 static bool handleMessage(void* arg, const addr_t from, const char* message);
+static bool handleOK(const char* message);
+static bool handleGRID(const char* message);
+static bool handleGOLD(const char* message);
+static bool handleDISPLAY(const char* message);
+static bool handleQUIT(const char* message);
+static bool handleERROR(const char* message);
+
+/**************** main ***************/
 
 int main(const int argc, char* argv[]) {
     char* serverHost;
@@ -59,6 +69,8 @@ int main(const int argc, char* argv[]) {
     return 0;
 }
 
+/**************** functions ****************/
+
 static int parseArgs(const int argc, char* argv[]) {
     int port;
 
@@ -84,21 +96,43 @@ static int parseArgs(const int argc, char* argv[]) {
 }
 
 static bool handleInput(void* arg) {
+    // const addr_t* server = arg;
     int c;
+    // char message[6];
     
-    while ((c = getch()) != 'z') {    // REVISIT z 
+
+    // // base cases modeled from miniclient
+    // if (server == NULL) {
+    //     fprintf(stderr, "handleInput called with arg=NULL");
+    //     return true;
+    // }
+
+    // if (!message_isAddr(*server)) {
+    //     fprintf(stderr, "handleInput called without a correspondent.");
+    //     return true;
+    // }
+    
+    while (c = getch()) {
         switch(c) {
             case 'h':   printf("move left\n"); break; // move cursor left
             case 'l':   printf("move right\n"); break; // move cursor right
             case 'j':   printf("move up\n"); break; // move cursor up
             case 'k':   printf("move down\n"); break; // move cursor down
+            case 'y':   printf("move up left\n"); break; // move cursor up left
+            case 'u':   printf("move up right\n"); break; // move cursor up right
+            case 'b':   printf("move down left\n"); break; // move cursor down left
+            case 'n':   printf("move down right\n"); break; // move cursor down right
+
             case 'H':   printf("move far left\n"); break; // move cursor far left
             case 'L':   printf("move far right\n"); break; // move cursor far right
             case 'J':   printf("move far up\n"); break; // move cursor far up
             case 'K':   printf("move far down\n"); break; // move cursor far down
-            case 'q':   return true; // quit
+            case 'Y':   printf("move far up left\n"); break; // move cursor far up left
+            case 'U':   printf("move far up right\n"); break; // move cursor far up right
+            case 'B':   printf("move far down left\n"); break; // move cursor far down left
+            case 'N':   printf("move far down right\n"); break; // move cursor far down right
 
-            default: if (isprint(c)) { printf("Idk\n"); }  // add character at cursor
+            case 'Q':   return true; // quit
         }
     }
 
@@ -106,30 +140,62 @@ static bool handleInput(void* arg) {
 }
 
 static bool handleMessage(void* arg, const addr_t from, const char* message) {
-    printf("Handled");
+    if (strncmp(message, "OK ", strlen("OK ")) == 0) {
+        const char* content = message + strlen("OK ");
+        return handleOK(content);
+    }
+
+    if (strncmp(message, "GRID ", strlen("GRID ")) == 0) {
+        const char* content = message + strlen("SPECTATE");
+        return handleGRID(content);
+    }
+
+    if (strncmp(message, "GOLD ", strlen("GOLD ")) == 0) {
+        const char* content = message + strlen("KEY ");
+        return handleGOLD(content);
+    }
+
+    if (strncmp(message, "DISPLAY ", strlen("DISPLAY ")) == 0) {
+        const char* content = message + strlen("KEY ");
+        return handleDISPLAY(content);
+    }
+
+    if (strncmp(message, "QUIT ", strlen("QUIT ")) == 0) {
+        const char* content = message + strlen("KEY ");
+        return handleQUIT(content);
+    }
+
+    if (strncmp(message, "ERROR ", strlen("ERROR ")) == 0) {
+        const char* content = message + strlen("KEY ");
+        return handleERROR(content);
+    }
+
+    fprintf(stderr, "Error: cannot recognize message. \n");
+    message_send(from, "ERROR cannot recognize message");
     return false;
 }
 
-// static bool handleOK(const char* message) {
+static bool handleOK(const char* message) {
+    printf("%s", message);
+    return false;
+}
 
-// }
+static bool handleGRID(const char* message) {
+    return false;
+}
 
-// static bool handleGRID(const char* message) {
+static bool handleGOLD(const char* message) {
+    return false;
+}
 
-// }
+static bool handleDISPLAY(const char* message) {
+    return false;
+}
 
-// static bool handleGOLD(const char* message) {
+static bool handleQUIT(const char* message) {
+    return true;
+}
 
-// }
-
-// static bool handleDISPLAY(const char* message) {
-
-// }
-
-// static bool handleQUIT(const char* message) {
-
-// }
-
-// static bool handleERROR(const char* message) {
-
-// }
+static bool handleERROR(const char* message) {
+    return false;
+}
