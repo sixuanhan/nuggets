@@ -3,4 +3,3 @@ server
 client
 support/support.a
 *.o
-client
