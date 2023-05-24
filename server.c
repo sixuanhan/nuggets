@@ -408,8 +408,8 @@ static bool handleSPECTATE(const addr_t from, const char* content) {
     game->spectator = &from;
 
     // allocate memory for message strings
-    char* GRIDmessage = (char*)mem_malloc_assert((6 + ((int)(ceil(log10(NC))+1)) + ((int)(ceil(log10(NR))+1))) * sizeof(char), "Error: Memory allocation failed. \n");
-    char* GOLDmessage = (char*)mem_malloc_assert((6 + ((int)(ceil(log10(1))+1)) + ((int)(ceil(log10(1))+1)) + ((int)(ceil(log10(game->goldRemaining))+1))) * sizeof(char), "Error: Memory allocation failed. \n");
+    char* GRIDmessage = (char*)mem_malloc_assert((6 + ((int)(ceil(log10(NC))+2)) + ((int)(ceil(log10(NR))+2))) * sizeof(char), "Error: Memory allocation failed. \n");
+    char* GOLDmessage = (char*)mem_malloc_assert((6 + ((int)(ceil(log10(1))+2)) + ((int)(ceil(log10(1))+2)) + ((int)(ceil(log10(game->goldRemaining))+2))) * sizeof(char), "Error: Memory allocation failed. \n");
     char* DISPLAYmessage = (char*)mem_malloc_assert((9 + (strlen(game->mainGrid))) * sizeof(char), "Error: Memory allocation failed. \n");
 
     // write to message strings
