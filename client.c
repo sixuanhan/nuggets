@@ -44,6 +44,12 @@ int main(const int argc, char* argv[]) {
         message_init(stderr);
         message_setAddr(serverHost, serverPort, &serverAddress);
         message_send(serverAddress, message); // client speaks first
+
+        printf("Enter handle input\n");
+        initscr(); // initialize the screen
+        cbreak();  // accept keystrokes immediately
+        noecho();
+
         message_loop(NULL, 0, NULL, handleInput, handleMessage);
         message_done();
 
@@ -79,20 +85,18 @@ static int parseArgs(const int argc, char* argv[]) {
 
 static bool handleInput(void* arg) {
     int c;
-    printf("Enter handle input\n");
-    initscr(); // initialize the screen
-    cbreak();  // accept keystrokes immediately
-    noecho();
     
-    while ((c = getch()) != 'z') {    // read one 
-    printf("Got input\n");
+    while ((c = getch()) != 'z') {    // REVISIT z 
         switch(c) {
             case 'h':   printf("move left\n"); break; // move cursor left
             case 'l':   printf("move right\n"); break; // move cursor right
             case 'j':   printf("move up\n"); break; // move cursor up
             case 'k':   printf("move down\n"); break; // move cursor down
-            case 'g':   printf("move far left\n"); break; // move cursor far left
-            case 'q':   return true; break; // move cursor far left
+            case 'H':   printf("move far left\n"); break; // move cursor far left
+            case 'L':   printf("move far right\n"); break; // move cursor far right
+            case 'J':   printf("move far up\n"); break; // move cursor far up
+            case 'K':   printf("move far down\n"); break; // move cursor far down
+            case 'q':   return true; // quit
 
             default: if (isprint(c)) { printf("Idk\n"); }  // add character at cursor
         }
