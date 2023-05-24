@@ -456,5 +456,7 @@ static bool gameOver() {
         message_send(*game->players[i]->address, QUITmessage);
     }
 
+    free(QUITmessage);
+
     return true;
 }
