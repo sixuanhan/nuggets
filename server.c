@@ -378,6 +378,12 @@ static bool handlePLAY(const addr_t from, const char* content) {
     message_send(from, GRIDmessage);
     message_send(from, GOLDmessage);
     message_send(from, DISPLAYmessage);
+
+    // free memory
+    free(OKmessage);
+    free(GRIDmessage);
+    free(GOLDmessage);
+    free(DISPLAYmessage);
     
     return false;
 }
@@ -415,6 +421,11 @@ static bool handleSPECTATE(const addr_t from, const char* content) {
     message_send(from, GRIDmessage);
     message_send(from, GOLDmessage);
     message_send(from, DISPLAYmessage);
+
+    // free memory
+    free(GRIDmessage);
+    free(GOLDmessage);
+    free(DISPLAYmessage);
 
     return false;
 }
