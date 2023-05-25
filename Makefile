@@ -14,8 +14,8 @@ MAKE = make
 
 CFLAGS = -Wall -pedantic -std=c11 -ggdb $(TESTING) -I$S -I$L
 OBJS = server.o client.o
-LIB = -lm
-LLIBS = $S/support.a $L/libcs50-given.a
+LIBS = -lm -lncurses
+LLIBS = $S/support.a $L/libcs50-given.a 
 
 .PHONY: all clean
 
@@ -35,7 +35,7 @@ server: $(OBJS) $(LLIBS)
 server.o: $S/grid.h $S/log.h $S/message.h $L/hashtable.h $L/file.h $L/mem.h
 
 client: $(OBJS) $(LLIBS)
-	$(CC) $(CFLAGS) client.o server.o $(LLIBS) $(LIBS) -o $@
+	$(CC) $(CFLAGS) client.o $(LLIBS) $(LIBS) -o $@
 
 client.o: client.c $L/hashtable.h $L/file.h $L/mem.h
 

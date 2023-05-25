@@ -10,6 +10,7 @@ Sixuan Han, Steven Mendley, and Kevin Cao, May 22 2023
 #include <ctype.h>
 #include <unistd.h>
 #include <stdbool.h>
+#include <math.h>
 #include "grid.h"
 #include "counters.h"
 #include "file.h"
@@ -96,8 +97,8 @@ int main(const int argc, char* argv[])
     printf("Server is ready at port %i. \n", port);
 
     bool ok = message_loop(NULL, 0, NULL, NULL, handleMessage);
-
     message_done();
+    gameOver();
     game_delete();
   
     return ok? 0 : 1;
@@ -303,8 +304,8 @@ static bool handleMessage(void* arg, const addr_t from, const char* message) {
         const char* content = message + strlen("PLAY ");
         return handlePLAY(from, content);
     }
-    if (strncmp(message, "SPECTATE ", strlen("SPECTATE ")) == 0) {
-        const char* content = message + strlen("SPECTATE ");
+    if (strncmp(message, "SPECTATE", strlen("SPECTATE")) == 0) {
+        const char* content = message + strlen("SPECTATE");
         return handleSPECTATE(from, content);
     }
     if (strncmp(message, "KEY ", strlen("KEY ")) == 0) {
@@ -316,11 +317,117 @@ static bool handleMessage(void* arg, const addr_t from, const char* message) {
     return false;
 }
 
+/* A function to handle incoming PLAY messages from the client
+ * and add a player to the game if there is space.
+ *
+ * We return:
+ *   true if we want to exit the loop (too many players or invalid name)
+ *   false otherwise
+ * 
+ * Caller is responsible for:
+ *   passing a valid address
+ */
 static bool handlePLAY(const addr_t from, const char* content) {
+    bool isempty = true;
+    char* username = (char*)mem_malloc_assert((MaxNameLength) * sizeof(char), "Error: Memory allocation failed. \n");
+    for (int i = 0; i < MaxNameLength; i++) {
+        if (i == strlen(content)) {
+            username[i] = '\0';
+            break;
+        }
+        if (!isspace(content[i])) {
+            isempty = false;
+            if (!(isblank(content[i]) || isgraph(content[i]))) {
+                username[i] = '_';
+            } else {
+                username[i] = content[i];
+            }
+        } else {
+            username[i] = content[i];
+        }
+    }
+    if (isempty) {
+        message_send(from, "QUIT Sorry - you must provide player's name.");
+        return false;
+    }
+
+    if (game->numPlayers >= MaxPlayers) {
+        message_send(from, "QUIT Game is full: no more players can join.");
+        return true;
+    }
+
+    game->numPlayers++;
+    player_t* player = player_new();
+    game->players[game->numPlayers-1] = player;
+    player->username = username;
+    player->address = &from;
+
+    // allocate memory for message strings
+    char* OKmessage = (char*)mem_malloc_assert(6 * sizeof(char), "Error: Memory allocation failed. \n");
+    char* GRIDmessage = (char*)mem_malloc_assert((6 + ((int)(ceil(log10(NC))+1)) + ((int)(ceil(log10(NR))+1))) * sizeof(char), "Error: Memory allocation failed. \n");
+    char* GOLDmessage = (char*)mem_malloc_assert((6 + ((int)(ceil(log10(1))+1)) + ((int)(ceil(log10(1))+1)) + ((int)(ceil(log10(game->goldRemaining))+1))) * sizeof(char), "Error: Memory allocation failed. \n");
+    char* DISPLAYmessage = (char*)mem_malloc_assert((9 + (strlen(player->localMap))) * sizeof(char), "Error: Memory allocation failed. \n");
+
+    // write to message strings
+    sprintf(OKmessage, "OK %c", player->letterID);
+    sprintf(GRIDmessage, "GRID %d %d", NC, NR);
+    sprintf(GOLDmessage, "GOLD 0 0 %d", game->goldRemaining);
+    sprintf(DISPLAYmessage, "DISPLAY\n%s", player->localMap);
+
+    // send messages
+    message_send(from, OKmessage);
+    message_send(from, GRIDmessage);
+    message_send(from, GOLDmessage);
+    message_send(from, DISPLAYmessage);
+
+    // free memory
+    free(OKmessage);
+    free(GRIDmessage);
+    free(GOLDmessage);
+    free(DISPLAYmessage);
+    
     return false;
 }
 
+/* A function to handle incoming SPECTATE messages from the client
+ * and add a spectator to the game if there is space.
+ *
+ * We return:
+ *   false
+ * 
+ * Caller is responsible for:
+ *   passing a valid address
+ */
 static bool handleSPECTATE(const addr_t from, const char* content) {
+    if (strlen(content)>1) {
+        fprintf(stderr, "Error: improper SPECTATE message. \n");
+        message_send(from, "ERROR improper SPECTATE message");
+    }
+    if (game->spectator != NULL) {
+        message_send(*game->spectator, "QUIT You have been replaced by a new spectator.");
+    }
+    game->spectator = &from;
+
+    // allocate memory for message strings
+    char* GRIDmessage = (char*)mem_malloc_assert((6 + ((int)(ceil(log10(NC))+2)) + ((int)(ceil(log10(NR))+2))) * sizeof(char), "Error: Memory allocation failed. \n");
+    char* GOLDmessage = (char*)mem_malloc_assert((6 + ((int)(ceil(log10(1))+2)) + ((int)(ceil(log10(1))+2)) + ((int)(ceil(log10(game->goldRemaining))+2))) * sizeof(char), "Error: Memory allocation failed. \n");
+    char* DISPLAYmessage = (char*)mem_malloc_assert((9 + (strlen(game->mainGrid))) * sizeof(char), "Error: Memory allocation failed. \n");
+
+    // write to message strings
+    sprintf(GRIDmessage, "GRID %d %d", NC, NR);
+    sprintf(GOLDmessage, "GOLD 0 0 %d", game->goldRemaining);
+    sprintf(DISPLAYmessage, "DISPLAY\n%s", game->mainGrid);
+
+    // send messages
+    message_send(from, GRIDmessage);
+    message_send(from, GOLDmessage);
+    message_send(from, DISPLAYmessage);
+
+    // free memory
+    free(GRIDmessage);
+    free(GOLDmessage);
+    free(DISPLAYmessage);
+
     return false;
 }
 
@@ -328,6 +435,29 @@ static bool handleKEY(const addr_t from, const char* content) {
     return false;
 }
 
+/* A function that sends a QUIT message to every client 
+* with a scoreboard when the game is over.
+*
+* We return:
+*   true, as the loop should end after this
+*/
 static bool gameOver() {
+    char* QUITmessage = (char*)mem_malloc_assert((17+game->numPlayers*(13+MaxNameLength)) * sizeof(char), "Error: Memory allocation failed. \n");
+    strcpy(QUITmessage, "QUIT GAME OVER:\n");
+
+    for (int i = 0; i < game->numPlayers; i++) {
+        sprintf(QUITmessage, "%c %12d %s\n", game->players[i]->letterID, game->players[i]->gold, game->players[i]->username);
+    }
+
+    if (game->spectator != NULL) {
+        message_send(*game->spectator, QUITmessage);
+    }
+
+    for (int i = 0; i < game->numPlayers; i++) {
+        message_send(*game->players[i]->address, QUITmessage);
+    }
+
+    free(QUITmessage);
+
     return true;
 }
