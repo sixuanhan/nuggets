@@ -185,6 +185,7 @@ static void game_delete(void) {
     // free the mainGrid
     mem_free(game->mainGrid);
     // free the each player struct
+
     for (int i = 0; i < game->numPlayers; i++) {
         mem_free(game->players[i]->username);
         mem_free(game->players[i]->localMap);
