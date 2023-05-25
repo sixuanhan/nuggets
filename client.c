@@ -112,7 +112,7 @@ static bool handleInput(void* arg) {
     //     return true;
     // }
     
-    while (c = getch()) {
+    while ((c = getch())) {
         switch(c) {
             case 'h':   printf("move left\n"); break; // move cursor left
             case 'l':   printf("move right\n"); break; // move cursor right
