@@ -95,7 +95,7 @@ int main(const int argc, char* argv[])
         fclose(logFP);
         return 6;
     }
-    printf("Server is ready at port %i. \n", port);
+    printf("\nServer is ready at port %i \n", port);
 
     bool ok = message_loop(NULL, 0, NULL, NULL, handleMessage);
     gameOver();
@@ -229,8 +229,10 @@ static player_t* player_new(void) {
         player->loc = randRange(0, NR*NC-1);
     }
 
+    player->localMap[player->loc]='@';
+
     // update their local map according to their visibility
-    grid_update_vis(game->mainGrid, player->localMap, player->loc, NR, NC);
+    // grid_update_vis(game->mainGrid, player->localMap, player->loc, NR, NC);
 
     return player;
 }
