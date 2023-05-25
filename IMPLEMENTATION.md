@@ -416,7 +416,7 @@ bool grid_isVisible(char** grid, int start_loc, int end_loc);
 
 This function updates the visibility of a player according to the `mainGrid`, the previous `localMap` and the new location and updates the `localMap`.
 ``` c
-void grid_update_vis(char** mainGrid, char** localMap, int loc, int NR, int NC);
+void grid_update_vis(char** mainGrid, char** localMap, int loc);
 ```
 
 ### Detailed pseudo code
