@@ -37,13 +37,11 @@ server.o: $S/grid.h $S/log.h $S/message.h $L/hashtable.h $L/file.h $L/mem.h
 client: $(OBJS) $(LLIBS)
 	$(CC) $(CFLAGS) client.o $(LLIBS) $(LIBS) -o $@
 
-client.o: client.c $L/hashtable.h $L/file.h $L/mem.h
+client.o: $L/hashtable.h $L/file.h $L/mem.h
 
 
-# client: $(OBJS) $(LLIBS)
-# 	$(CC) $(CFLAGS) client.o $(LLIBS) $(LIBS) -o $@
-
-# client.o: $S/grid.h $S/log.h $S/message.h $L/mem.h
+test: testing.sh
+	bash -v testing.sh >& testing.out
 
 
 clean:
