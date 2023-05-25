@@ -3,3 +3,4 @@ server
 client
 support/support.a
 *.o
+vgcore*
