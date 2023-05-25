@@ -183,6 +183,7 @@ static void game_delete(void) {
     mem_free(game->mainGrid);
     // free the each player struct
     for (int i = 0; i < MaxPlayers+1; i++) {
+        mem_free(game->players[i]->localMap);
         mem_free(game->players[i]);
     }
     // free the players array
