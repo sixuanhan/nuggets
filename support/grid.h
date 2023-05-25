@@ -73,4 +73,4 @@ bool grid_isVisible(char* grid, int start_loc, int end_loc);
  * Caller is responsible for:
  *   providing a one dimensional location within the range of the grid.
  */
-void grid_update_vis(char* mainGrid, char* localMap, int loc, int NR, int NC);
+void grid_update_vis(char* mainGrid, char* localMap, int loc);
