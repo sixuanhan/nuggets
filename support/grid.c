@@ -134,7 +134,7 @@ void grid_update_vis(char* mainGrid, char* localMap, int loc) {
     for (int i = 0; i < strlen(mainGrid); i++) {
 
         // if the character/location is visible, then copy that to localMap to make it visible to the client
-        if isVisible(mainGrid, i, loc) {
+        if grid_isVisible(mainGrid, i, loc) {
 
             strcpy(mainGrid[i], localMap[i]);
 
