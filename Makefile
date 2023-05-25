@@ -50,5 +50,6 @@ clean:
 	rm -f server
 	rm -f client
 	rm -f core
+	rm -f vgcore*
 	make -C libcs50 clean
 	make -C support clean
