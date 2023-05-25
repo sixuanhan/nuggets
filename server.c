@@ -47,10 +47,10 @@ static void game_delete(void);
 static player_t* player_new(void);
 
 static int parseArgs(const int argc, char* argv[], char* mapFile);
-static bool handleMessage(void* arg, const addr_t from, const char* message);
-static bool handlePLAY(const addr_t from, const char* content);
-static bool handleSPECTATE(const addr_t from, const char* content);
-static bool handleKEY(const addr_t from, const char* content);
+static bool handleMessage(void* arg, addr_t from, const char* message);
+static bool handlePLAY(addr_t* from, const char* content);
+static bool handleSPECTATE(addr_t* from, const char* content);
+static bool handleKEY(addr_t* from, const char* content);
 static bool gameOver();
 
 
@@ -305,18 +305,19 @@ static int parseArgs(const int argc, char* argv[], char* mapFile) {
  * Caller is responsible for:
  *   passing a valid address
  */
-static bool handleMessage(void* arg, const addr_t from, const char* message) {
+static bool handleMessage(void* arg, addr_t from, const char* message) {
+    addr_t* addr = &from;
     if (strncmp(message, "PLAY ", strlen("PLAY ")) == 0) {
         const char* content = message + strlen("PLAY ");
-        return handlePLAY(from, content);
+        return handlePLAY(addr, content);
     }
     if (strncmp(message, "SPECTATE", strlen("SPECTATE")) == 0) {
         const char* content = message + strlen("SPECTATE");
-        return handleSPECTATE(from, content);
+        return handleSPECTATE(addr, content);
     }
     if (strncmp(message, "KEY ", strlen("KEY ")) == 0) {
         const char* content = message + strlen("KEY ");
-        return handleKEY(from, content);
+        return handleKEY(addr, content);
     }
     fprintf(stderr, "Error: cannot recognize message. \n");
     message_send(from, "ERROR cannot recognize message");
@@ -332,7 +333,7 @@ static bool handleMessage(void* arg, const addr_t from, const char* message) {
  * Caller is responsible for:
  *   passing a valid address
  */
-static bool handlePLAY(addr_t from, const char* content) {
+static bool handlePLAY(addr_t* from, const char* content) {
     bool isempty = true;
     char* username = (char*)mem_malloc_assert((MaxNameLength) * sizeof(char), "Error: Memory allocation failed. \n");
     for (int i = 0; i < MaxNameLength; i++) {
@@ -352,19 +353,19 @@ static bool handlePLAY(addr_t from, const char* content) {
         }
     }
     if (isempty) {
-        message_send(from, "QUIT Sorry - you must provide player's name.");
+        message_send(*from, "QUIT Sorry - you must provide player's name.");
         return false;
     }
 
     if (game->numPlayers >= MaxPlayers) {
-        message_send(from, "QUIT Game is full: no more players can join.");
+        message_send(*from, "QUIT Game is full: no more players can join.");
         return false;
     }
 
     
     player_t* player = player_new();
     player->username = username;
-    player->address = &from;
+    player->address = from;
     game->players[game->numPlayers] = player;
     game->numPlayers++;
 
@@ -381,10 +382,10 @@ static bool handlePLAY(addr_t from, const char* content) {
     sprintf(DISPLAYmessage, "DISPLAY\n%s", player->localMap);
 
     // send messages
-    message_send(from, OKmessage);
-    message_send(from, GRIDmessage);
-    message_send(from, GOLDmessage);
-    message_send(from, DISPLAYmessage);
+    message_send(*from, OKmessage);
+    message_send(*from, GRIDmessage);
+    message_send(*from, GOLDmessage);
+    message_send(*from, DISPLAYmessage);
 
     // free memory
     free(OKmessage);
@@ -404,16 +405,16 @@ static bool handlePLAY(addr_t from, const char* content) {
  * Caller is responsible for:
  *   passing a valid address
  */
-static bool handleSPECTATE(addr_t from, const char* content) {
+static bool handleSPECTATE(addr_t* from, const char* content) {
     if (strlen(content)>0) {
         fprintf(stderr, "Error: improper SPECTATE message. \n");
-        message_send(from, "ERROR improper SPECTATE message");
+        message_send(*from, "ERROR improper SPECTATE message");
         return false;
     }
     if (game->spectator != NULL) {
         message_send(*game->spectator, "QUIT You have been replaced by a new spectator.");
     }
-    game->spectator = &from;
+    game->spectator = from;
 
     // allocate memory for message strings
     char* GRIDmessage = (char*)mem_malloc_assert((6 + ((int)(ceil(log10(NC))+2)) + ((int)(ceil(log10(NR))+2))) * sizeof(char), "Error: Memory allocation failed. \n");
@@ -426,9 +427,9 @@ static bool handleSPECTATE(addr_t from, const char* content) {
     sprintf(DISPLAYmessage, "DISPLAY\n%s", game->mainGrid);
 
     // send messages
-    message_send(from, GRIDmessage);
-    message_send(from, GOLDmessage);
-    message_send(from, DISPLAYmessage);
+    message_send(*from, GRIDmessage);
+    message_send(*from, GOLDmessage);
+    message_send(*from, DISPLAYmessage);
 
     // free memory
     free(GRIDmessage);
@@ -438,7 +439,7 @@ static bool handleSPECTATE(addr_t from, const char* content) {
     return false;
 }
 
-static bool handleKEY(const addr_t from, const char* content) {
+static bool handleKEY(addr_t* from, const char* content) {
     return true;
 }
 
