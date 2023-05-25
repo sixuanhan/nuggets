@@ -363,10 +363,10 @@ static bool handlePLAY(addr_t from, const char* content) {
 
     
     player_t* player = player_new();
-    game->players[game->numPlayers] = player;
-    game->numPlayers++;
     player->username = username;
     player->address = &from;
+    game->players[game->numPlayers] = player;
+    game->numPlayers++;
 
     // allocate memory for message strings
     char* OKmessage = (char*)mem_malloc_assert(6 * sizeof(char), "Error: Memory allocation failed. \n");
@@ -376,7 +376,7 @@ static bool handlePLAY(addr_t from, const char* content) {
 
     // write to message strings
     sprintf(OKmessage, "OK %c", player->letterID);
-    sprintf(GRIDmessage, "GRID %d %d", NC, NR);
+    sprintf(GRIDmessage, "GRID %d %d", NR, NC);
     sprintf(GOLDmessage, "GOLD 0 0 %d", game->goldRemaining);
     sprintf(DISPLAYmessage, "DISPLAY\n%s", player->localMap);
 
@@ -421,7 +421,7 @@ static bool handleSPECTATE(addr_t from, const char* content) {
     char* DISPLAYmessage = (char*)mem_malloc_assert((9 + (strlen(game->mainGrid))) * sizeof(char), "Error: Memory allocation failed. \n");
 
     // write to message strings
-    sprintf(GRIDmessage, "GRID %d %d", NC, NR);
+    sprintf(GRIDmessage, "GRID %d %d", NR, NC);
     sprintf(GOLDmessage, "GOLD 0 0 %d", game->goldRemaining);
     sprintf(DISPLAYmessage, "DISPLAY\n%s", game->mainGrid);
 
@@ -439,7 +439,7 @@ static bool handleSPECTATE(addr_t from, const char* content) {
 }
 
 static bool handleKEY(const addr_t from, const char* content) {
-    return false;
+    return true;
 }
 
 /* A function that sends a QUIT message to every client 
