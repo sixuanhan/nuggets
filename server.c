@@ -97,6 +97,10 @@ int main(const int argc, char* argv[])
     }
     printf("\nServer is ready at port %i \n", port);
 
+    // log NR and NC
+    log_d("NR=%d\n", NR);
+    log_d("NC=%d\n", NC);
+
     bool ok = message_loop(NULL, 0, NULL, NULL, handleMessage);
     gameOver();
     message_done();
@@ -309,6 +313,11 @@ static int parseArgs(const int argc, char* argv[], char* mapFile) {
  */
 static bool handleMessage(void* arg, addr_t from, const char* message) {
     addr_t* addr = &from;
+
+    // logs message and sender
+    log_s("Received message from %s, ", message_stringAddr(from));
+    log_s("message: %s\n", message);
+
     if (strncmp(message, "PLAY ", strlen("PLAY ")) == 0) {
         const char* content = message + strlen("PLAY ");
         return handlePLAY(addr, content);

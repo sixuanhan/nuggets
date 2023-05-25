@@ -113,6 +113,9 @@ static bool handleInput(void* arg) {
     // }
     
     while ((c = getch())) {
+        // logs keystroke
+        log_c("Received keystroke: %c\n", c);
+
         switch(c) {
             case 'h':   printf("move left\n"); break; // move cursor left
             case 'l':   printf("move right\n"); break; // move cursor right
@@ -140,6 +143,10 @@ static bool handleInput(void* arg) {
 }
 
 static bool handleMessage(void* arg, const addr_t from, const char* message) {
+    // logs message and sender
+    log_s("Received message from %s, ", message_stringAddr(from));
+    log_s("message: %s\n", message);
+
     if (strncmp(message, "OK ", strlen("OK ")) == 0) {
         const char* content = message + strlen("OK ");
         return handleOK(content);
