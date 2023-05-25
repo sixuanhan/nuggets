@@ -18,10 +18,8 @@ void grid_load(FILE* fp, char* grid, int NR, int NC) {
     int i = 0;
     while (i < NR*NC) {
         char curr = (char)fgetc(fp);
-        if (curr != '\n') {
-            grid[i] = curr;
-            i++;
-        }
+        grid[i] = curr;
+        i++;
     }
 }
 
