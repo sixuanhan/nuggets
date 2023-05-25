@@ -177,6 +177,7 @@ static bool handleMessage(void* arg, const addr_t from, const char* message) {
 
 static bool handleOK(const char* message) {
     printf("%s", message);
+
     return false;
 }
 
