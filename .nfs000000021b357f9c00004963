@@ -1,15 +1,15 @@
 START OF LOG
-Received message from 127.0.0.1:50414, 
-message: OK B
+Received message from 127.0.0.1:57680, 
+message: OK A
 
-OK message logs client at letter: B
-Received message from 127.0.0.1:50414, 
+OK message logs client at letter: A
+Received message from 127.0.0.1:57680, 
 message: GRID 21 79
 
-Received message from 127.0.0.1:50414, 
+Received message from 127.0.0.1:57680, 
 message: GOLD 0 0 250
 
-Received message from 127.0.0.1:50414, 
+Received message from 127.0.0.1:57680, 
 message: DISPLAY
                                                                                
                                                                                
@@ -22,45 +22,47 @@ message: DISPLAY
                                                                                
                                                                                
                                                                                
+                                                     +--------#--+             
+                                                     |...........|             
+                                                     #..*........|             
+                                                     |...........|             
+                                                     |........@..|             
+                                                     +-----------+             
                                                                                
-     +---------------------------------+                                       
-     |.*.................*.............|                                       
-     |...............*.*.....*.*.*..*..|                                       
-                            +.........@|                                       
-                            |........*.#                                       
-                            |..........|                                       
-                            |..*.......|                                       
-                            |...A......|                                       
-                            +----------+                                       
+                                                                               
+                                                                               
+                                                                               
 
-
-Received keystroke: h
 
 Received keystroke: h
 
 Received keystroke: j
 
-Received keystroke: j
+Received keystroke: i
 
 Received keystroke: k
 
-Received keystroke: l
-
-Received keystroke: l
+Received keystroke: k
 
 Received keystroke: k
 
-Received keystroke: h
-
 Received keystroke: j
 
-Received keystroke: k
+Received keystroke: j
 
 Received keystroke: l
 
+Received keystroke: j
+
 Received keystroke: h
 
-Received keystroke: j
+Received keystroke: h
+
+Received keystroke: h
+
+Received keystroke: h
+
+Received keystroke: L
 
 Received keystroke: H
 
@@ -68,5 +70,9 @@ Received keystroke: J
 
 Received keystroke: K
 
-Received keystroke: l
+Received keystroke: J
+
+Received keystroke: K
+
+Received keystroke: L
 
