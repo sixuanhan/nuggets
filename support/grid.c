@@ -126,7 +126,7 @@ bool grid_isVisible(char* grid, int start_loc, int end_loc, int NR, int NC)
 
 /********************** grid_update_vis() *********************/
 /* see grid.h for more information */
-void grid_update_vis(char* mainGrid, char* localMap, int loc) {
+void grid_update_vis(char* mainGrid, char* localMap, int loc, int NR, int NC) {
 
     // loop through and check the visibility of each coordinate in mainGrid
     for (int i = 0; i < strlen(mainGrid); i++) {
@@ -138,7 +138,7 @@ void grid_update_vis(char* mainGrid, char* localMap, int loc) {
         }
         
         // if the character/location is visible, then copy that to localMap to make it visible to the client
-        if (grid_isVisible(mainGrid, i, loc)) {
+        if (grid_isVisible(mainGrid, i, loc, NR, NC)) {
 
             localMap[i] = mainGrid[i];
 
