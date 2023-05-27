@@ -23,7 +23,8 @@ typedef struct player {
     char* username;
 	char letterID;
 	int gold;  // how many nuggets they have
-	int loc;
+	int loc;    // a 1d coordinate of the current location
+    char currSpot;  // the spot type that they player's standing on
 	char* localMap;  // the grid that this player can see
 	addr_t* address;
 } player_t;
@@ -233,7 +234,12 @@ static player_t* player_new(void) {
         player->loc = randRange(0, NR*NC-1);
     }
 
+    // update the player's map to show @
     player->localMap[player->loc]='@';
+    // remember the current spot that the player is standing on (in this case, '.')
+    player->currSpot = game->mainGrid[player->loc];
+    // update the player's map to show the player's letterID
+    game->mainGrid[player->loc]=player->letterID;
 
     // update their local map according to their visibility
     // grid_update_vis(game->mainGrid, player->localMap, player->loc, NR, NC);
