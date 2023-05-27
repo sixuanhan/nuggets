@@ -63,7 +63,7 @@ int grid_2dto1d(int x, int y, int NR, int NC);
  * Caller is responsible for:
  *   providing two one dimensional locations within the range of the grid.
  */
-bool grid_isVisible(char* grid, int start_loc, int end_loc);
+bool grid_isVisible(char* grid, int start_loc, int end_loc, int NR, int NC);
 
 
 /**************** grid_2dto1d ****************/
