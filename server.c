@@ -53,6 +53,7 @@ static bool handleSPECTATE(addr_t* from, const char* content);
 static bool handleKEY(addr_t* from, const char* content);
 static bool gameOver();
 
+static char* updateMainGrid();
 
 /*********************** global ***********************/
 /**************** constants ****************/
@@ -450,8 +451,198 @@ static bool handleSPECTATE(addr_t* from, const char* content) {
     return false;
 }
 
-static bool handleKEY(addr_t* from, const char* content) {
+/*
+*   A function to handle KEY messages and updates the game based on the 
+*   the contents of the KEY message
+*/
+static bool handleKEY(addr_t* from, const char* content)
+{
+
+    // check to see if the message is from a player
+    // if playerIndex is still -1, then it must be spectator; else is player
+    int playerIndex = -1;
+    for (int i = 0; i < 26; i++) {
+
+        if(game->players[i] != NULL && from == game->players[i]->address) {
+
+            playerIndex = i;
+            break;
+
+        }
+
+    }
+
+    if (playerIndex != -1) {
+
+        switch(content) {
+
+            case 'Q':
+                
+                // player quits
+                message_send(*game->players[i]->address, "QUIT Thanks for playing!");
+            
+                // free up the memory storing the player information
+                mem_free(game->players[i]->username);
+                mem_free(game->players[i]->letterID);
+                mem_free(game->players[i]->gold);
+                mem_free(game->players[i]->loc);
+                mem_free(game->players[i]->localMap);
+                mem_free(game->players[i]->address);
+                mem_free(game->players[i]);
+
+                game->numPlayers -= 1;
+                break;
+
+            case 'y':
+
+                // move the player up and to the left:
+                game->players[i]->loc = game->players[i]->loc - NC - 1;
+                // update the main grid first 
+                grid_update_vis(game->mainGrid, game->players[i]->localMap, game->players[i]->loc);
+                // update the main grid (for the spectator)
+                // NOTE: somehow need to update the @ and gold here (probs will create a helper function)
+
+                char* displayMessage = mem_malloc(8 + NR * NC); 
+                strcpy(displayMessage, "DISPLAY\n");
+                strcat(displayMessage, game->players[i]->localMap);
+
+                message_send(*game->players[i]->address, displayMessage);
+                mem_free(displayMessage);
+                break;
+
+            case 'k':
+
+                // move the player upwards 
+                game->players[i]->loc = game->players[i]->loc - NC - 1;
+                grid_update_vis(game->mainGrid, game->players[i]->localMap, game->players[i]->loc);
+                // update the main grid (for the spectator)
+                // NOTE: somehow need to update the @ and gold here (probs will create a helper function)
+
+                char* displayMessage = mem_malloc(8 + NR * NC); 
+                strcpy(displayMessage, "DISPLAY\n");
+                strcat(displayMessage, game->players[i]->localMap);
+
+                message_send(*game->players[i]->address, displayMessage);
+                mem_free(displayMessage);
+                break;
+
+            case 'u':
+
+                game->players[i]->loc = game->players[i]->loc - NC;
+                grid_update_vis(game->mainGrid, game->players[i]->localMap, game->players[i]->loc);
+                // update the main grid (for the spectator)
+                // NOTE: somehow need to update the @ and gold here (probs will create a helper function)
+
+                char* displayMessage = mem_malloc(8 + NR * NC); 
+                strcpy(displayMessage, "DISPLAY\n");
+                strcat(displayMessage, game->players[i]->localMap);
+
+                message_send(*game->players[i]->address, displayMessage);
+                mem_free(displayMessage);
+                break;
+
+            case 'h':
+                
+                game->players[i]->loc = game->players[i]->loc - 1;
+                grid_update_vis(game->mainGrid, game->players[i]->localMap, game->players[i]->loc);
+                // update the main grid (for the spectator)
+                // NOTE: somehow need to update the @ and gold here (probs will create a helper function)
+
+                char* displayMessage = mem_malloc(8 + NR * NC); 
+                strcpy(displayMessage, "DISPLAY\n");
+                strcat(displayMessage, game->players[i]->localMap);
+
+                message_send(*game->players[i]->address, displayMessage);
+                mem_free(displayMessage);
+                break;
+
+            case 'l':
+
+                game->players[i]->loc = game->players[i]->loc + 1;
+                grid_update_vis(game->mainGrid, game->players[i]->localMap, game->players[i]->loc);
+                // update the main grid (for the spectator)
+                // NOTE: somehow need to update the @ and gold here (probs will create a helper function)
+
+                char* displayMessage = mem_malloc(8 + NR * NC); 
+                strcpy(displayMessage, "DISPLAY\n");
+                strcat(displayMessage, game->players[i]->localMap);
+
+                message_send(*game->players[i]->address, displayMessage);
+                mem_free(displayMessage);
+                break;
+
+            case 'b':
+
+                game->players[i]->loc = game->players[i]->loc + NC;
+                grid_update_vis(game->mainGrid, game->players[i]->localMap, game->players[i]->loc);
+                // update the main grid (for the spectator)
+                // NOTE: somehow need to update the @ and gold here (probs will create a helper function)
+
+                char* displayMessage = mem_malloc(8 + NR * NC); 
+                strcpy(displayMessage, "DISPLAY\n");
+                strcat(displayMessage, game->players[i]->localMap);
+
+                message_send(*game->players[i]->address, displayMessage);
+                mem_free(displayMessage);
+                break;
+
+            case 'j':
+
+                game->players[i]->loc = game->players[i]->loc + NC + 1; 
+                grid_update_vis(game->mainGrid, game->players[i]->localMap, game->players[i]->loc);
+                // update the main grid (for the spectator)
+                // NOTE: somehow need to update the @ and gold here (probs will create a helper function)
+
+                char* displayMessage = mem_malloc(8 + NR * NC); 
+                strcpy(displayMessage, "DISPLAY\n");
+                strcat(displayMessage, game->players[i]->localMap);
+
+                message_send(*game->players[i]->address, displayMessage);
+                mem_free(displayMessage);
+                break;
+
+            case 'n':
+
+                game->players[i]->loc = game->players[i]->loc + NC + 2;
+                grid_update_vis(game->mainGrid, game->players[i]->localMap, game->players[i]->loc);
+                // update the main grid (for the spectator)
+                // NOTE: somehow need to update the @ and gold here (probs will create a helper function)
+
+                char* displayMessage = mem_malloc(8 + NR * NC); 
+                strcpy(displayMessage, "DISPLAY\n");
+                strcat(displayMessage, game->players[i]->localMap);
+
+                message_send(*game->players[i]->address, displayMessage);
+                mem_free(displayMessage);
+                break;
+
+
+        }
+        
+    }
+
+
     return true;
+}
+
+// creates a new grid that overlays the player/gold locations
+// on top of the game's main grid (NOTE: REMEMBER TO ADD THIS TO SPECS)
+static char* updateMainGrid() 
+{
+
+    for (int i = 0; i < 26; i++) {
+
+        if (game->players[i] == NULL) {
+
+            continue;
+
+        }
+
+        game->mainGrid
+
+
+    }
+
 }
 
 /* A function that sends a QUIT message to every client 
