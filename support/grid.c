@@ -41,16 +41,16 @@ int grid_2dto1d(int x, int y, int NR, int NC)
 
 /****************** grid_isVisible() ***********************/
 /* see grid.h for more information */
-bool grid_isVisible(char* grid, int start_loc, int end_loc)
+bool grid_isVisible(char* grid, int start_loc, int end_loc, int NR, int NC)
 {
 
     // converts starting location index to the 2d coordinate
-    int start_x = grid_1dto2d_x(start_loc);
-    int start_y = grid_1dto2d_y(start_loc);
+    int start_x = grid_1dto2d_x(start_loc, NR, NC);
+    int start_y = grid_1dto2d_y(start_loc, NR, NC);
     
     // converts ending location index to the 2d coordinate
-    int end_x = grid_1dto2d_x(end_loc);
-    int end_y = grid_1dto2d_y(end_loc);
+    int end_x = grid_1dto2d_x(end_loc, NR, NC);
+    int end_y = grid_1dto2d_y(end_loc, NR, NC);
 
 
     // implement modified bresenham raytracing algorithm between these 2 coordinates
@@ -96,7 +96,7 @@ bool grid_isVisible(char* grid, int start_loc, int end_loc)
 
         // if the ray reaches one of the specified characters and is not at the starting loc
         // then mark the point as not visible by returning false
-        char mapChar = grid[grid_2dto1d(start_x, start_y)];
+        char mapChar = grid[grid_2dto1d(start_x, start_y, NR, NC)];
         if (x != start_x && y != start_y && (mapChar == '-' || mapChar == '|' || mapChar == '+' ||
             mapChar == ' ' || mapChar == '#')) {
 
@@ -140,7 +140,7 @@ void grid_update_vis(char* mainGrid, char* localMap, int loc) {
         // if the character/location is visible, then copy that to localMap to make it visible to the client
         if (grid_isVisible(mainGrid, i, loc)) {
 
-            strcpy(mainGrid[i], localMap[i]);
+            localMap[i] = mainGrid[i];
 
         }
 
