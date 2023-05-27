@@ -1,15 +1,15 @@
 START OF LOG
-Received message from 127.0.0.1:45214, 
+Received message from 127.0.0.1:46736, 
 message: OK A
 
 OK message logs client at letter: A
-Received message from 127.0.0.1:45214, 
+Received message from 127.0.0.1:46736, 
 message: GRID 21 79
 
-Received message from 127.0.0.1:45214, 
+Received message from 127.0.0.1:46736, 
 message: GOLD 0 0 250
 
-Received message from 127.0.0.1:45214, 
+Received message from 127.0.0.1:46736, 
 message: DISPLAY
                                                                                
                                                                                
@@ -17,30 +17,30 @@ message: DISPLAY
                                                                                
                                                                                
                                                                                
-                                           +--------#+                         
-                                           |......*..|                         
-                                           |.........|                         
-                                           #..@.*....|                         
-                                           +----#----+                         
                                                                                
                                                                                
                                                                                
                                                                                
                                                                                
                                                                                
-                                                                               
-                                                                               
-                                                                               
-                                                                               
+     +---------------------------------+                                       
+     |.......*....*....................|                                       
+     |.....@.................*.........|                                       
+     |......+---------------+...*......|                                       
+     |......|                                                                  
+     |......|                                                                  
+     |.*.*..|                                                                  
+     |......|                                                                  
+     +------+                                                                  
 
+
+Received keystroke: h
+
+Received keystroke: h
 
 Received keystroke: j
 
 Received keystroke: k
 
 Received keystroke: l
-
-Received keystroke: l
-
-Received keystroke: i
 

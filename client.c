@@ -138,6 +138,7 @@ static bool handleInput(void* arg) {
         char* KEYmessage = (char*)mem_malloc_assert(5 * sizeof(char), "Error: Memory allocation failed. \n");
         sprintf(KEYmessage, "KEY %c", c);
         message_send(game->server, KEYmessage);
+        mem_free(KEYmessage);
     }
 
     return false;
