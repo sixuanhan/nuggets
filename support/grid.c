@@ -97,15 +97,15 @@ bool grid_isVisible(char* grid, int start_loc, int end_loc)
         // if the ray reaches one of the specified characters and is not at the starting loc
         // then mark the point as not visible by returning false
         char mapChar = grid[grid_2dto1d(start_x, start_y)];
-        if (x != start_x && y != start_y && (strcmp(mapChar, "-") == 0 || strcmp(mapChar, "|") == 0 || strcmp(mapChar, "+") == 0
-            strcmp(mapChar, " ") == 0 || strcmp(mapChar, "#"))) {
+        if (x != start_x && y != start_y && (mapChar == '-' || mapChar == '|' || mapChar == '+' ||
+            mapChar == ' ' || mapChar == '#')) {
 
-                return false; 
+            return false; 
 
         }
 
         // adjust the errors 
-        error2 = 2 * error1;
+        int error2 = 2 * error1;
         if (error2 > -1 * dy) {
 
             error1 -= dy;
@@ -131,8 +131,14 @@ void grid_update_vis(char* mainGrid, char* localMap, int loc) {
     // loop through and check the visibility of each coordinate in mainGrid
     for (int i = 0; i < strlen(mainGrid); i++) {
 
+        if (mainGrid[i] == '\n') {
+
+            continue;
+
+        }
+        
         // if the character/location is visible, then copy that to localMap to make it visible to the client
-        if grid_isVisible(mainGrid, i, loc) {
+        if (grid_isVisible(mainGrid, i, loc)) {
 
             strcpy(mainGrid[i], localMap[i]);
 
