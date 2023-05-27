@@ -23,6 +23,7 @@ all:
 	cd $L; cp $L-given.a $L.a
 	make -C support
 	make server
+	make client
 
 # for memory-leak tests
 VALGRIND = valgrind --leak-check=full --show-leak-kinds=all
@@ -32,12 +33,13 @@ VALGRIND = valgrind --leak-check=full --show-leak-kinds=all
 server: $(OBJS) $(LLIBS)
 	$(CC) $(CFLAGS) server.o $(LLIBS) $(LIBS) -o $@
 
-server.o: $S/grid.h $S/log.h $S/message.h $L/hashtable.h $L/file.h $L/mem.h
+server.o: $S/grid.h $S/log.h $S/message.h $L/counters.h $L/file.h $L/mem.h
+
 
 client: $(OBJS) $(LLIBS)
 	$(CC) $(CFLAGS) client.o $(LLIBS) $(LIBS) -o $@
 
-client.o: $L/hashtable.h $L/file.h $L/mem.h
+client.o: $S/grid.h $S/log.h $S/message.h $L/counters.h $L/file.h $L/mem.h
 
 
 test: testing.sh

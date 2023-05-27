@@ -1,15 +1,15 @@
 START OF LOG
-Received message from 127.0.0.1:59246, 
-message: OK O
+Received message from 127.0.0.1:45214, 
+message: OK A
 
-OK message logs client at letter: O
-Received message from 127.0.0.1:59246, 
+OK message logs client at letter: A
+Received message from 127.0.0.1:45214, 
 message: GRID 21 79
 
-Received message from 127.0.0.1:59246, 
-message: GOLD 0 0 206
+Received message from 127.0.0.1:45214, 
+message: GOLD 0 0 250
 
-Received message from 127.0.0.1:59246, 
+Received message from 127.0.0.1:45214, 
 message: DISPLAY
                                                                                
                                                                                
@@ -17,11 +17,11 @@ message: DISPLAY
                                                                                
                                                                                
                                                                                
-               +-----------+                                                   
-               #..G.@.*....#                                                   
-               |.....*.....|                                                   
-               +-----------+                                                   
-                                                                               
+                                           +--------#+                         
+                                           |......*..|                         
+                                           |.........|                         
+                                           #..@.*....|                         
+                                           +----#----+                         
                                                                                
                                                                                
                                                                                
@@ -34,17 +34,13 @@ message: DISPLAY
                                                                                
 
 
-Received keystroke: h
+Received keystroke: j
 
-Received keystroke: h
+Received keystroke: k
 
-Received keystroke: h
+Received keystroke: l
 
-Received keystroke: h
+Received keystroke: l
 
-Received keystroke: h
-
-Received keystroke: h
-
-Received keystroke: h
+Received keystroke: i
 

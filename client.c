@@ -28,6 +28,8 @@ typedef struct game {
 	char letter;  // the letter corresponding to this player
     bool init;
     FILE *log;
+    char* ServerHost;
+    char* ServerPort;
 } game_t;
 
 /*********************** global ***********************/
@@ -51,16 +53,13 @@ static void game_delete(void);
 /**************** main ***************/
 
 int main(const int argc, char* argv[]) {
-    char* serverHost;
-    char* serverPort;
-    addr_t serverAddress;
     char* message;
 
     int parsed = parseArgs(argc, argv);
     
     if (parsed == 1 || parsed == 0) {
-        serverHost = argv[1]; // why not assign memory?
-        serverPort = argv[2];
+        game->ServerHost = argv[1]; // why not assign memory?
+        game->ServerPort = argv[2];
         
         if (parsed == 0) {
             message = "SPECTATE";
@@ -71,13 +70,13 @@ int main(const int argc, char* argv[]) {
         }
 
         message_init(stderr);
-        message_setAddr(serverHost, serverPort, &serverAddress);
-        message_send(serverAddress, message); // client speaks first
+        message_setAddr(game->ServerHost, game->ServerPort, &game->server);
+        message_send(game->server, message); // client speaks first
 
         FILE* fp = fopen("client.log", "w");
 
         flog_init(fp);
-        game->server = serverAddress;
+        game->server = game->server;
         game->log = fp;
 
         printf("Enter handle input\n");
@@ -136,28 +135,9 @@ static bool handleInput(void* arg) {
         // logs keystroke
         flog_c(game->log, "Received keystroke: %c\n", c);
 
-        switch(c) {
-            case 'h':   message_send(game->server, "KEY h"); break; // move cursor left
-            case 'l':   message_send(game->server, "KEY l"); break; // move cursor right
-            case 'j':   message_send(game->server, "KEY j"); break; // move cursor up
-            case 'k':   message_send(game->server, "KEY k"); break; // move cursor down
-            // case 'y':   message_send(*server, "KEY y"); break; // move cursor up left
-            // case 'u':   message_send(*server, "KEY u"); break; // move cursor up right
-            // case 'b':   message_send(*server, "KEY b"); break; // move cursor down left
-            // case 'n':   message_send(*server, "KEY n"); break; // move cursor down right
-
-            // case 'H':   message_send(*server, "KEY H"); break; // move cursor far left
-            // case 'L':   message_send(*server, "KEY L"); break; // move cursor far right
-            // case 'J':   message_send(*server, "KEY J"); break; // move cursor far up
-            // case 'K':   message_send(*server, "KEY K"); break; // move cursor far down
-            // case 'Y':   message_send(*server, "KEY Y"); break; // move cursor far up left
-            // case 'U':   message_send(*server, "KEY U"); break; // move cursor far up right
-            // case 'B':   message_send(*server, "KEY B"); break; // move cursor far down left
-            // case 'N':   message_send(*server, "KEY N"); break; // move cursor far down right
-
-            case 'Q':   message_send(game->server, "KEY Q"); break; // quit
-        }
-
+        char* KEYmessage = (char*)mem_malloc_assert(5 * sizeof(char), "Error: Memory allocation failed. \n");
+        sprintf(KEYmessage, "KEY %c", c);
+        message_send(game->server, KEYmessage);
     }
 
     return false;
