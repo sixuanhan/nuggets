@@ -279,8 +279,8 @@ typedef struct game {
     char* mainGrid;  // the grid that contains all information (spectator's view)
 	int numPlayers;  // the number of players that have joined the games
 	int goldRemaining;  // the number of unclaimed nuggets
-	player_t* players[MaxPlayers];  // an array of players
-	addr_t* spectator; // the spectator's address
+	player_t** players;  // an array of players
+    addr_t* spectator; // the spectator's address
 	counters_t* nuggetsInPile;  // where all the gold is and how many nuggets there are in each pile
 } game_t;
 ```
@@ -292,7 +292,8 @@ typedef struct player {
     char* username;
 	char letterID;
 	int gold;  // how many nuggets they have
-	int loc;
+	int loc;    // a 1d coordinate of the current location
+    char currSpot;  // the spot type that they player's standing on
 	char* localMap;  // the grid that this player can see
 	addr_t* address;
 } player_t;
@@ -322,7 +323,7 @@ static void game_delete(game_t* game);
 
 This function will initialize a new player struct and return its pointer.
 ```c
-static void game_delete();
+static player_t* player_new(void);
 ```
 
 
@@ -377,6 +378,9 @@ static void game_delete();
 	initialize loc to a random number in [0, NRxNC-1]
 	while the coordinate does not represent an empty room spot in mainGrid
 		set loc to a random number in [0, NRxNC-1] to be the gold drop coordinate again
+	update the player's map to show @
+	remember the current spot that the player is standing on
+	update the player's map to show the player's letterID
 	call grid_update_vis
 
 
