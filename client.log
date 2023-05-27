@@ -1,0 +1,50 @@
+START OF LOG
+Received message from 127.0.0.1:59246, 
+message: OK O
+
+OK message logs client at letter: O
+Received message from 127.0.0.1:59246, 
+message: GRID 21 79
+
+Received message from 127.0.0.1:59246, 
+message: GOLD 0 0 206
+
+Received message from 127.0.0.1:59246, 
+message: DISPLAY
+                                                                               
+                                                                               
+                                                                               
+                                                                               
+                                                                               
+                                                                               
+               +-----------+                                                   
+               #..G.@.*....#                                                   
+               |.....*.....|                                                   
+               +-----------+                                                   
+                                                                               
+                                                                               
+                                                                               
+                                                                               
+                                                                               
+                                                                               
+                                                                               
+                                                                               
+                                                                               
+                                                                               
+                                                                               
+
+
+Received keystroke: h
+
+Received keystroke: h
+
+Received keystroke: h
+
+Received keystroke: h
+
+Received keystroke: h
+
+Received keystroke: h
+
+Received keystroke: h
+
