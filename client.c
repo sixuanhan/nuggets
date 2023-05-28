@@ -145,7 +145,6 @@ static bool handleInput(void* arg) {
 
 static bool handleMessage(void* arg, const addr_t from, const char* message) {
     // logs message and sender
-    printf("message: %s\n", message);
 
     flog_s(game->log, "Received message from %s, ", message_stringAddr(from));
     flog_s(game->log, "message: %s\n", message);
@@ -227,7 +226,9 @@ static bool handleDISPLAY(const char* message) {
         game->init = false;
     }
 
-    mvprintw(1, 0, message);
+    move(0, 0);
+    refresh();
+    printw("%s", message);
     refresh();
 
     return false;

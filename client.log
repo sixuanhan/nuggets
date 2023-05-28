@@ -1,21 +1,16 @@
 START OF LOG
-Received message from 127.0.0.1:54024, 
-message: OK A
+Received message from 127.0.0.1:42748, 
+message: OK E
 
-OK message logs client at letter: A
-Received message from 127.0.0.1:54024, 
+OK message logs client at letter: E
+Received message from 127.0.0.1:42748, 
 message: GRID 21 79
 
-Received message from 127.0.0.1:54024, 
-message: GOLD 0 0 250
+Received message from 127.0.0.1:42748, 
+message: GOLD 0 0 218
 
-Received message from 127.0.0.1:54024, 
+Received message from 127.0.0.1:42748, 
 message: DISPLAY
-  +----------+                                                                 
-  |..*.....@.|                                                                 
-  |......*..*#                                                                 
-  |..........|                                                                 
-  +---------#+                                                                 
                                                                                
                                                                                
                                                                                
@@ -28,305 +23,1924 @@ message: DISPLAY
                                                                                
                                                                                
                                                                                
-                                                                               
-                                                                               
-                                                                               
-                                                                               
+                           ------------+                                       
+                            ...........|                                       
+                            ...........|                                       
+                            +..........|                                       
+                            |B.........#                                       
+                            |..........|                                       
+                            |......A...|                                       
+                            |.@.D......|                                       
+                            +----------+                                       
 
 
-Received keystroke: h
+Received keystroke: 
 
-Received message from 127.0.0.1:54024, 
-message: DISPLAY
-  +----------+                                                                 
-  |..*....@..|                                                                 
-  |......*..*#                                                                 
-  |..........|                                                                 
-  +---------#+                                                                 
-                                                                               
-                                                                               
-                                                                               
-                                                                               
-                                                                               
-                                                                               
-                                                                               
-                                                                               
-                                                                               
-                                                                               
-                                                                               
-                                                                               
-                                                                               
-                                                                               
-                                                                               
-                                                                               
+Received keystroke: [
 
+Received keystroke: A
 
-Received keystroke: h
-
-Received message from 127.0.0.1:54024, 
-message: DISPLAY
-  +----------+                                                                 
-  |..*...@...|                                                                 
-  |......*..*#                                                                 
-  |..........|                                                                 
-  +---------#+                                                                 
-                                                                               
-                                                                               
-                                                                               
-                                                                               
-                                                                               
-                                                                               
-                                                                               
-                                                                               
-                                                                               
-                                                                               
-                                                                               
-                                                                               
-                                                                               
-                                                                               
-                                                                               
-                                                                               
-
-
-Received keystroke: h
-
-Received message from 127.0.0.1:54024, 
-message: DISPLAY
-  +----------+                                                                 
-  |..*..@....|                                                                 
-  |......*..*#                                                                 
-  |..........|                                                                 
-  +---------#+                                                                 
-                                                                               
-                                                                               
-                                                                               
-                                                                               
-                                                                               
-                                                                               
-                                                                               
-                                                                               
-                                                                               
-                                                                               
-                                                                               
-                                                                               
-                                                                               
-                                                                               
-                                                                               
-                                                                               
-
-
-Received keystroke: l
-
-Received message from 127.0.0.1:54024, 
-message: DISPLAY
-  +----------+                                                                 
-  |..*...@...|                                                                 
-  |......*..*#                                                                 
-  |..........|                                                                 
-  +---------#+                                                                 
-                                                                               
-                                                                               
-                                                                               
-                                                                               
-                                                                               
-                                                                               
-                                                                               
-                                                                               
-                                                                               
-                                                                               
-                                                                               
-                                                                               
-                                                                               
-                                                                               
-                                                                               
-                                                                               
-
-
-Received keystroke: l
-
-Received message from 127.0.0.1:54024, 
-message: DISPLAY
-  +----------+                                                                 
-  |..*....@..|                                                                 
-  |......*..*#                                                                 
-  |..........|                                                                 
-  +---------#+                                                                 
-                                                                               
-                                                                               
-                                                                               
-                                                                               
-                                                                               
-                                                                               
-                                                                               
-                                                                               
-                                                                               
-                                                                               
-                                                                               
-                                                                               
-                                                                               
-                                                                               
-                                                                               
-                                                                               
-
-
-Received keystroke: l
-
-Received message from 127.0.0.1:54024, 
-message: DISPLAY
-  +----------+                                                                 
-  |..*.....@.|                                                                 
-  |......*..*#                                                                 
-  |..........|                                                                 
-  +---------#+                                                                 
-                                                                               
-                                                                               
-                                                                               
-                                                                               
-                                                                               
-                                                                               
-                                                                               
-                                                                               
-                                                                               
-                                                                               
-                                                                               
-                                                                               
-                                                                               
-                                                                               
-                                                                               
-                                                                               
-
-
-Received keystroke: k
-
-Received keystroke: j
-
-Received message from 127.0.0.1:54024, 
-message: DISPLAY
-  +----------+                                                                 
-  |..*.......|                                                                 
-  |......*.@*#                                                                 
-  |..........|                                                                 
-  +---------#+                                                                 
-                                                                               
-                                                                               
-                                                                               
-                                                                               
-                                                                               
-                                                                               
-                                                                               
-                                                                               
-                                                                               
-                                                                               
-                                                                               
-                                                                               
-                                                                               
-                                                                               
-                                                                               
-                                                                               
-
-
-Received keystroke: h
-
-Received message from 127.0.0.1:54024, 
-message: DISPLAY
-  +----------+                                                                 
-  |..*.......|                                                                 
-  |......*@.*#                                                                 
-  |..........|                                                                 
-  +---------#+                                                                 
-                                                                               
-                                                                               
-                                                                               
-                                                                               
-                                                                               
-                                                                               
-                                                                               
-                                                                               
-                                                                               
-                                                                               
-                                                                               
-                                                                               
-                                                                               
-                                                                               
-                                                                               
-                                                                               
-
-
-Received keystroke: h
-
-Received message from 127.0.0.1:54024, 
-message: GOLD 0 16 234
-
-Received message from 127.0.0.1:54024, 
-message: GOLD 16 16 234
-
-Received message from 127.0.0.1:54024, 
-message: DISPLAY
-  +----------+                                                                 
-  |..*.......|                                                                 
-  |......@..*#                                                                 
-  |..........|                                                                 
-  +---------#+                                                                 
-                                                                               
-                                                                               
-                                                                               
-                                                                               
-                                                                               
-                                                                               
-                                                                               
-                                                                               
-                                                                               
-                                                                               
-                                                                               
-                                                                               
-                                                                               
-                                                                               
-                                                                               
-                                                                               
-
-
-Received keystroke: h
-
-Received message from 127.0.0.1:54024, 
-message: DISPLAY
-  +----------+                                                                 
-  |..*.......|                                                                 
-  |.....@...*#                                                                 
-  |..........|                                                                 
-  +---------#+                                                                 
-                                                                               
-                                                                               
-                                                                               
-                                                                               
-                                                                               
-                                                                               
-                                                                               
-                                                                               
-                                                                               
-                                                                               
-                                                                               
-                                                                               
-                                                                               
-                                                                               
-                                                                               
-                                                                               
-
-
-Received keystroke: q
-
-Received message from 127.0.0.1:54024, 
+Received message from 127.0.0.1:42748, 
 message: ERROR usage: unknown keystroke
 
 
 ERROR: usage: unknown keystroke
 
-Received keystroke: Q
-
-Received message from 127.0.0.1:54024, 
-message: QUIT Thanks for playing!
+Received message from 127.0.0.1:42748, 
+message: ERROR usage: unknown keystroke
 
 
-Player A quitting...
-Reason: Thanks for playing!
+ERROR: usage: unknown keystroke
 
-END OF LOG
+Received message from 127.0.0.1:42748, 
+message: ERROR usage: unknown keystroke
+
+
+ERROR: usage: unknown keystroke
+
+Received keystroke: 
+
+Received keystroke: [
+
+Received keystroke: A
+
+Received message from 127.0.0.1:42748, 
+message: ERROR usage: unknown keystroke
+
+
+ERROR: usage: unknown keystroke
+
+Received message from 127.0.0.1:42748, 
+message: ERROR usage: unknown keystroke
+
+
+ERROR: usage: unknown keystroke
+
+Received message from 127.0.0.1:42748, 
+message: ERROR usage: unknown keystroke
+
+
+ERROR: usage: unknown keystroke
+
+Received keystroke: 
+
+Received keystroke: [
+
+Received keystroke: A
+
+Received message from 127.0.0.1:42748, 
+message: ERROR usage: unknown keystroke
+
+
+ERROR: usage: unknown keystroke
+
+Received message from 127.0.0.1:42748, 
+message: ERROR usage: unknown keystroke
+
+
+ERROR: usage: unknown keystroke
+
+Received message from 127.0.0.1:42748, 
+message: ERROR usage: unknown keystroke
+
+
+ERROR: usage: unknown keystroke
+
+Received keystroke: 
+
+Received keystroke: [
+
+Received keystroke: A
+
+Received message from 127.0.0.1:42748, 
+message: ERROR usage: unknown keystroke
+
+
+ERROR: usage: unknown keystroke
+
+Received message from 127.0.0.1:42748, 
+message: ERROR usage: unknown keystroke
+
+
+ERROR: usage: unknown keystroke
+
+Received message from 127.0.0.1:42748, 
+message: ERROR usage: unknown keystroke
+
+
+ERROR: usage: unknown keystroke
+
+Received keystroke: 
+
+Received keystroke: [
+
+Received keystroke: A
+
+Received message from 127.0.0.1:42748, 
+message: ERROR usage: unknown keystroke
+
+
+ERROR: usage: unknown keystroke
+
+Received message from 127.0.0.1:42748, 
+message: ERROR usage: unknown keystroke
+
+
+ERROR: usage: unknown keystroke
+
+Received message from 127.0.0.1:42748, 
+message: ERROR usage: unknown keystroke
+
+
+ERROR: usage: unknown keystroke
+
+Received keystroke: 
+
+Received keystroke: [
+
+Received keystroke: A
+
+Received message from 127.0.0.1:42748, 
+message: ERROR usage: unknown keystroke
+
+
+ERROR: usage: unknown keystroke
+
+Received message from 127.0.0.1:42748, 
+message: ERROR usage: unknown keystroke
+
+
+ERROR: usage: unknown keystroke
+
+Received message from 127.0.0.1:42748, 
+message: ERROR usage: unknown keystroke
+
+
+ERROR: usage: unknown keystroke
+
+Received keystroke: 
+
+Received keystroke: [
+
+Received keystroke: A
+
+Received message from 127.0.0.1:42748, 
+message: ERROR usage: unknown keystroke
+
+
+ERROR: usage: unknown keystroke
+
+Received message from 127.0.0.1:42748, 
+message: ERROR usage: unknown keystroke
+
+
+ERROR: usage: unknown keystroke
+
+Received message from 127.0.0.1:42748, 
+message: ERROR usage: unknown keystroke
+
+
+ERROR: usage: unknown keystroke
+
+Received keystroke: 
+
+Received keystroke: [
+
+Received keystroke: A
+
+Received message from 127.0.0.1:42748, 
+message: ERROR usage: unknown keystroke
+
+
+ERROR: usage: unknown keystroke
+
+Received message from 127.0.0.1:42748, 
+message: ERROR usage: unknown keystroke
+
+
+ERROR: usage: unknown keystroke
+
+Received message from 127.0.0.1:42748, 
+message: ERROR usage: unknown keystroke
+
+
+ERROR: usage: unknown keystroke
+
+Received keystroke: 
+
+Received keystroke: [
+
+Received keystroke: A
+
+Received message from 127.0.0.1:42748, 
+message: ERROR usage: unknown keystroke
+
+
+ERROR: usage: unknown keystroke
+
+Received message from 127.0.0.1:42748, 
+message: ERROR usage: unknown keystroke
+
+
+ERROR: usage: unknown keystroke
+
+Received message from 127.0.0.1:42748, 
+message: ERROR usage: unknown keystroke
+
+
+ERROR: usage: unknown keystroke
+
+Received keystroke: 
+
+Received keystroke: [
+
+Received keystroke: A
+
+Received message from 127.0.0.1:42748, 
+message: ERROR usage: unknown keystroke
+
+
+ERROR: usage: unknown keystroke
+
+Received message from 127.0.0.1:42748, 
+message: ERROR usage: unknown keystroke
+
+
+ERROR: usage: unknown keystroke
+
+Received message from 127.0.0.1:42748, 
+message: ERROR usage: unknown keystroke
+
+
+ERROR: usage: unknown keystroke
+
+Received keystroke: 
+
+Received keystroke: [
+
+Received keystroke: A
+
+Received message from 127.0.0.1:42748, 
+message: ERROR usage: unknown keystroke
+
+
+ERROR: usage: unknown keystroke
+
+Received message from 127.0.0.1:42748, 
+message: ERROR usage: unknown keystroke
+
+
+ERROR: usage: unknown keystroke
+
+Received message from 127.0.0.1:42748, 
+message: ERROR usage: unknown keystroke
+
+
+ERROR: usage: unknown keystroke
+
+Received keystroke: 
+
+Received keystroke: [
+
+Received keystroke: B
+
+Received message from 127.0.0.1:42748, 
+message: ERROR usage: unknown keystroke
+
+
+ERROR: usage: unknown keystroke
+
+Received message from 127.0.0.1:42748, 
+message: ERROR usage: unknown keystroke
+
+
+ERROR: usage: unknown keystroke
+
+Received keystroke: 
+
+Received keystroke: [
+
+Received keystroke: B
+
+Received keystroke: 
+
+Received message from 127.0.0.1:42748, 
+message: ERROR usage: unknown keystroke
+
+
+ERROR: usage: unknown keystroke
+
+Received keystroke: [
+
+Received message from 127.0.0.1:42748, 
+message: ERROR usage: unknown keystroke
+
+
+ERROR: usage: unknown keystroke
+
+Received keystroke: B
+
+Received message from 127.0.0.1:42748, 
+message: ERROR usage: unknown keystroke
+
+
+ERROR: usage: unknown keystroke
+
+Received message from 127.0.0.1:42748, 
+message: ERROR usage: unknown keystroke
+
+
+ERROR: usage: unknown keystroke
+
+Received keystroke: 
+
+Received keystroke: [
+
+Received keystroke: B
+
+Received keystroke: 
+
+Received message from 127.0.0.1:42748, 
+message: ERROR usage: unknown keystroke
+
+
+ERROR: usage: unknown keystroke
+
+Received keystroke: [
+
+Received message from 127.0.0.1:42748, 
+message: ERROR usage: unknown keystroke
+
+
+ERROR: usage: unknown keystroke
+
+Received keystroke: B
+
+Received message from 127.0.0.1:42748, 
+message: ERROR usage: unknown keystroke
+
+
+ERROR: usage: unknown keystroke
+
+Received message from 127.0.0.1:42748, 
+message: ERROR usage: unknown keystroke
+
+
+ERROR: usage: unknown keystroke
+
+Received keystroke: 
+
+Received keystroke: [
+
+Received keystroke: B
+
+Received keystroke: 
+
+Received keystroke: [
+
+Received keystroke: B
+
+Received keystroke: 
+
+Received message from 127.0.0.1:42748, 
+message: ERROR usage: unknown keystroke
+
+
+ERROR: usage: unknown keystroke
+
+Received keystroke: [
+
+Received message from 127.0.0.1:42748, 
+message: ERROR usage: unknown keystroke
+
+
+ERROR: usage: unknown keystroke
+
+Received keystroke: B
+
+Received message from 127.0.0.1:42748, 
+message: ERROR usage: unknown keystroke
+
+
+ERROR: usage: unknown keystroke
+
+Received message from 127.0.0.1:42748, 
+message: ERROR usage: unknown keystroke
+
+
+ERROR: usage: unknown keystroke
+
+Received message from 127.0.0.1:42748, 
+message: ERROR usage: unknown keystroke
+
+
+ERROR: usage: unknown keystroke
+
+Received message from 127.0.0.1:42748, 
+message: ERROR usage: unknown keystroke
+
+
+ERROR: usage: unknown keystroke
+
+Received keystroke: 
+
+Received keystroke: [
+
+Received keystroke: B
+
+Received keystroke: 
+
+Received message from 127.0.0.1:42748, 
+message: ERROR usage: unknown keystroke
+
+
+ERROR: usage: unknown keystroke
+
+Received keystroke: [
+
+Received message from 127.0.0.1:42748, 
+message: ERROR usage: unknown keystroke
+
+
+ERROR: usage: unknown keystroke
+
+Received keystroke: B
+
+Received message from 127.0.0.1:42748, 
+message: ERROR usage: unknown keystroke
+
+
+ERROR: usage: unknown keystroke
+
+Received message from 127.0.0.1:42748, 
+message: ERROR usage: unknown keystroke
+
+
+ERROR: usage: unknown keystroke
+
+Received keystroke: 
+
+Received keystroke: [
+
+Received keystroke: B
+
+Received keystroke: 
+
+Received keystroke: [
+
+Received message from 127.0.0.1:42748, 
+message: ERROR usage: unknown keystroke
+
+
+ERROR: usage: unknown keystroke
+
+Received keystroke: B
+
+Received message from 127.0.0.1:42748, 
+message: ERROR usage: unknown keystroke
+
+
+ERROR: usage: unknown keystroke
+
+Received keystroke: 
+
+Received message from 127.0.0.1:42748, 
+message: ERROR usage: unknown keystroke
+
+
+ERROR: usage: unknown keystroke
+
+Received keystroke: [
+
+Received message from 127.0.0.1:42748, 
+message: ERROR usage: unknown keystroke
+
+
+ERROR: usage: unknown keystroke
+
+Received keystroke: B
+
+Received message from 127.0.0.1:42748, 
+message: ERROR usage: unknown keystroke
+
+
+ERROR: usage: unknown keystroke
+
+Received message from 127.0.0.1:42748, 
+message: ERROR usage: unknown keystroke
+
+
+ERROR: usage: unknown keystroke
+
+Received keystroke: 
+
+Received keystroke: [
+
+Received keystroke: B
+
+Received keystroke: 
+
+Received keystroke: [
+
+Received message from 127.0.0.1:42748, 
+message: ERROR usage: unknown keystroke
+
+
+ERROR: usage: unknown keystroke
+
+Received keystroke: B
+
+Received message from 127.0.0.1:42748, 
+message: ERROR usage: unknown keystroke
+
+
+ERROR: usage: unknown keystroke
+
+Received message from 127.0.0.1:42748, 
+message: ERROR usage: unknown keystroke
+
+
+ERROR: usage: unknown keystroke
+
+Received message from 127.0.0.1:42748, 
+message: ERROR usage: unknown keystroke
+
+
+ERROR: usage: unknown keystroke
+
+Received keystroke: 
+
+Received keystroke: [
+
+Received keystroke: B
+
+Received keystroke: 
+
+Received keystroke: [
+
+Received message from 127.0.0.1:42748, 
+message: ERROR usage: unknown keystroke
+
+
+ERROR: usage: unknown keystroke
+
+Received keystroke: B
+
+Received message from 127.0.0.1:42748, 
+message: ERROR usage: unknown keystroke
+
+
+ERROR: usage: unknown keystroke
+
+Received keystroke: 
+
+Received message from 127.0.0.1:42748, 
+message: ERROR usage: unknown keystroke
+
+
+ERROR: usage: unknown keystroke
+
+Received keystroke: [
+
+Received message from 127.0.0.1:42748, 
+message: ERROR usage: unknown keystroke
+
+
+ERROR: usage: unknown keystroke
+
+Received keystroke: B
+
+Received message from 127.0.0.1:42748, 
+message: ERROR usage: unknown keystroke
+
+
+ERROR: usage: unknown keystroke
+
+Received message from 127.0.0.1:42748, 
+message: ERROR usage: unknown keystroke
+
+
+ERROR: usage: unknown keystroke
+
+Received keystroke: 
+
+Received keystroke: [
+
+Received keystroke: B
+
+Received keystroke: 
+
+Received message from 127.0.0.1:42748, 
+message: ERROR usage: unknown keystroke
+
+
+ERROR: usage: unknown keystroke
+
+Received keystroke: [
+
+Received message from 127.0.0.1:42748, 
+message: ERROR usage: unknown keystroke
+
+
+ERROR: usage: unknown keystroke
+
+Received keystroke: B
+
+Received message from 127.0.0.1:42748, 
+message: ERROR usage: unknown keystroke
+
+
+ERROR: usage: unknown keystroke
+
+Received message from 127.0.0.1:42748, 
+message: ERROR usage: unknown keystroke
+
+
+ERROR: usage: unknown keystroke
+
+Received keystroke: 
+
+Received keystroke: [
+
+Received keystroke: B
+
+Received keystroke: 
+
+Received keystroke: [
+
+Received message from 127.0.0.1:42748, 
+message: ERROR usage: unknown keystroke
+
+
+ERROR: usage: unknown keystroke
+
+Received keystroke: B
+
+Received message from 127.0.0.1:42748, 
+message: ERROR usage: unknown keystroke
+
+
+ERROR: usage: unknown keystroke
+
+Received keystroke: 
+
+Received message from 127.0.0.1:42748, 
+message: ERROR usage: unknown keystroke
+
+
+ERROR: usage: unknown keystroke
+
+Received keystroke: [
+
+Received message from 127.0.0.1:42748, 
+message: ERROR usage: unknown keystroke
+
+
+ERROR: usage: unknown keystroke
+
+Received keystroke: B
+
+Received message from 127.0.0.1:42748, 
+message: ERROR usage: unknown keystroke
+
+
+ERROR: usage: unknown keystroke
+
+Received message from 127.0.0.1:42748, 
+message: ERROR usage: unknown keystroke
+
+
+ERROR: usage: unknown keystroke
+
+Received keystroke: 
+
+Received keystroke: [
+
+Received keystroke: B
+
+Received keystroke: 
+
+Received keystroke: [
+
+Received message from 127.0.0.1:42748, 
+message: ERROR usage: unknown keystroke
+
+
+ERROR: usage: unknown keystroke
+
+Received keystroke: B
+
+Received message from 127.0.0.1:42748, 
+message: ERROR usage: unknown keystroke
+
+
+ERROR: usage: unknown keystroke
+
+Received message from 127.0.0.1:42748, 
+message: ERROR usage: unknown keystroke
+
+
+ERROR: usage: unknown keystroke
+
+Received message from 127.0.0.1:42748, 
+message: ERROR usage: unknown keystroke
+
+
+ERROR: usage: unknown keystroke
+
+Received keystroke: 
+
+Received keystroke: [
+
+Received keystroke: B
+
+Received keystroke: 
+
+Received keystroke: [
+
+Received message from 127.0.0.1:42748, 
+message: ERROR usage: unknown keystroke
+
+
+ERROR: usage: unknown keystroke
+
+Received keystroke: B
+
+Received message from 127.0.0.1:42748, 
+message: ERROR usage: unknown keystroke
+
+
+ERROR: usage: unknown keystroke
+
+Received keystroke: 
+
+Received message from 127.0.0.1:42748, 
+message: ERROR usage: unknown keystroke
+
+
+ERROR: usage: unknown keystroke
+
+Received keystroke: [
+
+Received message from 127.0.0.1:42748, 
+message: ERROR usage: unknown keystroke
+
+
+ERROR: usage: unknown keystroke
+
+Received keystroke: B
+
+Received message from 127.0.0.1:42748, 
+message: ERROR usage: unknown keystroke
+
+
+ERROR: usage: unknown keystroke
+
+Received message from 127.0.0.1:42748, 
+message: ERROR usage: unknown keystroke
+
+
+ERROR: usage: unknown keystroke
+
+Received keystroke: 
+
+Received keystroke: [
+
+Received keystroke: B
+
+Received keystroke: 
+
+Received keystroke: [
+
+Received message from 127.0.0.1:42748, 
+message: ERROR usage: unknown keystroke
+
+
+ERROR: usage: unknown keystroke
+
+Received keystroke: B
+
+Received message from 127.0.0.1:42748, 
+message: ERROR usage: unknown keystroke
+
+
+ERROR: usage: unknown keystroke
+
+Received message from 127.0.0.1:42748, 
+message: ERROR usage: unknown keystroke
+
+
+ERROR: usage: unknown keystroke
+
+Received message from 127.0.0.1:42748, 
+message: ERROR usage: unknown keystroke
+
+
+ERROR: usage: unknown keystroke
+
+Received keystroke: 
+
+Received keystroke: [
+
+Received keystroke: B
+
+Received keystroke: 
+
+Received keystroke: [
+
+Received message from 127.0.0.1:42748, 
+message: ERROR usage: unknown keystroke
+
+
+ERROR: usage: unknown keystroke
+
+Received keystroke: B
+
+Received message from 127.0.0.1:42748, 
+message: ERROR usage: unknown keystroke
+
+
+ERROR: usage: unknown keystroke
+
+Received message from 127.0.0.1:42748, 
+message: ERROR usage: unknown keystroke
+
+
+ERROR: usage: unknown keystroke
+
+Received message from 127.0.0.1:42748, 
+message: ERROR usage: unknown keystroke
+
+
+ERROR: usage: unknown keystroke
+
+Received keystroke: 
+
+Received keystroke: [
+
+Received keystroke: B
+
+Received keystroke: 
+
+Received message from 127.0.0.1:42748, 
+message: ERROR usage: unknown keystroke
+
+
+ERROR: usage: unknown keystroke
+
+Received keystroke: [
+
+Received message from 127.0.0.1:42748, 
+message: ERROR usage: unknown keystroke
+
+
+ERROR: usage: unknown keystroke
+
+Received keystroke: B
+
+Received message from 127.0.0.1:42748, 
+message: ERROR usage: unknown keystroke
+
+
+ERROR: usage: unknown keystroke
+
+Received message from 127.0.0.1:42748, 
+message: ERROR usage: unknown keystroke
+
+
+ERROR: usage: unknown keystroke
+
+Received keystroke: 
+
+Received keystroke: [
+
+Received keystroke: B
+
+Received keystroke: 
+
+Received keystroke: [
+
+Received message from 127.0.0.1:42748, 
+message: ERROR usage: unknown keystroke
+
+
+ERROR: usage: unknown keystroke
+
+Received keystroke: B
+
+Received message from 127.0.0.1:42748, 
+message: ERROR usage: unknown keystroke
+
+
+ERROR: usage: unknown keystroke
+
+Received message from 127.0.0.1:42748, 
+message: ERROR usage: unknown keystroke
+
+
+ERROR: usage: unknown keystroke
+
+Received message from 127.0.0.1:42748, 
+message: ERROR usage: unknown keystroke
+
+
+ERROR: usage: unknown keystroke
+
+Received keystroke: 
+
+Received keystroke: [
+
+Received keystroke: B
+
+Received message from 127.0.0.1:42748, 
+message: ERROR usage: unknown keystroke
+
+
+ERROR: usage: unknown keystroke
+
+Received message from 127.0.0.1:42748, 
+message: ERROR usage: unknown keystroke
+
+
+ERROR: usage: unknown keystroke
+
+Received keystroke: 
+
+Received keystroke: [
+
+Received keystroke: B
+
+Received keystroke: 
+
+Received keystroke: [
+
+Received message from 127.0.0.1:42748, 
+message: ERROR usage: unknown keystroke
+
+
+ERROR: usage: unknown keystroke
+
+Received keystroke: B
+
+Received message from 127.0.0.1:42748, 
+message: ERROR usage: unknown keystroke
+
+
+ERROR: usage: unknown keystroke
+
+Received message from 127.0.0.1:42748, 
+message: ERROR usage: unknown keystroke
+
+
+ERROR: usage: unknown keystroke
+
+Received message from 127.0.0.1:42748, 
+message: ERROR usage: unknown keystroke
+
+
+ERROR: usage: unknown keystroke
+
+Received keystroke: 
+
+Received keystroke: [
+
+Received keystroke: B
+
+Received message from 127.0.0.1:42748, 
+message: ERROR usage: unknown keystroke
+
+
+ERROR: usage: unknown keystroke
+
+Received message from 127.0.0.1:42748, 
+message: ERROR usage: unknown keystroke
+
+
+ERROR: usage: unknown keystroke
+
+Received keystroke: 
+
+Received keystroke: [
+
+Received keystroke: B
+
+Received message from 127.0.0.1:42748, 
+message: ERROR usage: unknown keystroke
+
+
+ERROR: usage: unknown keystroke
+
+Received message from 127.0.0.1:42748, 
+message: ERROR usage: unknown keystroke
+
+
+ERROR: usage: unknown keystroke
+
+Received keystroke: 
+
+Received keystroke: [
+
+Received keystroke: B
+
+Received message from 127.0.0.1:42748, 
+message: ERROR usage: unknown keystroke
+
+
+ERROR: usage: unknown keystroke
+
+Received message from 127.0.0.1:42748, 
+message: ERROR usage: unknown keystroke
+
+
+ERROR: usage: unknown keystroke
+
+Received keystroke: 
+
+Received keystroke: [
+
+Received keystroke: B
+
+Received message from 127.0.0.1:42748, 
+message: ERROR usage: unknown keystroke
+
+
+ERROR: usage: unknown keystroke
+
+Received message from 127.0.0.1:42748, 
+message: ERROR usage: unknown keystroke
+
+
+ERROR: usage: unknown keystroke
+
+Received keystroke: 
+
+Received keystroke: [
+
+Received keystroke: B
+
+Received message from 127.0.0.1:42748, 
+message: ERROR usage: unknown keystroke
+
+
+ERROR: usage: unknown keystroke
+
+Received message from 127.0.0.1:42748, 
+message: ERROR usage: unknown keystroke
+
+
+ERROR: usage: unknown keystroke
+
+Received keystroke: 
+
+Received keystroke: [
+
+Received keystroke: B
+
+Received message from 127.0.0.1:42748, 
+message: ERROR usage: unknown keystroke
+
+
+ERROR: usage: unknown keystroke
+
+Received message from 127.0.0.1:42748, 
+message: ERROR usage: unknown keystroke
+
+
+ERROR: usage: unknown keystroke
+
+Received keystroke: 
+
+Received keystroke: [
+
+Received keystroke: B
+
+Received message from 127.0.0.1:42748, 
+message: ERROR usage: unknown keystroke
+
+
+ERROR: usage: unknown keystroke
+
+Received message from 127.0.0.1:42748, 
+message: ERROR usage: unknown keystroke
+
+
+ERROR: usage: unknown keystroke
+
+Received keystroke: 
+
+Received keystroke: [
+
+Received keystroke: B
+
+Received message from 127.0.0.1:42748, 
+message: ERROR usage: unknown keystroke
+
+
+ERROR: usage: unknown keystroke
+
+Received message from 127.0.0.1:42748, 
+message: ERROR usage: unknown keystroke
+
+
+ERROR: usage: unknown keystroke
+
+Received keystroke: 
+
+Received keystroke: [
+
+Received keystroke: B
+
+Received message from 127.0.0.1:42748, 
+message: ERROR usage: unknown keystroke
+
+
+ERROR: usage: unknown keystroke
+
+Received message from 127.0.0.1:42748, 
+message: ERROR usage: unknown keystroke
+
+
+ERROR: usage: unknown keystroke
+
+Received keystroke: 
+
+Received keystroke: [
+
+Received keystroke: B
+
+Received message from 127.0.0.1:42748, 
+message: ERROR usage: unknown keystroke
+
+
+ERROR: usage: unknown keystroke
+
+Received message from 127.0.0.1:42748, 
+message: ERROR usage: unknown keystroke
+
+
+ERROR: usage: unknown keystroke
+
+Received keystroke: 
+
+Received keystroke: [
+
+Received keystroke: B
+
+Received message from 127.0.0.1:42748, 
+message: ERROR usage: unknown keystroke
+
+
+ERROR: usage: unknown keystroke
+
+Received message from 127.0.0.1:42748, 
+message: ERROR usage: unknown keystroke
+
+
+ERROR: usage: unknown keystroke
+
+Received keystroke: j
+
+Received keystroke: 
+
+Received keystroke: [
+
+Received keystroke: B
+
+Received message from 127.0.0.1:42748, 
+message: ERROR usage: unknown keystroke
+
+
+ERROR: usage: unknown keystroke
+
+Received message from 127.0.0.1:42748, 
+message: ERROR usage: unknown keystroke
+
+
+ERROR: usage: unknown keystroke
+
+Received keystroke: 
+
+Received keystroke: [
+
+Received keystroke: B
+
+Received message from 127.0.0.1:42748, 
+message: ERROR usage: unknown keystroke
+
+
+ERROR: usage: unknown keystroke
+
+Received message from 127.0.0.1:42748, 
+message: ERROR usage: unknown keystroke
+
+
+ERROR: usage: unknown keystroke
+
+Received keystroke: 
+
+Received keystroke: [
+
+Received keystroke: B
+
+Received message from 127.0.0.1:42748, 
+message: ERROR usage: unknown keystroke
+
+
+ERROR: usage: unknown keystroke
+
+Received message from 127.0.0.1:42748, 
+message: ERROR usage: unknown keystroke
+
+
+ERROR: usage: unknown keystroke
+
+Received keystroke: 
+
+Received keystroke: [
+
+Received keystroke: B
+
+Received message from 127.0.0.1:42748, 
+message: ERROR usage: unknown keystroke
+
+
+ERROR: usage: unknown keystroke
+
+Received message from 127.0.0.1:42748, 
+message: ERROR usage: unknown keystroke
+
+
+ERROR: usage: unknown keystroke
+
+Received keystroke: k
+
+Received message from 127.0.0.1:42748, 
+message: DISPLAY
+                                                                               
+                                                                               
+                                                                               
+                                                                               
+                                                                               
+                                                                               
+                                                                               
+                                                                               
+                                                                               
+                                                                               
+                                                                               
+                                                                               
+                           ------------+                                       
+                           ............|                                       
+                            ...........|                                       
+                            +..........|                                       
+                            |B.........#                                       
+                            |..........|                                       
+                            |.@....A...|                                       
+                            |...D......|                                       
+                            +----------+                                       
+
+
+Received keystroke: l
+
+Received message from 127.0.0.1:42748, 
+message: DISPLAY
+                                                                               
+                                                                               
+                                                                               
+                                                                               
+                                                                               
+                                                                               
+                                                                               
+                                                                               
+                                                                               
+                                                                               
+                                                                               
+                                                                               
+                          -------------+                                       
+                           ............|                                       
+                            ...........|                                       
+                            +..........|                                       
+                            |B.........#                                       
+                            |..........|                                       
+                            |..@...A...|                                       
+                            |...D......|                                       
+                            +----------+                                       
+
+
+Received keystroke: l
+
+Received message from 127.0.0.1:42748, 
+message: DISPLAY
+                                                                               
+                                                                               
+                                                                               
+                                                                               
+                                                                               
+                                                                               
+                                                                               
+                                                                               
+                                                                               
+                                                                               
+                                                                               
+                                                                               
+                         --------------+                                       
+                          .............|                                       
+                           ............|                                       
+                            +..........|                                       
+                            |B.........#                                       
+                            |..........|                                       
+                            |...@..A...|                                       
+                            |...D......|                                       
+                            +----------+                                       
+
+
+Received keystroke: l
+
+Received message from 127.0.0.1:42748, 
+message: DISPLAY
+                                                                               
+                                                                               
+                                                                               
+                                                                               
+                                                                               
+                                                                               
+                                                                               
+                                                                               
+                                                                               
+                                                                               
+                                                                               
+                                                                               
+                        ---------------+                                       
+                         ..............|                                       
+                           ............|                                       
+                            +..........|                                       
+                            |B.........#                                       
+                            |..........|                                       
+                            |....@.A...|                                       
+                            |...D......|                                       
+                            +----------+                                       
+
+
+Received keystroke: k
+
+Received message from 127.0.0.1:42748, 
+message: DISPLAY
+                                                                               
+                                                                               
+                                                                               
+                                                                               
+                                                                               
+                                                                               
+                                                                               
+                                                                               
+                                                                               
+                                                                               
+                                                                               
+                                                                               
+                     ------------------+                                       
+                        ...............|                                       
+                          .............|                                       
+                            +..........|                                       
+                            |B.........#                                       
+                            |....@.....|                                       
+                            |......A...|                                       
+                            |...D......|                                       
+                            +----------+                                       
+
+
+Received keystroke: i
+
+Received message from 127.0.0.1:42748, 
+message: ERROR usage: unknown keystroke
+
+
+ERROR: usage: unknown keystroke
+
+Received keystroke: i
+
+Received message from 127.0.0.1:42748, 
+message: ERROR usage: unknown keystroke
+
+
+ERROR: usage: unknown keystroke
+
+Received keystroke: i
+
+Received message from 127.0.0.1:42748, 
+message: ERROR usage: unknown keystroke
+
+
+ERROR: usage: unknown keystroke
+
+Received keystroke: l
+
+Received message from 127.0.0.1:42748, 
+message: DISPLAY
+                                                                               
+                                                                               
+                                                                               
+                                                                               
+                                                                               
+                                                                               
+                                                                               
+                                                                               
+                                                                               
+                                                                               
+                                                                               
+                                                                               
+                    -------------------+                                       
+                       ................|                                       
+                          .............|                                       
+                            +..........|                                       
+                            |B.........#                                       
+                            |.....@....|                                       
+                            |......A...|                                       
+                            |...D......|                                       
+                            +----------+                                       
+
+
+Received keystroke: l
+
+Received message from 127.0.0.1:42748, 
+message: DISPLAY
+                                                                               
+                                                                               
+                                                                               
+                                                                               
+                                                                               
+                                                                               
+                                                                               
+                                                                               
+                                                                               
+                                                                               
+                                                                               
+                                                                               
+                  ---------------------+                                       
+                      .................|                                       
+                         ..............|                                       
+                            +..........|                                       
+                            |B.........#                                       
+                            |......@...|                                       
+                            |......A...|                                       
+                            |...D......|                                       
+                            +----------+                                       
+
+
+Received keystroke: l
+
+Received message from 127.0.0.1:42748, 
+message: DISPLAY
+                                                                               
+                                                                               
+                                                                               
+                                                                               
+                                                                               
+                                                                               
+                                                                               
+                                                                               
+                                                                               
+                                                                               
+                                                                               
+                                                                               
+                 ----------------------+                                       
+                     ..................|                                       
+                         ..............|                                       
+                            +..........|                                       
+                            |B.........#                                       
+                            |.......@..|                                       
+                            |......A...|                                       
+                            |...D......|                                       
+                            +----------+                                       
+
+
+Received keystroke: k
+
+Received message from 127.0.0.1:42748, 
+message: DISPLAY
+                                                                               
+                                                                               
+                                                                               
+                                                                               
+                                                                               
+                                                                               
+                                                                               
+                                                                               
+                                                                               
+                                                                               
+                                                                               
+                                                                               
+     +---------------------------------+                                       
+             ..........................|                                       
+                     ..................|                                       
+                            +..........|                                       
+                            |B......@..#                                       
+                            |..........|                                       
+                            |......A...|                                       
+                            |...D......|                                       
+                            +----------+                                       
+
+
+Received keystroke: k
+
+Received message from 127.0.0.1:42748, 
+message: DISPLAY
+                                                                               
+                                                                               
+                                                                               
+                                                                               
+                                                                               
+                                                                               
+                                                                               
+                                                                               
+                                                                               
+                                                                               
+                                                                               
+                                                                               
+     +---------------------------------+                                       
+     |.................................|                                       
+     |.................................|                                       
+                            +.......@..|                                       
+                            |B.........#                                       
+                            |..........|                                       
+                            |......A...|                                       
+                            |...D......|                                       
+                            +----------+                                       
+
+
+Received keystroke: k
+
+Received message from 127.0.0.1:42748, 
+message: DISPLAY
+                                                                               
+                                                                               
+                                                                               
+                                                                               
+                                                                               
+                                                                               
+                                                                               
+                                                                               
+                                                                               
+                                                                               
+                                                                               
+                                                                               
+     +---------------------------------+                                       
+     |.................................|                                       
+     |..............................@..|                                       
+     |......+---------------+..........|                                       
+                            |B.........#                                       
+                            |..........|                                       
+                            |......A...|                                       
+                            |...D......|                                       
+                            +----------+                                       
+
+
+Received keystroke: j
+
+Received message from 127.0.0.1:42748, 
+message: DISPLAY
+                                                                               
+                                                                               
+                                                                               
+                                                                               
+                                                                               
+                                                                               
+                                                                               
+                                                                               
+                                                                               
+                                                                               
+                                                                               
+                                                                               
+     +---------------------------------+                                       
+     |.................................|                                       
+     |.................................|                                       
+     |......+---------------+.......@..|                                       
+                            |B.........#                                       
+                            |..........|                                       
+                            |......A...|                                       
+                            |...D......|                                       
+                            +----------+                                       
+
+
+Received keystroke: j
+
+Received message from 127.0.0.1:42748, 
+message: DISPLAY
+                                                                               
+                                                                               
+                                                                               
+                                                                               
+                                                                               
+                                                                               
+                                                                               
+                                                                               
+                                                                               
+                                                                               
+                                                                               
+                                                                               
+     +---------------------------------+                                       
+     |.................................|                                       
+     |.................................|                                       
+     |......+---------------+..........|                                       
+                            |B......@..#                                       
+                            |..........|                                       
+                            |......A...|                                       
+                            |...D......|                                       
+                            +----------+                                       
+
+
+Received keystroke: j
+
+Received message from 127.0.0.1:42748, 
+message: DISPLAY
+                                                                               
+                                                                               
+                                                                               
+                                                                               
+                                                                               
+                                                                               
+                                                                               
+                                                                               
+                                                                               
+                                                                               
+                                                                               
+                                                                               
+     +---------------------------------+                                       
+     |.................................|                                       
+     |.................................|                                       
+     |......+---------------+..........|                                       
+                            |B.........#                                       
+                            |.......@..|                                       
+                            |......A...|                                       
+                            |...D......|                                       
+                            +----------+                                       
+
+
+Received keystroke: h
+
+Received message from 127.0.0.1:42748, 
+message: DISPLAY
+                                                                               
+                                                                               
+                                                                               
+                                                                               
+                                                                               
+                                                                               
+                                                                               
+                                                                               
+                                                                               
+                                                                               
+                                                                               
+                                                                               
+     +---------------------------------+                                       
+     |.................................|                                       
+     |.................................|                                       
+     |......+---------------+..........|                                       
+                            |B.........#                                       
+                            |......@...|                                       
+                            |......A...|                                       
+                            |...D......|                                       
+                            +----------+                                       
+
+
+Received keystroke: h
+
+Received message from 127.0.0.1:42748, 
+message: DISPLAY
+                                                                               
+                                                                               
+                                                                               
+                                                                               
+                                                                               
+                                                                               
+                                                                               
+                                                                               
+                                                                               
+                                                                               
+                                                                               
+                                                                               
+     +---------------------------------+                                       
+     |.................................|                                       
+     |.................................|                                       
+     |......+---------------+..........|                                       
+                            |B.........#                                       
+                            |.....@....|                                       
+                            |......A...|                                       
+                            |...D......|                                       
+                            +----------+                                       
+
+
+Received keystroke: j
+
+Received message from 127.0.0.1:42748, 
+message: DISPLAY
+                                                                               
+                                                                               
+                                                                               
+                                                                               
+                                                                               
+                                                                               
+                                                                               
+                                                                               
+                                                                               
+                                                                               
+                                                                               
+                                                                               
+     +---------------------------------+                                       
+     |.................................|                                       
+     |.................................|                                       
+     |......+---------------+..........|                                       
+                            |B.........#                                       
+                            |..........|                                       
+                            |.....@A...|                                       
+                            |...D......|                                       
+                            +----------+                                       
+
+
+Received keystroke: k
+
+Received message from 127.0.0.1:42748, 
+message: DISPLAY
+                                                                               
+                                                                               
+                                                                               
+                                                                               
+                                                                               
+                                                                               
+                                                                               
+                                                                               
+                                                                               
+                                                                               
+                                                                               
+                                                                               
+     +---------------------------------+                                       
+     |.................................|                                       
+     |.................................|                                       
+     |......+---------------+..........|                                       
+                            |B.........#                                       
+                            |.....@....|                                       
+                            |......A...|                                       
+                            |...D......|                                       
+                            +----------+                                       
+
+
+Received keystroke: k
+
+Received message from 127.0.0.1:42748, 
+message: DISPLAY
+                                                                               
+                                                                               
+                                                                               
+                                                                               
+                                                                               
+                                                                               
+                                                                               
+                                                                               
+                                                                               
+                                                                               
+                                                                               
+                                                                               
+     +---------------------------------+                                       
+     |.................................|                                       
+     |.................................|                                       
+     |......+---------------+..........|                                       
+                            |B....@....#                                       
+                            |..........|                                       
+                            |......A...|                                       
+                            |...D......|                                       
+                            +----------+                                       
+
+
+Received keystroke: k
+
+Received message from 127.0.0.1:42748, 
+message: DISPLAY
+                                                                               
+                                                                               
+                                                                               
+                                                                               
+                                                                               
+                                                                               
+                                                                               
+                                                                               
+                                                                               
+                                                                               
+                                                                               
+                                                                               
+     +---------------------------------+                                       
+     |.................................|                                       
+     |.................................|                                       
+     |......+---------------+.....@....|                                       
+                            |B.........#                                       
+                            |..........|                                       
+                            |......A...|                                       
+                            |...D......|                                       
+                            +----------+                                       
+
+
+Received keystroke: k
+
+Received message from 127.0.0.1:42748, 
+message: DISPLAY
+                                                                               
+                                                                               
+                                                                               
+                                                                               
+                                                                               
+                                                                               
+                                                                               
+                                                                               
+                                                                               
+                                                                               
+                                                                               
+                                                                               
+     +---------------------------------+                                       
+     |.................................|                                       
+     |............................@....|                                       
+     |......+---------------+..........|                                       
+                            |B.........#                                       
+                            |..........|                                       
+                            |......A...|                                       
+                            |...D......|                                       
+                            +----------+                                       
+
+
+Received keystroke: k
+
+Received message from 127.0.0.1:42748, 
+message: DISPLAY
+                                                                               
+                                                                               
+                                                                               
+                                                                               
+                                                                               
+                                                                               
+                                                                               
+                                                                               
+                                                                               
+                                                                               
+                                                                               
+                                                                               
+     +---------------------------------+                                       
+     |............................@....|                                       
+     |.................................|                                       
+     |......+---------------+..........|                                       
+                            |B.........#                                       
+                            |..........|                                       
+                            |......A...|                                       
+                            |...D......|                                       
+                            +----------+                                       
+
+
+Received keystroke: h
+
+Received message from 127.0.0.1:42748, 
+message: DISPLAY
+                                                                               
+                                                                               
+                                                                               
+                                                                               
+                                                                               
+                                                                               
+                                                                               
+                                                                               
+                                                                               
+                                                                               
+                                                                               
+                                                                               
+     +---------------------------------+                                       
+     |...........................@.....|                                       
+     |.................................|                                       
+     |......+---------------+..........|                                       
+                            |B.........#                                       
+                            |..........|                                       
+                            |......A...|                                       
+                            |...D......|                                       
+                            +----------+                                       
+
+
+Received keystroke: h
+
+Received message from 127.0.0.1:42748, 
+message: DISPLAY
+                                                                               
+                                                                               
+                                                                               
+                                                                               
+                                                                               
+                                                                               
+                                                                               
+                                                                               
+                                                                               
+                                                                               
+                                                                               
+                                                                               
+     +---------------------------------+                                       
+     |..........................@......|                                       
+     |.................................|                                       
+     |......+---------------+..........|                                       
+                            |B.........#                                       
+                            |..........|                                       
+                            |......A...|                                       
+                            |...D......|                                       
+                            +----------+                                       
+
+
