@@ -27,6 +27,9 @@ typedef struct game {
     int NR; // the number of rows in the grid
 	char letter;  // the letter corresponding to this player
     bool init;
+    int r;
+    int p;
+    int n;
     FILE *log;
     char* ServerHost;
     char* ServerPort;
@@ -124,6 +127,7 @@ static int parseArgs(const int argc, char* argv[]) {
 static void game_new(void) {
     game = mem_malloc(sizeof(game_t));
     game->init = true;
+    game->n = 0;
 }
 
 static void game_delete(void) {
@@ -203,12 +207,11 @@ static bool handleGRID(const char* message) {
 }
 
 static bool handleGOLD(const char* message) {
-    int n; // number collected on move
-    int p; // in purse
-    int r; // remaining
-
-    if (sscanf(message, "GOLD %d %d %d", &n, &p, &r) == 3) {
-        // printf("Player %c has %d nuggets (%d nuggets remaining). Gold received: %d\n", game->letter, p, r, n);
+    if (sscanf(message, "GOLD %d %d %d", &game->n, &game->p, &game->r) == 3) {
+        move(0,0);
+        refresh();
+        printw("Player %c has %d nuggets (%d nuggets remaining). Gold received: %d\n", game->letter, game->p, game->r, game->n);
+        refresh();
     }
 
     else {
@@ -226,8 +229,18 @@ static bool handleDISPLAY(const char* message) {
         game->init = false;
     }
 
-    move(0, 0);
-    refresh();
+    if (game->n == 0) {
+        move(0, 0);
+        refresh();
+        printw("Player %c has %d nuggets (%d nuggets remaining)", game->letter, game->p, game->r);
+    }
+
+    else {
+        move(1, 0);
+        refresh();
+        game->n = 0;
+    }
+
     printw("%s", message);
     refresh();
 
