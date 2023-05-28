@@ -89,6 +89,7 @@ bool grid_isVisible(char* grid, int start_loc, int end_loc, int NR, int NC)
 
     while (true) {
 
+
         // if the ray reaches the end point then mark the point as visible by returning true
         if (x == end_x && y == end_y) {
 
