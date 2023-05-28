@@ -55,7 +55,7 @@ bool grid_isVisible(char* grid, int start_loc, int end_loc, int NR, int NC)
 
     // implement modified bresenham raytracing algorithm between these 2 coordinates
     int dx = abs(start_x - end_x);
-    int dy = abs(start_y - end_x);
+    int dy = abs(start_y - end_y);
 
     // sx and sy take into account which quadrant the end point is with respect to the start point
     int sx;
@@ -85,7 +85,11 @@ bool grid_isVisible(char* grid, int start_loc, int end_loc, int NR, int NC)
 
     int x = start_x; 
     int y = start_y; 
+
+
     while (true) {
+
+        printf("%d,%d,%d, %d, %d, %d, %d, %d,  %d, %d\n", start_x, start_y, end_x, end_y, dx, dy, sx, sy, x, y);
 
         // if the ray reaches the end point then mark the point as visible by returning true
         if (x == end_x && y == end_y) {
@@ -116,10 +120,9 @@ bool grid_isVisible(char* grid, int start_loc, int end_loc, int NR, int NC)
         if (error2 < dx) {
 
             error1 += dx;
-            y -= sy;
+            y += sy;
 
         }
-
     }
 
 }

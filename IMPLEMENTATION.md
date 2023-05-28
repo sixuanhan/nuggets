@@ -178,6 +178,12 @@ A function to handle the end of the game and sends a message to each client with
 ```c
 static bool gameOver();
 ```
+
+A function to update the main grid when a player moves.
+```c
+static char* updateMainGrid(const int playerIndex, const int old_loc);
+```
+
 ### Detailed pseudo code
 
 #### `parseArgs`:
@@ -262,6 +268,15 @@ static bool gameOver();
 	loop through the players array
 		send a QUIT message to every client with a scoreboard
 	return true
+
+#### `updateMainGrid`:
+
+	if the player is stepping onto another player
+		swap the two players, updating their stored spot type data
+	else if the player is stepping onto gold
+		update the gold and send a gold message to everyone
+	else if the player is stepping on to a spot
+		move the player and restore the spot they're stepping from to its previous character
 
 
 ---
@@ -410,12 +425,12 @@ int grid_1dto2d_y(int loc, int NR, int NC);
 
 This function converts a two dimensional coordinate to a one dimensional coordinate and returns it.
 ``` c
-int grid_2dto1d(int x, int y);
+int grid_2dto1d(int x, int y, int NR, int NC);
 ```
 
 This function checks if a point in the grid located at `end_loc` is visible from a player located at the `start_loc`.
 ``` c
-bool grid_isVisible(char** grid, int start_loc, int end_loc);
+bool grid_isVisible(char** grid, int start_loc, int end_loc, int NR, int NC);
 ```
 
 This function updates the visibility of a player according to the `mainGrid`, the previous `localMap` and the new location and updates the `localMap`.

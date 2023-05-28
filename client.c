@@ -27,7 +27,12 @@ typedef struct game {
     int NR; // the number of rows in the grid
 	char letter;  // the letter corresponding to this player
     bool init;
+    int r;
+    int p;
+    int n;
     FILE *log;
+    char* ServerHost;
+    char* ServerPort;
 } game_t;
 
 /*********************** global ***********************/
@@ -51,16 +56,13 @@ static void game_delete(void);
 /**************** main ***************/
 
 int main(const int argc, char* argv[]) {
-    char* serverHost;
-    char* serverPort;
-    addr_t serverAddress;
     char* message;
 
     int parsed = parseArgs(argc, argv);
     
     if (parsed == 1 || parsed == 0) {
-        serverHost = argv[1]; // why not assign memory?
-        serverPort = argv[2];
+        game->ServerHost = argv[1]; // why not assign memory?
+        game->ServerPort = argv[2];
         
         if (parsed == 0) {
             message = "SPECTATE";
@@ -71,22 +73,24 @@ int main(const int argc, char* argv[]) {
         }
 
         message_init(stderr);
-        message_setAddr(serverHost, serverPort, &serverAddress);
-        message_send(serverAddress, message); // client speaks first
+        message_setAddr(game->ServerHost, game->ServerPort, &game->server);
+        message_send(game->server, message); // client speaks first
 
         FILE* fp = fopen("client.log", "w");
 
         flog_init(fp);
-        game->server = serverAddress;
+        game->server = game->server;
         game->log = fp;
 
         printf("Enter handle input\n");
 
-        message_loop(NULL, 0, NULL, handleInput, handleMessage);
+        bool ok = message_loop(NULL, 0, NULL, handleInput, handleMessage);  
+
         message_done();
         flog_done(fp);
         game_delete();
-
+        endwin();
+        return ok? 0 : 1;
     }
 
 
@@ -123,6 +127,7 @@ static int parseArgs(const int argc, char* argv[]) {
 static void game_new(void) {
     game = mem_malloc(sizeof(game_t));
     game->init = true;
+    game->n = 0;
 }
 
 static void game_delete(void) {
@@ -130,35 +135,14 @@ static void game_delete(void) {
 }
 
 static bool handleInput(void* arg) {
-    int c;    
-    
-    while ((c = getch())) {
-        // logs keystroke
-        flog_c(game->log, "Received keystroke: %c\n", c);
+    char c = getch();
+    // logs keystroke
+    flog_c(game->log, "Received keystroke: %c\n", c);
 
-        switch(c) {
-            case 'h':   message_send(game->server, "KEY h"); break; // move cursor left
-            case 'l':   message_send(game->server, "KEY l"); break; // move cursor right
-            case 'j':   message_send(game->server, "KEY j"); break; // move cursor up
-            case 'k':   message_send(game->server, "KEY k"); break; // move cursor down
-            // case 'y':   message_send(*server, "KEY y"); break; // move cursor up left
-            // case 'u':   message_send(*server, "KEY u"); break; // move cursor up right
-            // case 'b':   message_send(*server, "KEY b"); break; // move cursor down left
-            // case 'n':   message_send(*server, "KEY n"); break; // move cursor down right
-
-            // case 'H':   message_send(*server, "KEY H"); break; // move cursor far left
-            // case 'L':   message_send(*server, "KEY L"); break; // move cursor far right
-            // case 'J':   message_send(*server, "KEY J"); break; // move cursor far up
-            // case 'K':   message_send(*server, "KEY K"); break; // move cursor far down
-            // case 'Y':   message_send(*server, "KEY Y"); break; // move cursor far up left
-            // case 'U':   message_send(*server, "KEY U"); break; // move cursor far up right
-            // case 'B':   message_send(*server, "KEY B"); break; // move cursor far down left
-            // case 'N':   message_send(*server, "KEY N"); break; // move cursor far down right
-
-            case 'Q':   message_send(game->server, "KEY Q"); break; // quit
-        }
-
-    }
+    char* KEYmessage = (char*)mem_malloc_assert(5 * sizeof(char), "Error: Memory allocation failed. \n");
+    sprintf(KEYmessage, "KEY %c", c);
+    message_send(game->server, KEYmessage);
+    mem_free(KEYmessage);
 
     return false;
 }
@@ -188,6 +172,7 @@ static bool handleMessage(void* arg, const addr_t from, const char* message) {
 
     if (strncmp(message, "QUIT ", strlen("QUIT ")) == 0) {
         const char* content = message + strlen("QUIT ");
+
         return handleQUIT(content);
     }
 
@@ -222,12 +207,11 @@ static bool handleGRID(const char* message) {
 }
 
 static bool handleGOLD(const char* message) {
-    int n; // number collected on move
-    int p; // in purse
-    int r; // remaining
-
-    if (sscanf(message, "GOLD %d %d %d", &n, &p, &r) == 3) {
-        // printf("Player %c has %d nuggets (%d nuggets remaining). Gold received: %d\n", game->letter, p, r, n);
+    if (sscanf(message, "GOLD %d %d %d", &game->n, &game->p, &game->r) == 3) {
+        move(0,0);
+        refresh();
+        printw("Player %c has %d nuggets (%d nuggets remaining). Gold received: %d\n", game->letter, game->p, game->r, game->n);
+        refresh();
     }
 
     else {
@@ -245,7 +229,20 @@ static bool handleDISPLAY(const char* message) {
         game->init = false;
     }
 
-    mvprintw(1, 0, message);
+    if (game->n == 0) {
+        move(0, 0);
+        refresh();
+        printw("Player %c has %d nuggets (%d nuggets remaining)", game->letter, game->p, game->r);
+    }
+
+    else {
+        move(1, 0);
+        refresh();
+        game->n = 0;
+    }
+
+    printw("%s", message);
+    refresh();
 
     return false;
 }
