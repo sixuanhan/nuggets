@@ -479,7 +479,7 @@ static bool handleSPECTATE(addr_t* from, const char* content)
 static bool handleKEY(addr_t* from, const char* content)
 {
 
-    // check to see if the message is from a player
+    // check to see which player the message is from
     // if playerIndex is still -1, then it must be spectator; else is player
     int playerIndex = -1;
     for (int i = 0; i < 26; i++) {
