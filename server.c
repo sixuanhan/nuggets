@@ -467,7 +467,7 @@ static bool handleKEY(addr_t* from, const char* content)
     int playerIndex = -1;
     for (int i = 0; i < 26; i++) {
 
-        if(game->players[i] != NULL && from == game->players[i]->address) {
+        if(game->players[i] != NULL && message_eqAddr(from, game->players[i]->address)) {
 
             playerIndex = i;
             break;
