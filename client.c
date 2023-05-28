@@ -86,6 +86,7 @@ int main(const int argc, char* argv[]) {
         message_done();
         flog_done(fp);
         game_delete();
+        endwin();
         return ok? 0 : 1;
     }
 
