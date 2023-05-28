@@ -11,12 +11,12 @@ Sixuan Han, Steven Mendley, and Kevin Cao, May 22 2023
 #include <unistd.h>
 #include <stdbool.h>
 #include <math.h>
-#include "grid.h"
-#include "counters.h"
-#include "file.h"
-#include "log.h"
-#include "message.h"
-#include "mem.h"
+#include "support/grid.h"
+#include "libcs50/counters.h"
+#include "libcs50/file.h"
+#include "support/log.h"
+#include "support/message.h"
+#include "libcs50/mem.h"
 
 /**************** structs ****************/
 typedef struct player {
@@ -469,7 +469,7 @@ static bool handleSPECTATE(addr_t* from, const char* content)
     free(DISPLAYmessage);
 
     return false;
-    
+
 }
 
 /*
@@ -484,7 +484,7 @@ static bool handleKEY(addr_t* from, const char* content)
     int playerIndex = -1;
     for (int i = 0; i < 26; i++) {
 
-        if(game->players[i] != NULL && message_eqAddr(from, game->players[i]->address)) {
+        if(game->players[i] != NULL && message_eqAddr(*from, *game->players[i]->address)) {
 
             playerIndex = i;
             break;
@@ -493,18 +493,19 @@ static bool handleKEY(addr_t* from, const char* content)
 
     }
 
+    // extract the actual key command from the contents of the message
+    char key;
+    sscanf(content, "KEY %c", &key);
+
     if (playerIndex != -1) {
 
-        if (content == 'Q') {
+        if (key == 'Q') {
 
             // send a QUIT message to the player who quit 
             message_send(*game->players[playerIndex]->address, "QUIT Thanks for playing!");
             
             // free up the memory storing the player information
             mem_free(game->players[playerIndex]->username);
-            mem_free(game->players[playerIndex]->letterID);
-            mem_free(game->players[playerIndex]->gold);
-            mem_free(game->players[playerIndex]->loc);
             mem_free(game->players[playerIndex]->localMap);
             mem_free(game->players[playerIndex]->address);
             mem_free(game->players[playerIndex]);
@@ -512,11 +513,10 @@ static bool handleKEY(addr_t* from, const char* content)
             // return false to keep looping
             return false; 
 
-        } else if (strchr("ykuhlbjn", content) != NULL) {
+        } else if (strchr("ykuhlbjn", key) != NULL) {
 
-            int old_loc = game->players[playerIndex]->loc;
             int new_loc;
-            switch(content) {
+            switch(key) {
 
                 case 'y':
                     
@@ -527,13 +527,13 @@ static bool handleKEY(addr_t* from, const char* content)
                 case 'k':
 
                     // move the player upwards
-                    new_loc = game->player[playerIndex]->loc - NC;
+                    new_loc = game->players[playerIndex]->loc - NC;
                     break;
 
                 case 'u':
 
                     // move the player up and to the right
-                    new_loc = game->player[playerIndex]->loc - NC + 1;
+                    new_loc = game->players[playerIndex]->loc - NC + 1;
                     break;
 
                 case 'h':
@@ -570,7 +570,9 @@ static bool handleKEY(addr_t* from, const char* content)
 
             // check if the movement was valid
             if (game->mainGrid[new_loc] == '.' || game->mainGrid[new_loc] == '*' || game->mainGrid[new_loc] == '#'
-                || isalpha(game->mainGrid[new_loc]) {
+                || isalpha(game->mainGrid[new_loc])) {
+
+                int old_loc = game->players[playerIndex]->loc;
 
                 // update the player's stored location
                 game->players[playerIndex]->loc = new_loc;
@@ -578,7 +580,7 @@ static bool handleKEY(addr_t* from, const char* content)
                 // check if the player steps on another player
                 if (isalpha(game->mainGrid[game->players[playerIndex]->loc]))  {
 
-                    int otherIndex = game->mainGrid[game->players[playerIndex]->letterID] - 'A';
+                    int otherIndex = game->mainGrid[game->players[playerIndex]->loc] - 'A';
 
                     // update the players' locations and currSpots 
                     game->players[otherIndex]->loc = old_loc;
@@ -595,12 +597,12 @@ static bool handleKEY(addr_t* from, const char* content)
                     // check if the player moves onto a gold pile
 
                     // update gold
-                    int goldCollected = counters_get(nuggetsInPile, game->players[playerIndex]->loc);
-                    counters_delete(nuggetsInPile, game->players[playerIndex]->loc);
+                    int goldCollected = counters_get(game->nuggetsInPile, game->players[playerIndex]->loc);
+                    counters_set(game->nuggetsInPile, game->players[playerIndex]->loc, 0);
 
                     game->players[playerIndex]->gold += goldCollected;
                     game->goldRemaining -= goldCollected;
-                    counters_delete(nuggetsInPile, game->players[playerIndex]->loc);
+                    counters_set(game->nuggetsInPile, game->players[playerIndex]->loc, 0);
 
                     // send a gold message to all players
                     for (int i = 0; i < 26; i++) {
@@ -642,7 +644,7 @@ static bool handleKEY(addr_t* from, const char* content)
                     // turn the gold pile into a regular room spot
                     game->players[playerIndex]->currSpot = '.';
 
-                    if (goldRemaining == 0) {
+                    if (game->goldRemaining == 0) {
 
                         // return true to exit message loop and end the game
                         return true;
@@ -652,10 +654,10 @@ static bool handleKEY(addr_t* from, const char* content)
                 } else {
 
                     // otherwise simply update the player's movement on the map
-                    newSpot = game->mainGrid[game->players[playerIndex]->loc];
+                    char newSpot = game->mainGrid[game->players[playerIndex]->loc];
                     game->mainGrid[game->players[playerIndex]->loc] = game->players[playerIndex]->letterID;
                     game->mainGrid[old_loc] = game->players[playerIndex]->currSpot;
-                    game->players[playerIndex] = newSpot;
+                    game->players[playerIndex]->currSpot = newSpot;
 
                 }
 
@@ -696,7 +698,7 @@ static bool handleKEY(addr_t* from, const char* content)
 
             }
 
-        } else if (strchr("YKUHLBJN", content) != NULL) {
+        } else if (strchr("YKUHLBJN", key) != NULL) {
 
             // tracks whether the player actually moved at least once
             bool didMove = false; 
@@ -706,7 +708,7 @@ static bool handleKEY(addr_t* from, const char* content)
             
                 int old_loc = game->players[playerIndex]->loc;
                 int new_loc;
-                switch(content) {
+                switch(key) {
 
                     case 'Y':
                         
@@ -717,13 +719,13 @@ static bool handleKEY(addr_t* from, const char* content)
                     case 'K':
 
                         // move the player upwards
-                        new_loc = game->player[playerIndex]->loc - NC;
+                        new_loc = game->players[playerIndex]->loc - NC;
                         break;
 
                     case 'U':
 
                         // move the player up and to the right
-                        new_loc = game->player[playerIndex]->loc - NC + 1;
+                        new_loc = game->players[playerIndex]->loc - NC + 1;
                         break;
 
                     case 'H':
@@ -760,7 +762,7 @@ static bool handleKEY(addr_t* from, const char* content)
 
                 // if the player cannot move to the spot, break out of the loop
                 if (game->mainGrid[new_loc] != '.' && game->mainGrid[new_loc] != '*' && game->mainGrid[new_loc] != '#'
-                    && !isalpha(game->mainGrid[new_loc]) {
+                    && !isalpha(game->mainGrid[new_loc])) {
 
                     break;
 
@@ -773,7 +775,7 @@ static bool handleKEY(addr_t* from, const char* content)
                 // check if the player steps on another player
                 if (isalpha(game->mainGrid[game->players[playerIndex]->loc]))  {
 
-                    int otherIndex = game->mainGrid[game->players[playerIndex]->letterID] - 'A';
+                    int otherIndex = game->mainGrid[game->players[playerIndex]->loc] - 'A';
 
                     // update the players' locations and currSpots 
                     game->players[otherIndex]->loc = old_loc;
@@ -785,17 +787,17 @@ static bool handleKEY(addr_t* from, const char* content)
                     game->mainGrid[game->players[playerIndex]->loc] = game->players[playerIndex]->letterID;
                     game->mainGrid[old_loc] = game->players[otherIndex]->letterID;
 
-                } else if (game->mainGrid[game->players[i]->loc] == '*') {
+                } else if (game->mainGrid[game->players[playerIndex]->loc] == '*') {
 
                     // check if the player moves onto a gold pile
 
                     // update gold
-                    int goldCollected = counters_get(nuggetsInPile, game->players[playerIndex]->loc);
-                    counters_delete(nuggetsInPile, playerIndex);
+                    int goldCollected = counters_get(game->nuggetsInPile, game->players[playerIndex]->loc);
+                    counters_set(game->nuggetsInPile, game->players[playerIndex]->loc, 0);
 
                     game->players[playerIndex]->gold += goldCollected;
                     game->goldRemaining -= goldCollected;
-                    counters_delete(nuggetsInPile, game->players[playerIndex]->loc);
+                    counters_set(game->nuggetsInPile, game->players[playerIndex]->loc, 0);
 
                     // send a gold message to all clients
                     for (int i = 0; i < 26; i++) {
@@ -813,7 +815,7 @@ static bool handleKEY(addr_t* from, const char* content)
 
                             }
 
-                            message_send(*game->players[i]->address, displayMessage);
+                            message_send(*game->players[i]->address, goldMessage);
                             mem_free(goldMessage);
 
                         }
@@ -827,7 +829,7 @@ static bool handleKEY(addr_t* from, const char* content)
                     // turn the gold pile into a regular room spot
                     game->players[playerIndex]->currSpot = '.';
 
-                    if (goldRemaining == 0) {
+                    if (game->goldRemaining == 0) {
 
                         // return true to exit message loop and end the game
                         return true;
@@ -837,7 +839,7 @@ static bool handleKEY(addr_t* from, const char* content)
                 } else {
 
                     // otherwise simply update the player's movement on the map
-                    newSpot = game->mainGrid[game->players[playerIndex]->loc];
+                    char newSpot = game->mainGrid[game->players[playerIndex]->loc];
                     game->mainGrid[game->players[playerIndex]->loc] = game->players[playerIndex]->letterID;
                     game->mainGrid[old_loc] = game->players[playerIndex]->currSpot;
                     game->players[playerIndex]->currSpot = newSpot;
@@ -871,7 +873,7 @@ static bool handleKEY(addr_t* from, const char* content)
                     char *displayMessage = (char *)mem_malloc(8 + NR * NC + 1);
                     sprintf(displayMessage, "DISPLAY\n%s", game->mainGrid);
                     message_send(*game->spectator, displayMessage);
-                    mem_free(displayMesage);
+                    mem_free(displayMessage);
 
                 }
 
@@ -893,7 +895,7 @@ static bool handleKEY(addr_t* from, const char* content)
         
     } else {
 
-        if (content == 'Q') {
+        if (key == 'Q') {
 
             // send a QUIT message to the player who quit 
             message_send(*game->spectator, "QUIT Thanks for watching!");
