@@ -187,7 +187,6 @@ static void game_scatter_gold(void) {
  */
 static void game_delete(void) 
 {
-
     // free the mainGrid
     mem_free(game->mainGrid);
     // free the each player struct
@@ -218,7 +217,6 @@ static void game_delete(void)
  */
 static player_t* player_new(void) 
 {
-
     player_t* player = mem_malloc_assert(sizeof(player_t), "Error: Memory allocation failed. \n");
 
     player->localMap = (char*)mem_malloc_assert((NR*NC + 1) * sizeof(char), "Error: Memory allocation failed. \n");
@@ -249,7 +247,6 @@ static player_t* player_new(void)
     grid_update_vis(game->mainGrid, player->localMap, player->loc, NR, NC);
 
     return player;
-
 }
 
 
@@ -362,7 +359,6 @@ static bool handleMessage(void* arg, addr_t from, const char* message)
  */
 static bool handlePLAY(addr_t* from, const char* content) 
 {
-
     bool isempty = true;
     char* username = (char*)mem_malloc_assert((MaxNameLength) * sizeof(char), "Error: Memory allocation failed. \n");
     for (int i = 0; i < MaxNameLength; i++) {
@@ -382,12 +378,12 @@ static bool handlePLAY(addr_t* from, const char* content)
         }
     }
     if (isempty) {
-        message_send(*from, "QUIT Sorry - you must provide player's name.");
+        message_send(*from, "ERROR Sorry - you must provide player's name.");
         return false;
     }
 
     if (game->numPlayers >= MaxPlayers) {
-        message_send(*from, "QUIT Game is full: no more players can join.");
+        message_send(*from, "ERROR Game is full: no more players can join.");
         return false;
     }
 
@@ -423,7 +419,6 @@ static bool handlePLAY(addr_t* from, const char* content)
     free(DISPLAYmessage);
     
     return false;
-
 }
 
 /* A function to handle incoming SPECTATE messages from the client

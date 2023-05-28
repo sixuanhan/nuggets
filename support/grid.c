@@ -89,7 +89,7 @@ bool grid_isVisible(char* grid, int start_loc, int end_loc, int NR, int NC)
 
     while (true) {
 
-        printf("%d,%d,%d, %d, %d, %d, %d, %d,  %d, %d\n", start_x, start_y, end_x, end_y, dx, dy, sx, sy, x, y);
+        // printf("%d,%d,%d, %d, %d, %d, %d, %d,  %d, %d\n", start_x, start_y, end_x, end_y, dx, dy, sx, sy, x, y);
 
         // if the ray reaches the end point then mark the point as visible by returning true
         if (x == end_x && y == end_y) {
