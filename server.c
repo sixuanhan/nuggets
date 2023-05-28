@@ -743,7 +743,7 @@ static bool handleKEY(addr_t* from, const char* content)
 
                 // if the player cannot move to the spot, break out of the loop
                 if (game->mainGrid[new_loc] != '.' && game->mainGrid[new_loc] != '*' && game->mainGrid[new_loc] != '#'
-                    && isalpha(game->mainGrid[new_loc]) {
+                    && !isalpha(game->mainGrid[new_loc]) {
 
                     break;
 
