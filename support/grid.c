@@ -129,7 +129,7 @@ bool grid_isVisible(char* grid, int start_loc, int end_loc, int NR, int NC)
 void grid_update_vis(char* mainGrid, char* localMap, int loc, int NR, int NC) {
 
     // loop through and check the visibility of each coordinate in mainGrid
-    for (int i = 0; i < strlen(mainGrid); i++) {
+    for (int i = 0; i < NR * NC; i++) {
 
         if (mainGrid[i] == '\n') {
 
