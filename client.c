@@ -81,11 +81,12 @@ int main(const int argc, char* argv[]) {
 
         printf("Enter handle input\n");
 
-        message_loop(NULL, 0, NULL, handleInput, handleMessage);
+        bool ok = message_loop(NULL, 0, NULL, handleInput, handleMessage);  
+
         message_done();
         flog_done(fp);
         game_delete();
-
+        return ok? 0 : 1;
     }
 
 
@@ -129,23 +130,21 @@ static void game_delete(void) {
 }
 
 static bool handleInput(void* arg) {
-    int c;    
-    
-    while ((c = getch())) {
-        // logs keystroke
-        flog_c(game->log, "Received keystroke: %c\n", c);
+    char c = getch();
+    // logs keystroke
+    flog_c(game->log, "Received keystroke: %c\n", c);
 
-        char* KEYmessage = (char*)mem_malloc_assert(5 * sizeof(char), "Error: Memory allocation failed. \n");
-        sprintf(KEYmessage, "KEY %c", c);
-        message_send(game->server, KEYmessage);
-        mem_free(KEYmessage);
-    }
+    char* KEYmessage = (char*)mem_malloc_assert(5 * sizeof(char), "Error: Memory allocation failed. \n");
+    sprintf(KEYmessage, "KEY %c", c);
+    message_send(game->server, KEYmessage);
+    mem_free(KEYmessage);
 
     return false;
 }
 
 static bool handleMessage(void* arg, const addr_t from, const char* message) {
     // logs message and sender
+    printf("message: %s\n", message);
 
     flog_s(game->log, "Received message from %s, ", message_stringAddr(from));
     flog_s(game->log, "message: %s\n", message);
@@ -169,6 +168,7 @@ static bool handleMessage(void* arg, const addr_t from, const char* message) {
 
     if (strncmp(message, "QUIT ", strlen("QUIT ")) == 0) {
         const char* content = message + strlen("QUIT ");
+
         return handleQUIT(content);
     }
 

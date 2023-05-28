@@ -1,15 +1,15 @@
 START OF LOG
-Received message from 127.0.0.1:46736, 
-message: OK A
+Received message from 127.0.0.1:57864, 
+message: OK B
 
-OK message logs client at letter: A
-Received message from 127.0.0.1:46736, 
+OK message logs client at letter: B
+Received message from 127.0.0.1:57864, 
 message: GRID 21 79
 
-Received message from 127.0.0.1:46736, 
+Received message from 127.0.0.1:57864, 
 message: GOLD 0 0 250
 
-Received message from 127.0.0.1:46736, 
+Received message from 127.0.0.1:57864, 
 message: DISPLAY
                                                                                
                                                                                
@@ -22,25 +22,52 @@ message: DISPLAY
                                                                                
                                                                                
                                                                                
+                                                     +--------#--+             
+                                                     |.....@.....|             
+                                                     #......*....|             
+                                                     |..*........|             
+                                                     |...........|             
+                                                     +-----------+             
                                                                                
-     +---------------------------------+                                       
-     |.......*....*....................|                                       
-     |.....@.................*.........|                                       
-     |......+---------------+...*......|                                       
-     |......|                                                                  
-     |......|                                                                  
-     |.*.*..|                                                                  
-     |......|                                                                  
-     +------+                                                                  
+                                                                               
+                                                                               
+                                                                               
 
-
-Received keystroke: h
-
-Received keystroke: h
-
-Received keystroke: j
-
-Received keystroke: k
 
 Received keystroke: l
 
+Received message from 127.0.0.1:57864, 
+message: DISPLAY
+                                                                               
+                                                                               
+                                                                               
+                                                                               
+                                                                               
+                                                                               
+                                                                               
+                                                                               
+                                                                               
+                                                                               
+                                                                               
+                                                     +--------#--+             
+                                                     |......@....|             
+                                                     #......*....|             
+                                                     |..*........|             
+                                                     |...........|             
+                                                     +-----------+             
+                                                                               
+                                                                               
+                                                                               
+                                                                               
+
+
+Received keystroke: Q
+
+Received message from 127.0.0.1:57864, 
+message: QUIT Thanks for playing!
+
+
+Player B quitting...
+Reason: Thanks for playing!
+
+END OF LOG
