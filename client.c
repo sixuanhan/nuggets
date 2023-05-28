@@ -209,7 +209,7 @@ static bool handleGOLD(const char* message) {
         move(0,0);
         refresh();
         if (game->n > 0) {
-            printw("Player %c has %d nuggets (%d nuggets remaining). Gold received: %d\n", game->letter, game->p, game->r, game->n);
+            printw("Player %c has %d nuggets (%d nuggets unclaimed). Gold received: %d\n", game->letter, game->p, game->r, game->n);
         }
         refresh();
     }
@@ -233,9 +233,9 @@ static bool handleDISPLAY(const char* message) {
         move(0, 0);
         refresh();
         if (!game->spect) {
-            printw("Player %c has %d nuggets (%d nuggets remaining)\n", game->letter, game->p, game->r);
+            printw("Player %c has %d nuggets (%d nuggets unclaimed).\n", game->letter, game->p, game->r);
         } else {
-            printw("%d nuggets remaining.\n", game->r);
+            printw("Spectator: %d nuggets unclaimed.\n", game->r);
         }
     }
 
@@ -266,6 +266,13 @@ static bool handleQUIT(const char* content) {
 
 static bool handleERROR(const char* content) {
     flog_s(game->log, "ERROR: %s", content);
+    move(0, 0);
+    refresh();
+    if (!game->spect) {
+        printw("Player %c has %d nuggets (%d nuggets unclaimed). %s\n", game->letter, game->p, game->r, content);
+    } else {
+        printw("Spectator: %d nuggets unclaimed. %s\n", game->r, content);
+    }
 
     return false;
 }
