@@ -670,6 +670,10 @@ static bool handleKEY(addr_t* from, const char* content)
 
                         char *displayMessage = (char *)mem_malloc(8 + NR * NC + 1);
                         sprintf(displayMessage, "DISPLAY\n%s", game->players[i]->localMap);
+
+                        // replace the player's letterID with '@'
+                        displayMessage[game->players[i]->loc] = '@';
+
                         message_send(*game->players[i]->address, displayMessage);
                         mem_free(displayMessage);
 
@@ -860,6 +864,10 @@ static bool handleKEY(addr_t* from, const char* content)
 
                         char *displayMessage = (char *)mem_malloc(8 + NR * NC + 1);
                         sprintf(displayMessage, "DISPLAY\n%s", game->players[i]->localMap);
+
+                        // replace the player's letterID with '@'
+                        displayMessage[game->players[i]->loc] = '@';
+                        
                         message_send(*game->players[i]->address, displayMessage);
                         mem_free(displayMessage);
 
