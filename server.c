@@ -185,7 +185,9 @@ static void game_scatter_gold(void) {
 
 /* This function will clean up a game struct and everything within it.
  */
-static void game_delete(void) {
+static void game_delete(void) 
+{
+
     // free the mainGrid
     mem_free(game->mainGrid);
     // free the each player struct
@@ -201,6 +203,7 @@ static void game_delete(void) {
     counters_delete(game->nuggetsInPile);
     // free the game struct
     mem_free(game);
+
 }
 
 
@@ -213,7 +216,9 @@ static void game_delete(void) {
  *   incrementing game->numPlayers after calling player_new
  *   only calling this function for players, not the spectator
  */
-static player_t* player_new(void) {
+static player_t* player_new(void) 
+{
+
     player_t* player = mem_malloc_assert(sizeof(player_t), "Error: Memory allocation failed. \n");
 
     player->localMap = (char*)mem_malloc_assert((NR*NC + 1) * sizeof(char), "Error: Memory allocation failed. \n");
@@ -244,6 +249,7 @@ static player_t* player_new(void) {
     // grid_update_vis(game->mainGrid, player->localMap, player->loc, NR, NC);
 
     return player;
+
 }
 
 
@@ -261,6 +267,7 @@ static player_t* player_new(void) {
  *   initializing char* mapFile and int randSeed before calling this function.
  */
 static int parseArgs(const int argc, char* argv[], char* mapFile) {
+
     if (argc != 2 && argc != 3) {
         fprintf(stderr, "Error: incorrect number of arguments. Usage: %s map.txt [seed] \n", argv[0]);
         return 2;
@@ -304,6 +311,7 @@ static int parseArgs(const int argc, char* argv[], char* mapFile) {
     game_scatter_gold();
 
     return 0;
+
 }
 
 
@@ -316,7 +324,9 @@ static int parseArgs(const int argc, char* argv[], char* mapFile) {
  * Caller is responsible for:
  *   passing a valid address
  */
-static bool handleMessage(void* arg, addr_t from, const char* message) {
+static bool handleMessage(void* arg, addr_t from, const char* message) 
+{
+
     addr_t* addr = &from;
 
     // logs message and sender
@@ -338,6 +348,7 @@ static bool handleMessage(void* arg, addr_t from, const char* message) {
     fprintf(stderr, "Error: cannot recognize message. \n");
     message_send(from, "ERROR cannot recognize message");
     return false;
+
 }
 
 /* A function to handle incoming PLAY messages from the client
@@ -349,7 +360,9 @@ static bool handleMessage(void* arg, addr_t from, const char* message) {
  * Caller is responsible for:
  *   passing a valid address
  */
-static bool handlePLAY(addr_t* from, const char* content) {
+static bool handlePLAY(addr_t* from, const char* content) 
+{
+
     bool isempty = true;
     char* username = (char*)mem_malloc_assert((MaxNameLength) * sizeof(char), "Error: Memory allocation failed. \n");
     for (int i = 0; i < MaxNameLength; i++) {
@@ -410,6 +423,7 @@ static bool handlePLAY(addr_t* from, const char* content) {
     free(DISPLAYmessage);
     
     return false;
+
 }
 
 /* A function to handle incoming SPECTATE messages from the client
@@ -421,7 +435,9 @@ static bool handlePLAY(addr_t* from, const char* content) {
  * Caller is responsible for:
  *   passing a valid address
  */
-static bool handleSPECTATE(addr_t* from, const char* content) {
+static bool handleSPECTATE(addr_t* from, const char* content) 
+{
+
     if (strlen(content)>0) {
         fprintf(stderr, "Error: improper SPECTATE message. \n");
         message_send(*from, "ERROR improper SPECTATE message");
@@ -453,6 +469,7 @@ static bool handleSPECTATE(addr_t* from, const char* content) {
     free(DISPLAYmessage);
 
     return false;
+    
 }
 
 /*
@@ -909,7 +926,9 @@ static bool handleKEY(addr_t* from, const char* content)
 * We return:
 *   true, as the loop should end after this
 */
-static bool gameOver(void) {
+static bool gameOver(void) 
+{
+
     char* QUITmessage = (char*)mem_malloc_assert((17+game->numPlayers*(15+MaxNameLength)) * sizeof(char), "Error: Memory allocation failed. \n");
     int len = 0;
     len += sprintf(QUITmessage, "QUIT GAME OVER:\n");
@@ -929,4 +948,5 @@ static bool gameOver(void) {
     free(QUITmessage);
 
     return true;
+
 }
