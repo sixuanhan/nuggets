@@ -246,7 +246,7 @@ static player_t* player_new(void)
     game->mainGrid[player->loc]=player->letterID;
 
     // update their local map according to their visibility
-    // grid_update_vis(game->mainGrid, player->localMap, player->loc, NR, NC);
+    grid_update_vis(game->mainGrid, player->localMap, player->loc, NR, NC);
 
     return player;
 
