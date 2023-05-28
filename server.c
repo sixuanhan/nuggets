@@ -693,19 +693,19 @@ static bool handleKEY(addr_t* from, const char* content)
                     case 'Y':
                         
                         // move the player up and to the left
-                        new_loc = game->players[playerIndex]->loc - NC - 1;
+                        new_loc = game->players[playerIndex]->loc - NC - 2;
                         break;
 
                     case 'K':
 
                         // move the player upwards
-                        new_loc = game->players[playerIndex]->loc - NC;
+                        new_loc = game->players[playerIndex]->loc - NC - 1;
                         break;
 
                     case 'U':
 
                         // move the player up and to the right
-                        new_loc = game->players[playerIndex]->loc - NC + 1;
+                        new_loc = game->players[playerIndex]->loc - NC;
                         break;
 
                     case 'H':
@@ -723,19 +723,19 @@ static bool handleKEY(addr_t* from, const char* content)
                     case 'B':
 
                         // move the player down and to the left
-                        new_loc = game->players[playerIndex]->loc + NC - 1;
+                        new_loc = game->players[playerIndex]->loc + NC;
                         break;
 
                     case 'J':
 
                         // move the player downwards
-                        new_loc = game->players[playerIndex]->loc + NC;
+                        new_loc = game->players[playerIndex]->loc + NC + 1;
                         break;
 
                     case 'N':
 
                         // move the player down and to the right
-                        new_loc = game->players[playerIndex]->loc + NC + 1;
+                        new_loc = game->players[playerIndex]->loc + NC + 2;
                         break;
 
                 }
