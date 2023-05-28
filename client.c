@@ -27,6 +27,7 @@ typedef struct game {
     int NR; // the number of rows in the grid
 	char letter;  // the letter corresponding to this player
     bool init;
+    bool spect;
     int r;
     int p;
     int n;
@@ -65,16 +66,18 @@ int main(const int argc, char* argv[]) {
         game->ServerPort = argv[2];
         
         if (parsed == 0) {
+            game->spect = true;
             message = "SPECTATE";
-        }
-
-        if (parsed == 1) {
-            message = "PLAY this";
+        } else {
+            game->spect = false;
+            message = mem_malloc_assert((6 + strlen(argv[3])) * sizeof(char), "Error: Memory allocation failed. \n");
+            sprintf(message, "PLAY %s", argv[3]);
         }
 
         message_init(stderr);
         message_setAddr(game->ServerHost, game->ServerPort, &game->server);
         message_send(game->server, message); // client speaks first
+        free(message);
 
         FILE* fp = fopen("client.log", "w");
 
@@ -114,14 +117,8 @@ static int parseArgs(const int argc, char* argv[]) {
         return 3;
     }
 
-    if (argc == 4) {
-        game_new();
-        return 1;
-    }
-
-
     game_new();
-    return 0;
+    return argc-3;
 }
 
 static void game_new(void) {
@@ -210,7 +207,9 @@ static bool handleGOLD(const char* message) {
     if (sscanf(message, "GOLD %d %d %d", &game->n, &game->p, &game->r) == 3) {
         move(0,0);
         refresh();
-        printw("Player %c has %d nuggets (%d nuggets remaining). Gold received: %d\n", game->letter, game->p, game->r, game->n);
+        if (game->n > 0) {
+            printw("Player %c has %d nuggets (%d nuggets remaining). Gold received: %d\n", game->letter, game->p, game->r, game->n);
+        }
         refresh();
     }
 
@@ -232,7 +231,11 @@ static bool handleDISPLAY(const char* message) {
     if (game->n == 0) {
         move(0, 0);
         refresh();
-        printw("Player %c has %d nuggets (%d nuggets remaining)", game->letter, game->p, game->r);
+        if (!game->spect) {
+            printw("Player %c has %d nuggets (%d nuggets remaining)\n", game->letter, game->p, game->r);
+        } else {
+            printw("%d nuggets remaining.\n", game->r);
+        }
     }
 
     else {
@@ -248,9 +251,13 @@ static bool handleDISPLAY(const char* message) {
 }
 
 static bool handleQUIT(const char* content) {
-    flog_c(game->log, "Player %c quitting...", game->letter);
-    flog_s(game->log, "Reason: %s", content);
-    
+    if (!game->spect) {
+        flog_c(game->log, "Player %c quitting...", game->letter);
+        flog_s(game->log, "Reason: %s", content);
+    } else {
+        flog_v(game->log, "Spectator quitting...");
+        flog_s(game->log, "Reason: %s", content);
+    }
     return true;
 }
 
