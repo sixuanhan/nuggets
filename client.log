@@ -1,4 +1,5 @@
 START OF LOG
+<<<<<<< HEAD
 Received message from 127.0.0.1:57864, 
 message: OK B
 
@@ -10,6 +11,19 @@ Received message from 127.0.0.1:57864,
 message: GOLD 0 0 250
 
 Received message from 127.0.0.1:57864, 
+=======
+Received message from 127.0.0.1:50414, 
+message: OK B
+
+OK message logs client at letter: B
+Received message from 127.0.0.1:50414, 
+message: GRID 21 79
+
+Received message from 127.0.0.1:50414, 
+message: GOLD 0 0 250
+
+Received message from 127.0.0.1:50414, 
+>>>>>>> 613c7cfd2c886db4f13336977afdfa8f6e679154
 message: DISPLAY
                                                                                
                                                                                
@@ -32,6 +46,7 @@ message: DISPLAY
                                                                                
                                                                                
                                                                                
+<<<<<<< HEAD
 
 
 Received keystroke: l
@@ -71,3 +86,52 @@ Player B quitting...
 Reason: Thanks for playing!
 
 END OF LOG
+=======
+     +---------------------------------+                                       
+     |.*.................*.............|                                       
+     |...............*.*.....*.*.*..*..|                                       
+                            +.........@|                                       
+                            |........*.#                                       
+                            |..........|                                       
+                            |..*.......|                                       
+                            |...A......|                                       
+                            +----------+                                       
+
+
+Received keystroke: h
+
+Received keystroke: h
+
+Received keystroke: j
+
+Received keystroke: j
+
+Received keystroke: k
+
+Received keystroke: l
+
+Received keystroke: l
+
+Received keystroke: k
+
+Received keystroke: h
+
+Received keystroke: j
+
+Received keystroke: k
+
+Received keystroke: l
+
+Received keystroke: h
+
+Received keystroke: j
+
+Received keystroke: H
+
+Received keystroke: J
+
+Received keystroke: K
+
+Received keystroke: l
+
+>>>>>>> 613c7cfd2c886db4f13336977afdfa8f6e679154

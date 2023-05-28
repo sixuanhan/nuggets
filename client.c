@@ -227,6 +227,7 @@ static bool handleDISPLAY(const char* message) {
     }
 
     mvprintw(1, 0, message);
+    refresh();
 
     return false;
 }
