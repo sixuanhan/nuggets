@@ -67,7 +67,8 @@ int main(const int argc, char* argv[]) {
         
         if (parsed == 0) {
             game->spect = true;
-            message = "SPECTATE";
+            message = mem_malloc_assert(9 * sizeof(char), "Error: Memory allocation failed. \n");
+            sprintf(message, "SPECTATE");
         } else {
             game->spect = false;
             message = mem_malloc_assert((6 + strlen(argv[3])) * sizeof(char), "Error: Memory allocation failed. \n");
@@ -92,7 +93,7 @@ int main(const int argc, char* argv[]) {
         message_done();
         flog_done(fp);
         game_delete();
-        endwin();
+
         return ok? 0 : 1;
     }
 
@@ -251,13 +252,15 @@ static bool handleDISPLAY(const char* message) {
 }
 
 static bool handleQUIT(const char* content) {
-    if (!game->spect) {
+    if (!game->spect && game->letter) {
         flog_c(game->log, "Player %c quitting...", game->letter);
         flog_s(game->log, "Reason: %s", content);
-    } else {
+    } else if (game->spect) {
         flog_v(game->log, "Spectator quitting...");
         flog_s(game->log, "Reason: %s", content);
     }
+    endwin();
+    printf("%s", content);
     return true;
 }
 
