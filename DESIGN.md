@@ -167,6 +167,8 @@ So that the user can access error messages, there will be an additional file or 
 
 `gameOver`: Prints “Game Over” to all clients and prints the score table.
 
+`updateMainGrid`: Updates the main grid as a player moves, correcting the spot the player moved from.
+
 
 ### Pseudo code for logic/algorithmic flow
 
