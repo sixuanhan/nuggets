@@ -179,11 +179,6 @@ static void game_scatter_gold(void) {
         goldRemaining-=goldDropNuggets;
         numPilesRemaining--;
     }
-
-    // make sure this algorithm is correct. Will delete this once we're done debugging
-    if (goldRemaining != 0 || numPilesRemaining != 0) {
-        printf("bug!! bug!! \n");
-    }
 }
 
 /* This function will clean up a game struct and everything within it.
@@ -239,8 +234,6 @@ static player_t* player_new(void)
         player->loc = randRange(0, NR*NC-1);
     }
 
-    // update the player's map to show @
-    player->localMap[player->loc]='@';
     // remember the current spot that the player is standing on (in this case, '.')
     player->currSpot = game->mainGrid[player->loc];
     // update the player's map to show the player's letterID
@@ -409,6 +402,7 @@ static bool handlePLAY(addr_t* from, const char* content)
     sprintf(GRIDmessage, "GRID %d %d", NR, NC);
     sprintf(GOLDmessage, "GOLD 0 0 %d", game->goldRemaining);
     sprintf(DISPLAYmessage, "DISPLAY\n%s", player->localMap);
+    DISPLAYmessage[player->loc+8] = '@';
 
     // send messages
     message_send(*from, OKmessage);
@@ -417,10 +411,10 @@ static bool handlePLAY(addr_t* from, const char* content)
     message_send(*from, DISPLAYmessage);
 
     // free memory
-    free(OKmessage);
-    free(GRIDmessage);
-    free(GOLDmessage);
-    free(DISPLAYmessage);
+    mem_free(OKmessage);
+    mem_free(GRIDmessage);
+    mem_free(GOLDmessage);
+    mem_free(DISPLAYmessage);
     
     return false;
 }
@@ -487,8 +481,6 @@ static bool handleKEY(addr_t* from, const char* content)
             break;
         }
     }
-
-    printf("playerIndex=%d\n", playerIndex);
 
     // extract the actual key command from the contents of the message
     char key;
@@ -585,9 +577,7 @@ static bool handleKEY(addr_t* from, const char* content)
                     game->mainGrid[old_loc] = game->players[otherIndex]->letterID;
 
                 } else if (game->mainGrid[game->players[playerIndex]->loc] == '*') {
-
                     // check if the player moves onto a gold pile
-
                     // update gold
                     int goldCollected = counters_get(game->nuggetsInPile, game->players[playerIndex]->loc);
                     counters_set(game->nuggetsInPile, game->players[playerIndex]->loc, 0);
@@ -619,7 +609,7 @@ static bool handleKEY(addr_t* from, const char* content)
 
                     }
 
-                    // send a gold message if there is a sepctator
+                    // send a gold message if there is a spectator
                     if (game->spectator != NULL) {
 
                         char* goldMessage = (char *)mem_malloc(25);
@@ -656,19 +646,21 @@ static bool handleKEY(addr_t* from, const char* content)
                 // update the local maps of all players and send display message
                 char *displayMessage = (char *)mem_malloc(8 + NR * NC + 1);
                 for (int i = 0; i < 26; i++) {
+                  
                     if (game->players[i] != NULL) {
                         grid_update_vis(game->mainGrid, game->players[i]->localMap, game->players[i]->loc, NR, NC);
-                        
                         sprintf(displayMessage, "DISPLAY\n%s", game->players[i]->localMap);
 
                         // replace the player's letterID with '@'
                         displayMessage[8 + game->players[i]->loc] = '@';
 
                         message_send(*game->players[i]->address, displayMessage);
+                      
                     }
+                  
                 }
+              
                 mem_free(displayMessage);
-
 
                 // send updated complete map to spectator if there is one
                 if (game->spectator != NULL) {
@@ -705,19 +697,19 @@ static bool handleKEY(addr_t* from, const char* content)
                     case 'Y':
                         
                         // move the player up and to the left
-                        new_loc = game->players[playerIndex]->loc - NC - 1;
+                        new_loc = game->players[playerIndex]->loc - NC - 2;
                         break;
 
                     case 'K':
 
                         // move the player upwards
-                        new_loc = game->players[playerIndex]->loc - NC;
+                        new_loc = game->players[playerIndex]->loc - NC - 1;
                         break;
 
                     case 'U':
 
                         // move the player up and to the right
-                        new_loc = game->players[playerIndex]->loc - NC + 1;
+                        new_loc = game->players[playerIndex]->loc - NC;
                         break;
 
                     case 'H':
@@ -735,19 +727,19 @@ static bool handleKEY(addr_t* from, const char* content)
                     case 'B':
 
                         // move the player down and to the left
-                        new_loc = game->players[playerIndex]->loc + NC - 1;
+                        new_loc = game->players[playerIndex]->loc + NC;
                         break;
 
                     case 'J':
 
                         // move the player downwards
-                        new_loc = game->players[playerIndex]->loc + NC;
+                        new_loc = game->players[playerIndex]->loc + NC + 1;
                         break;
 
                     case 'N':
 
                         // move the player down and to the right
-                        new_loc = game->players[playerIndex]->loc + NC + 1;
+                        new_loc = game->players[playerIndex]->loc + NC + 2;
                         break;
 
                 }
