@@ -234,8 +234,6 @@ static player_t* player_new(void)
         player->loc = randRange(0, NR*NC-1);
     }
 
-    // update the player's map to show @
-    player->localMap[player->loc]='@';
     // remember the current spot that the player is standing on (in this case, '.')
     player->currSpot = game->mainGrid[player->loc];
     // update the player's map to show the player's letterID
@@ -404,6 +402,7 @@ static bool handlePLAY(addr_t* from, const char* content)
     sprintf(GRIDmessage, "GRID %d %d", NR, NC);
     sprintf(GOLDmessage, "GOLD 0 0 %d", game->goldRemaining);
     sprintf(DISPLAYmessage, "DISPLAY\n%s", player->localMap);
+    DISPLAYmessage[player->loc+8] = '@';
 
     // send messages
     message_send(*from, OKmessage);
@@ -412,10 +411,10 @@ static bool handlePLAY(addr_t* from, const char* content)
     message_send(*from, DISPLAYmessage);
 
     // free memory
-    free(OKmessage);
-    free(GRIDmessage);
-    free(GOLDmessage);
-    free(DISPLAYmessage);
+    mem_free(OKmessage);
+    mem_free(GRIDmessage);
+    mem_free(GOLDmessage);
+    mem_free(DISPLAYmessage);
     
     return false;
 }
@@ -557,7 +556,7 @@ static bool handleKEY(addr_t* from, const char* content)
             if (game->mainGrid[new_loc] == '.' || game->mainGrid[new_loc] == '*' || game->mainGrid[new_loc] == '#'
                 || isalpha(game->mainGrid[new_loc])) {
 
-            int old_loc = game->players[playerIndex]->loc;
+                int old_loc = game->players[playerIndex]->loc;
 
                 // update the player's stored location
                 game->players[playerIndex]->loc = new_loc;
@@ -578,9 +577,7 @@ static bool handleKEY(addr_t* from, const char* content)
                     game->mainGrid[old_loc] = game->players[otherIndex]->letterID;
 
                 } else if (game->mainGrid[game->players[playerIndex]->loc] == '*') {
-
                     // check if the player moves onto a gold pile
-
                     // update gold
                     int goldCollected = counters_get(game->nuggetsInPile, game->players[playerIndex]->loc);
                     counters_set(game->nuggetsInPile, game->players[playerIndex]->loc, 0);
@@ -612,7 +609,7 @@ static bool handleKEY(addr_t* from, const char* content)
 
                     }
 
-                    // send a gold message if there is a sepctator
+                    // send a gold message if there is a spectator
                     if (game->spectator != NULL) {
 
                         char* goldMessage = (char *)mem_malloc(25);
@@ -649,11 +646,11 @@ static bool handleKEY(addr_t* from, const char* content)
                 for (int i = 0; i < 26; i++) {
                     if (game->players[i] != NULL) {
                         grid_update_vis(game->mainGrid, game->players[i]->localMap, game->players[i]->loc, NR, NC);
-                        
                         sprintf(displayMessage, "DISPLAY\n%s", game->players[i]->localMap);
 
                         // replace the player's letterID with '@'
-                        displayMessage[game->players[i]->loc] = '@';
+                        displayMessage[game->players[i]->loc+8] = '@';
+                        printf("displayMessage:%s\n", displayMessage);
 
                         message_send(*game->players[i]->address, displayMessage);
                     }
@@ -845,7 +842,7 @@ static bool handleKEY(addr_t* from, const char* content)
                         sprintf(displayMessage, "DISPLAY\n%s", game->players[i]->localMap);
 
                         // replace the player's letterID with '@'
-                        displayMessage[game->players[i]->loc] = '@';
+                        displayMessage[game->players[i]->loc+8] = '@';
                         
                         message_send(*game->players[i]->address, displayMessage);
                         mem_free(displayMessage);
