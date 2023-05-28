@@ -179,11 +179,6 @@ static void game_scatter_gold(void) {
         goldRemaining-=goldDropNuggets;
         numPilesRemaining--;
     }
-
-    // make sure this algorithm is correct. Will delete this once we're done debugging
-    if (goldRemaining != 0 || numPilesRemaining != 0) {
-        printf("bug!! bug!! \n");
-    }
 }
 
 /* This function will clean up a game struct and everything within it.
@@ -487,8 +482,6 @@ static bool handleKEY(addr_t* from, const char* content)
             break;
         }
     }
-
-    printf("playerIndex=%d\n", playerIndex);
 
     // extract the actual key command from the contents of the message
     char key;
