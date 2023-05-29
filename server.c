@@ -26,7 +26,7 @@ typedef struct player {
 	int loc;    // a 1d coordinate of the current location
     char currSpot;  // the spot type that they player's standing on
 	char* localMap;  // the grid that this player can see
-	addr_t* address;
+	addr_t address;
 } player_t;
 
 
@@ -35,7 +35,7 @@ typedef struct game {
 	int numPlayers;  // the number of players that have joined the games
 	int goldRemaining;  // the number of unclaimed nuggets
 	player_t** players;  // an array of players
-    addr_t* spectator; // the spectator's address
+    addr_t spectator; // the spectator's address
 	counters_t* nuggetsInPile;  // where all the gold is and how many nuggets there are in each pile
 } game_t;
 
@@ -48,10 +48,10 @@ static void game_delete(void);
 static player_t* player_new(void);
 
 static int parseArgs(const int argc, char* argv[], char* mapFile);
-static bool handleMessage(void* arg, addr_t from, const char* message);
-static bool handlePLAY(addr_t* from, const char* content);
-static bool handleSPECTATE(addr_t* from, const char* content);
-static bool handleKEY(addr_t* from, const char* content);
+static bool handleMessage(void* arg, const addr_t from, const char* message);
+static bool handlePLAY(const addr_t from, const char* content);
+static bool handleSPECTATE(const addr_t from, const char* content);
+static bool handleKEY(const addr_t from, const char* content);
 static bool gameOver();
 
 /*********************** global ***********************/
@@ -133,7 +133,7 @@ static void game_new(void) {
     for (int i = 0; i < 26; i++) {
         game->players[i] = NULL;
     }
-    game->spectator = NULL;
+    game->spectator = message_noAddr();
     game->nuggetsInPile = counters_new();
     if (game->nuggetsInPile == NULL) {
         fprintf(stderr, "Memory allocation failed. \n");
@@ -319,25 +319,22 @@ static int parseArgs(const int argc, char* argv[], char* mapFile) {
  * Caller is responsible for:
  *   passing a valid address
  */
-static bool handleMessage(void* arg, addr_t from, const char* message) 
+static bool handleMessage(void* arg, const addr_t from, const char* message) 
 {
-
-    addr_t* addr = &from;
-
     // logs message and sender
     log_s("Received message from %s, ", message_stringAddr(from));
     log_s("message: %s\n", message);
 
     if (strncmp(message, "PLAY ", strlen("PLAY ")) == 0) {
         const char* content = message + strlen("PLAY ");
-        return handlePLAY(addr, content);
+        return handlePLAY(from, content);
     }
     if (strncmp(message, "SPECTATE", strlen("SPECTATE")) == 0) {
         const char* content = message + strlen("SPECTATE");
-        return handleSPECTATE(addr, content);
+        return handleSPECTATE(from, content);
     }
     if (strncmp(message, "KEY ", strlen("KEY ")) == 0) {
-        return handleKEY(addr, message);
+        return handleKEY(from, message);
     }
     fprintf(stderr, "Error: cannot recognize message. \n");
     message_send(from, "ERROR cannot recognize message");
@@ -354,7 +351,7 @@ static bool handleMessage(void* arg, addr_t from, const char* message)
  * Caller is responsible for:
  *   passing a valid address
  */
-static bool handlePLAY(addr_t* from, const char* content) 
+static bool handlePLAY(const addr_t from, const char* content) 
 {
     bool isempty = true;
     char* username = (char*)mem_malloc_assert((MaxNameLength) * sizeof(char), "Error: Memory allocation failed. \n");
@@ -375,12 +372,12 @@ static bool handlePLAY(addr_t* from, const char* content)
         }
     }
     if (isempty) {
-        message_send(*from, "ERROR Sorry - you must provide player's name.");
+        message_send(from, "ERROR Sorry - you must provide player's name.");
         return false;
     }
 
     if (game->numPlayers >= MaxPlayers) {
-        message_send(*from, "ERROR Game is full: no more players can join.");
+        message_send(from, "ERROR Game is full: no more players can join.");
         return false;
     }
 
@@ -405,10 +402,10 @@ static bool handlePLAY(addr_t* from, const char* content)
     DISPLAYmessage[player->loc+8] = '@';
 
     // send messages
-    message_send(*from, OKmessage);
-    message_send(*from, GRIDmessage);
-    message_send(*from, GOLDmessage);
-    message_send(*from, DISPLAYmessage);
+    message_send(from, OKmessage);
+    message_send(from, GRIDmessage);
+    message_send(from, GOLDmessage);
+    message_send(from, DISPLAYmessage);
 
     // free memory
     mem_free(OKmessage);
@@ -428,16 +425,16 @@ static bool handlePLAY(addr_t* from, const char* content)
  * Caller is responsible for:
  *   passing a valid address
  */
-static bool handleSPECTATE(addr_t* from, const char* content) 
+static bool handleSPECTATE(const addr_t from, const char* content) 
 {
 
     if (strlen(content)>0) {
         fprintf(stderr, "Error: improper SPECTATE message. \n");
-        message_send(*from, "ERROR improper SPECTATE message");
+        message_send(from, "ERROR improper SPECTATE message");
         return false;
     }
-    if (game->spectator != NULL) {
-        message_send(*game->spectator, "QUIT You have been replaced by a new spectator.");
+    if (message_isAddr(game->spectator)) {
+        message_send(game->spectator, "QUIT You have been replaced by a new spectator.");
     }
     game->spectator = from;
 
@@ -452,9 +449,9 @@ static bool handleSPECTATE(addr_t* from, const char* content)
     sprintf(DISPLAYmessage, "DISPLAY\n%s", game->mainGrid);
 
     // send messages
-    message_send(*from, GRIDmessage);
-    message_send(*from, GOLDmessage);
-    message_send(*from, DISPLAYmessage);
+    message_send(from, GRIDmessage);
+    message_send(from, GOLDmessage);
+    message_send(from, DISPLAYmessage);
 
     // free memory
     free(GRIDmessage);
@@ -469,14 +466,14 @@ static bool handleSPECTATE(addr_t* from, const char* content)
 *   A function to handle KEY messages and updates the game based on the 
 *   the contents of the KEY message
 */
-static bool handleKEY(addr_t* from, const char* content)
+static bool handleKEY(const addr_t from, const char* content)
 {
 
     // check to see which player the message is from
     // if playerIndex is still -1, then it must be spectator; else is player
     int playerIndex = -1;
     for (int i = 0; i < 26; i++) {
-        if(game->players[i] != NULL && message_eqAddr(*from, *game->players[i]->address)) {
+        if(game->players[i] != NULL && message_eqAddr(from, game->players[i]->address)) {
             playerIndex = i;
             break;
         }
@@ -489,12 +486,9 @@ static bool handleKEY(addr_t* from, const char* content)
     if (playerIndex != -1) {
         if (key == 'Q') {
             // send a QUIT message to the player who quit 
-            message_send(*game->players[playerIndex]->address, "QUIT Thanks for playing!");
+            message_send(game->players[playerIndex]->address, "QUIT Thanks for playing!");
             
             // free up the memory storing the player information
-            mem_free(game->players[playerIndex]->username);
-            mem_free(game->players[playerIndex]->localMap);
-            mem_free(game->players[playerIndex]->address);
             mem_free(game->players[playerIndex]);
 
             // return false to keep looping
@@ -602,7 +596,7 @@ static bool handleKEY(addr_t* from, const char* content)
 
                             }
 
-                            message_send(*game->players[i]->address, goldMessage);
+                            message_send(game->players[i]->address, goldMessage);
                             mem_free(goldMessage);
 
                         }
@@ -610,11 +604,11 @@ static bool handleKEY(addr_t* from, const char* content)
                     }
 
                     // send a gold message if there is a spectator
-                    if (game->spectator != NULL) {
+                    if (message_isAddr(game->spectator)) {
 
                         char* goldMessage = (char *)mem_malloc(25);
                         sprintf(goldMessage, "GOLD 0 0 %d", game->goldRemaining);
-                        message_send(*game->spectator, goldMessage);
+                        message_send(game->spectator, goldMessage);
                         mem_free(goldMessage);
 
                     }
@@ -654,7 +648,7 @@ static bool handleKEY(addr_t* from, const char* content)
                         // replace the player's letterID with '@'
                         displayMessage[8 + game->players[i]->loc] = '@';
 
-                        message_send(*game->players[i]->address, displayMessage);
+                        message_send(game->players[i]->address, displayMessage);
                       
                     }
                   
@@ -663,11 +657,11 @@ static bool handleKEY(addr_t* from, const char* content)
                 mem_free(displayMessage);
 
                 // send updated complete map to spectator if there is one
-                if (game->spectator != NULL) {
+                if (message_isAddr(game->spectator)) {
 
                     char *displayMessage = (char *)mem_malloc(8 + NR * NC + 1);
                     sprintf(displayMessage, "DISPLAY\n%s", game->mainGrid);
-                    message_send(*game->spectator, displayMessage);
+                    message_send(game->spectator, displayMessage);
                     mem_free(displayMessage);
 
                 }
@@ -799,18 +793,18 @@ static bool handleKEY(addr_t* from, const char* content)
 
                             }
 
-                            message_send(*game->players[i]->address, goldMessage);
+                            message_send(game->players[i]->address, goldMessage);
                             mem_free(goldMessage);
 
                         }
 
                     }
 
-                    if (game->spectator != NULL) {
+                    if (message_isAddr(game->spectator)) {
 
                         char* goldMessage = (char *)mem_malloc(25);
                         sprintf(goldMessage, "GOLD 0 0 %d", game->goldRemaining);
-                        message_send(*game->spectator, goldMessage);
+                        message_send(game->spectator, goldMessage);
                         mem_free(goldMessage);
 
                     }
@@ -857,7 +851,7 @@ static bool handleKEY(addr_t* from, const char* content)
                         // replace the player's letterID with '@'
                         displayMessage[8 + game->players[i]->loc] = '@';
                         
-                        message_send(*game->players[i]->address, displayMessage);
+                        message_send(game->players[i]->address, displayMessage);
                         mem_free(displayMessage);
 
                     }
@@ -865,11 +859,11 @@ static bool handleKEY(addr_t* from, const char* content)
                 }
 
                 // send updated complete map to spectator if there is one
-                if (game->spectator != NULL) {
+                if (message_isAddr(game->spectator)) {
 
                     char *displayMessage = (char *)mem_malloc(8 + NR * NC + 1);
                     sprintf(displayMessage, "DISPLAY\n%s", game->mainGrid);
-                    message_send(*game->spectator, displayMessage);
+                    message_send(game->spectator, displayMessage);
                     mem_free(displayMessage);
 
                 }
@@ -882,7 +876,7 @@ static bool handleKEY(addr_t* from, const char* content)
         } else {
 
             // if invalid keystroke command then send error message
-            message_send(*game->players[playerIndex]->address, "ERROR Invalid player keystroke");
+            message_send(game->players[playerIndex]->address, "ERROR Invalid player keystroke");
             
             // return false to keep looping
             return false;
@@ -895,10 +889,10 @@ static bool handleKEY(addr_t* from, const char* content)
         if (key == 'Q') {
 
             // send a QUIT message to the player who quit 
-            message_send(*game->spectator, "QUIT Thanks for watching!");
+            message_send(game->spectator, "QUIT Thanks for watching!");
 
             // free up the memory storing the spectator's address
-            mem_free(game->spectator);
+            game->spectator = message_noAddr();
             
             // return false to keep looping
             return false; 
@@ -906,7 +900,7 @@ static bool handleKEY(addr_t* from, const char* content)
         } else {
 
             // if any other keystroke send error message
-            message_send(*game->spectator, "ERROR Invalid spectator keystroke");
+            message_send(game->spectator, "ERROR Invalid spectator keystroke");
 
             // return false to keep looping
             return false; 
@@ -936,12 +930,12 @@ static bool gameOver(void)
         len += sprintf(QUITmessage + len, "%c %12d %s\n", game->players[i]->letterID, game->players[i]->gold, game->players[i]->username);
     }
 
-    if (game->spectator != NULL) {
-        message_send(*game->spectator, QUITmessage);
+    if (message_isAddr(game->spectator)) {
+        message_send(game->spectator, QUITmessage);
     }
 
     for (int i = 0; i < game->numPlayers; i++) {
-        message_send(*game->players[i]->address, QUITmessage);
+        message_send(game->players[i]->address, QUITmessage);
     }
 
     free(QUITmessage);
