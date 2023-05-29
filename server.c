@@ -52,8 +52,9 @@ static bool handleMessage(void* arg, const addr_t from, const char* message);
 static bool handlePLAY(const addr_t from, const char* content);
 static bool handleSPECTATE(const addr_t from, const char* content);
 static bool handleKEY(const addr_t from, const char* content);
-static bool gameOver();
+static bool gameOver(void);
 static void broadcastDisplay(void);
+static void broadcastGold(int playerIndex, int goldCollected);
 
 /*********************** global ***********************/
 /**************** constants ****************/
@@ -338,7 +339,8 @@ static bool handleMessage(void* arg, const addr_t from, const char* message)
         return handleKEY(from, message);
     }
     fprintf(stderr, "Error: cannot recognize message. \n");
-    message_send(from, "ERROR cannot recognize message");
+    message_send(from, "ERROR cannot recognize message.\n");
+    log_s("Sending error message to %s. \n", message_stringAddr(from));
     return false;
 
 }
@@ -374,11 +376,13 @@ static bool handlePLAY(const addr_t from, const char* content)
     }
     if (isempty) {
         message_send(from, "ERROR Sorry - you must provide player's name.");
+        log_s("Sending error message to %s. \n", message_stringAddr(from));
         return false;
     }
 
     if (game->numPlayers >= MaxPlayers) {
         message_send(from, "ERROR Game is full: no more players can join.");
+        log_s("Sending error message to %s. \n", message_stringAddr(from));
         return false;
     }
 
@@ -400,9 +404,13 @@ static bool handlePLAY(const addr_t from, const char* content)
     sprintf(GOLDmessage, "GOLD 0 0 %d", game->goldRemaining);
 
     // send messages
+    log_s("Sending message to %s,", message_stringAddr(from));
     message_send(from, OKmessage);
+    log_s("message: %s\n", OKmessage);
     message_send(from, GRIDmessage);
+    log_s("message: %s\n", GRIDmessage);
     message_send(from, GOLDmessage);
+    log_s("message: %s\n", GOLDmessage);
     broadcastDisplay();
 
     // free memory
@@ -428,10 +436,12 @@ static bool handleSPECTATE(const addr_t from, const char* content)
     if (strlen(content)>0) {
         fprintf(stderr, "Error: improper SPECTATE message. \n");
         message_send(from, "ERROR improper SPECTATE message");
+        log_s("Sending error message to %s. \n", message_stringAddr(from));
         return false;
     }
     if (message_isAddr(game->spectator)) {
         message_send(game->spectator, "QUIT You have been replaced by a new spectator.");
+        log_s("Sending quit message to %s \n", message_stringAddr(game->spectator));
     }
     game->spectator = from;
 
@@ -446,9 +456,13 @@ static bool handleSPECTATE(const addr_t from, const char* content)
     sprintf(DISPLAYmessage, "DISPLAY\n%s", game->mainGrid);
 
     // send messages
+    log_s("Sending message to %s,", message_stringAddr(from));
     message_send(from, GRIDmessage);
+    log_s("message: %s\n", GRIDmessage);
     message_send(from, GOLDmessage);
+    log_s("message: %s\n", GOLDmessage);
     message_send(from, DISPLAYmessage);
+    log_s("message: %s\n", DISPLAYmessage);
 
     // free memory
     free(GRIDmessage);
@@ -484,6 +498,7 @@ static bool handleKEY(const addr_t from, const char* content)
         if (key == 'Q') {
             // send a QUIT message to the player who quit 
             message_send(game->players[playerIndex]->address, "QUIT Thanks for playing!");
+            log_s("Sending quit message to %s \n", message_stringAddr(game->players[playerIndex]->address));
             
             game->mainGrid[game->players[playerIndex]->loc] = game->players[playerIndex]->currSpot;
 
@@ -583,38 +598,7 @@ static bool handleKEY(const addr_t from, const char* content)
                     game->goldRemaining -= goldCollected;
                     counters_set(game->nuggetsInPile, game->players[playerIndex]->loc, 0);
 
-                    // send a gold message to all players
-                    for (int i = 0; i < 26; i++) {
-
-                        if (game->players[i] != NULL) {
-
-                            char* goldMessage = (char *)mem_malloc(25);
-                            if (i == playerIndex) {
-
-                                sprintf(goldMessage, "GOLD %d %d %d", goldCollected, game->players[i]->gold, game->goldRemaining);                    
-
-                            } else {
-
-                                sprintf(goldMessage, "GOLD 0 %d %d", game->players[i]->gold, game->goldRemaining);
-
-                            }
-
-                            message_send(game->players[i]->address, goldMessage);
-                            mem_free(goldMessage);
-
-                        }
-
-                    }
-
-                    // send a gold message if there is a spectator
-                    if (message_isAddr(game->spectator)) {
-
-                        char* goldMessage = (char *)mem_malloc(25);
-                        sprintf(goldMessage, "GOLD 0 0 %d", game->goldRemaining);
-                        message_send(game->spectator, goldMessage);
-                        mem_free(goldMessage);
-
-                    }
+                    broadcastGold(playerIndex, goldCollected);
 
                     // update the visualization
                     game->mainGrid[game->players[playerIndex]->loc] = game->players[playerIndex]->letterID;
@@ -753,37 +737,7 @@ static bool handleKEY(const addr_t from, const char* content)
                     game->goldRemaining -= goldCollected;
                     counters_set(game->nuggetsInPile, game->players[playerIndex]->loc, 0);
 
-                    // send a gold message to all clients
-                    for (int i = 0; i < 26; i++) {
-
-                        if (game->players[i] != NULL) {
-
-                            char* goldMessage = (char *)mem_malloc(25);
-                            if (i == playerIndex) {
-
-                                sprintf(goldMessage, "GOLD %d %d %d", goldCollected, game->players[i]->gold, game->goldRemaining);                    
-
-                            } else {
-
-                                sprintf(goldMessage, "GOLD 0 %d %d", game->players[i]->gold, game->goldRemaining);
-
-                            }
-
-                            message_send(game->players[i]->address, goldMessage);
-                            mem_free(goldMessage);
-
-                        }
-
-                    }
-
-                    if (message_isAddr(game->spectator)) {
-
-                        char* goldMessage = (char *)mem_malloc(25);
-                        sprintf(goldMessage, "GOLD 0 0 %d", game->goldRemaining);
-                        message_send(game->spectator, goldMessage);
-                        mem_free(goldMessage);
-
-                    }
+                    broadcastGold(playerIndex, goldCollected);
 
                     // update the visualization
                     game->mainGrid[game->players[playerIndex]->loc] = game->players[playerIndex]->letterID;
@@ -823,6 +777,7 @@ static bool handleKEY(const addr_t from, const char* content)
 
             // if invalid keystroke command then send error message
             message_send(game->players[playerIndex]->address, "ERROR Invalid player keystroke");
+            log_s("Sending error message to %s. \n", message_stringAddr(game->players[playerIndex]->address));
             
             // return false to keep looping
             return false;
@@ -836,6 +791,7 @@ static bool handleKEY(const addr_t from, const char* content)
 
             // send a QUIT message to the player who quit 
             message_send(game->spectator, "QUIT Thanks for watching!");
+            log_s("Sending error message to %s. \n", message_stringAddr(game->spectator));
 
             // free up the memory storing the spectator's address
             game->spectator = message_noAddr();
@@ -847,6 +803,7 @@ static bool handleKEY(const addr_t from, const char* content)
 
             // if any other keystroke send error message
             message_send(game->spectator, "ERROR Invalid spectator keystroke");
+            log_s("Sending error message to %s. \n", message_stringAddr(game->spectator));
 
             // return false to keep looping
             return false; 
@@ -878,10 +835,12 @@ static bool gameOver(void)
 
     if (message_isAddr(game->spectator)) {
         message_send(game->spectator, QUITmessage);
+        log_s("Sending QUIT message to %s. \n", message_stringAddr(game->spectator));
     }
 
     for (int i = 0; i < game->numPlayers; i++) {
         message_send(game->players[i]->address, QUITmessage);
+        log_s("Sending QUIT message to %s. \n", message_stringAddr(game->players[i]->address));
     }
 
     free(QUITmessage);
@@ -907,6 +866,8 @@ static void broadcastDisplay() {
             displayMessage[8 + game->players[i]->loc] = '@';
 
             message_send(game->players[i]->address, displayMessage);
+            log_s("Sending message to %s, ", message_stringAddr(game->players[i]->address));
+            log_s("message: %s\n", displayMessage);
         }  
     }
     mem_free(displayMessage);
@@ -916,6 +877,45 @@ static void broadcastDisplay() {
         char *displayMessage = (char *)mem_malloc(8 + NR * NC + 1);
         sprintf(displayMessage, "DISPLAY\n%s", game->mainGrid);
         message_send(game->spectator, displayMessage);
+        log_s("Sending message to %s, ", message_stringAddr(game->spectator));
+        log_s("message: %s\n", displayMessage);
         mem_free(displayMessage);
+    }
+}
+
+static void broadcastGold(int playerIndex, int goldCollected) {
+    // send a gold message to all players
+    for (int i = 0; i < 26; i++) {
+
+        if (game->players[i] != NULL) {
+
+            char* goldMessage = (char *)mem_malloc(25);
+            if (i == playerIndex) {
+
+                sprintf(goldMessage, "GOLD %d %d %d", goldCollected, game->players[i]->gold, game->goldRemaining);                    
+
+            } else {
+
+                sprintf(goldMessage, "GOLD 0 %d %d", game->players[i]->gold, game->goldRemaining);
+
+            }
+
+            message_send(game->players[i]->address, goldMessage);
+            log_s("Sending message to %s, ", message_stringAddr(game->players[i]->address));
+            log_s("message: %s\n", goldMessage);
+            mem_free(goldMessage);
+        }
+
+    }
+
+    // send a gold message if there is a spectator
+    if (message_isAddr(game->spectator)) {
+
+        char* goldMessage = (char *)mem_malloc(25);
+        sprintf(goldMessage, "GOLD 0 0 %d", game->goldRemaining);
+        message_send(game->spectator, goldMessage);
+        log_s("Sending message to %s, ", message_stringAddr(game->spectator));
+        log_s("message: %s\n", goldMessage);
+        mem_free(goldMessage);
     }
 }
