@@ -89,8 +89,6 @@ int main(const int argc, char* argv[])
         return parseArgsReturn;
     }
 
-    printf("%s", game->mainGrid);
-
     FILE* logFP = fopen("server.log", "w");
     int port = message_init(logFP);
     if (port == 0) {
