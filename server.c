@@ -643,7 +643,6 @@ static bool handleKEY(const addr_t from, const char* content)
 
             // keep looping (loop breaks once player can no longer go in specified direction)
             while (true) {
-            
                 int old_loc = game->players[playerIndex]->loc;
                 int new_loc;
                 switch(key) {
@@ -701,9 +700,7 @@ static bool handleKEY(const addr_t from, const char* content)
                 // if the player cannot move to the spot, break out of the loop
                 if (game->mainGrid[new_loc] != '.' && game->mainGrid[new_loc] != '*' && game->mainGrid[new_loc] != '#'
                     && !isalpha(game->mainGrid[new_loc])) {
-
                     break;
-
                 }
 
                 // update the player's stored location
@@ -762,13 +759,12 @@ static bool handleKEY(const addr_t from, const char* content)
                     game->players[playerIndex]->currSpot = newSpot;
 
                 }
-
-            }   
-
+            
             // only send messages if the player actually moved
-            if (didMove) {
-                broadcastDisplay();
-            }
+                if (didMove) {
+                    broadcastDisplay();
+                }
+            }   
 
             // return false to keep looping
             return false;
@@ -886,18 +882,12 @@ static void broadcastDisplay() {
 static void broadcastGold(int playerIndex, int goldCollected) {
     // send a gold message to all players
     for (int i = 0; i < 26; i++) {
-
         if (game->players[i] != NULL) {
-
             char* goldMessage = (char *)mem_malloc(25);
             if (i == playerIndex) {
-
                 sprintf(goldMessage, "GOLD %d %d %d", goldCollected, game->players[i]->gold, game->goldRemaining);                    
-
             } else {
-
                 sprintf(goldMessage, "GOLD 0 %d %d", game->players[i]->gold, game->goldRemaining);
-
             }
 
             message_send(game->players[i]->address, goldMessage);
@@ -905,12 +895,10 @@ static void broadcastGold(int playerIndex, int goldCollected) {
             log_s("message: %s\n", goldMessage);
             mem_free(goldMessage);
         }
-
     }
 
     // send a gold message if there is a spectator
     if (message_isAddr(game->spectator)) {
-
         char* goldMessage = (char *)mem_malloc(25);
         sprintf(goldMessage, "GOLD 0 0 %d", game->goldRemaining);
         message_send(game->spectator, goldMessage);

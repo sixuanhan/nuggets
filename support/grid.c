@@ -10,6 +10,7 @@ Sixuan Han and Kevin Cao, May 22 2023
 #include <stdlib.h>
 #include <string.h>
 #include <stdbool.h>
+#include <ctype.h>
 #include "../libcs50/file.h"
 
 
@@ -62,23 +63,15 @@ bool grid_isVisible(char* grid, int start_loc, int end_loc, int NR, int NC)
     int sy; 
 
     if (start_x > end_x) {
-
         sx = -1;
-
     } else {
-
         sx = 1;
-
     }
 
     if (start_y > end_y) {
-
         sy = -1;
-
     } else {
-
         sy = 1;
-
     }
 
     int error1 = dx - dy;
@@ -86,15 +79,10 @@ bool grid_isVisible(char* grid, int start_loc, int end_loc, int NR, int NC)
     int x = start_x; 
     int y = start_y; 
 
-
     while (true) {
-
-
         // if the ray reaches the end point then mark the point as visible by returning true
         if (x == end_x && y == end_y) {
-
             return true;
-
         }
 
         // if the ray reaches one of the specified characters and is not at the starting loc
@@ -102,28 +90,20 @@ bool grid_isVisible(char* grid, int start_loc, int end_loc, int NR, int NC)
         char mapChar = grid[grid_2dto1d(x, y, NR, NC)];
         if ((x != start_x || y != start_y) && (mapChar == '-' || mapChar == '|' || mapChar == '+' 
             || mapChar == ' ' || mapChar == '#')) {
-
             return false; 
-
         }
 
         // adjust the errors 
         int error2 = 2 * error1;
         if (error2 > -1 * dy) {
-
             error1 -= dy;
             x += sx;
-
         }
-
         if (error2 < dx) {
-
             error1 += dx;
             y += sy;
-
         }
     }
-
 }
 
 /********************** grid_update_vis() *********************/
@@ -132,15 +112,17 @@ void grid_update_vis(char* mainGrid, char* localMap, int loc, int NR, int NC)
 {
     // loop through and check the visibility of each coordinate in mainGrid
     for (int i = 0; i < NR * NC; i++) {
-
         if (mainGrid[i] == '\n') {
             continue;
         }
         
-        //if the character/location is visible, then copy that to localMap to make it visible to the client
+        // if the character/location is visible, then copy that to localMap to make it visible to the client
         if (grid_isVisible(mainGrid, i, loc, NR, NC)) {
             localMap[i] = mainGrid[i];
         }
-        
+        // if an occupant location is not visible, show it as an empty room spot
+        else if (localMap[i] == '*' || isalpha(localMap[i])) {
+            localMap[i] = '.';
+        }
     }
 }
