@@ -53,6 +53,7 @@ static bool handlePLAY(const addr_t from, const char* content);
 static bool handleSPECTATE(const addr_t from, const char* content);
 static bool handleKEY(const addr_t from, const char* content);
 static bool gameOver();
+static void broadcastDisplay(void);
 
 /*********************** global ***********************/
 /**************** constants ****************/
@@ -392,26 +393,22 @@ static bool handlePLAY(const addr_t from, const char* content)
     char* OKmessage = (char*)mem_malloc_assert(6 * sizeof(char), "Error: Memory allocation failed. \n");
     char* GRIDmessage = (char*)mem_malloc_assert((6 + ((int)(ceil(log10(NC))+1)) + ((int)(ceil(log10(NR))+1))) * sizeof(char), "Error: Memory allocation failed. \n");
     char* GOLDmessage = (char*)mem_malloc_assert((6 + ((int)(ceil(log10(2))+2)) + ((int)(ceil(log10(2))+2)) + ((int)(ceil(log10(game->goldRemaining))+2))) * sizeof(char), "Error: Memory allocation failed. \n");
-    char* DISPLAYmessage = (char*)mem_malloc_assert((9 + (strlen(player->localMap))) * sizeof(char), "Error: Memory allocation failed. \n");
 
     // write to message strings
     sprintf(OKmessage, "OK %c", player->letterID);
     sprintf(GRIDmessage, "GRID %d %d", NR, NC);
     sprintf(GOLDmessage, "GOLD 0 0 %d", game->goldRemaining);
-    sprintf(DISPLAYmessage, "DISPLAY\n%s", player->localMap);
-    DISPLAYmessage[player->loc+8] = '@';
 
     // send messages
     message_send(from, OKmessage);
     message_send(from, GRIDmessage);
     message_send(from, GOLDmessage);
-    message_send(from, DISPLAYmessage);
+    broadcastDisplay();
 
     // free memory
     mem_free(OKmessage);
     mem_free(GRIDmessage);
     mem_free(GOLDmessage);
-    mem_free(DISPLAYmessage);
     
     return false;
 }
@@ -488,8 +485,14 @@ static bool handleKEY(const addr_t from, const char* content)
             // send a QUIT message to the player who quit 
             message_send(game->players[playerIndex]->address, "QUIT Thanks for playing!");
             
+            game->mainGrid[game->players[playerIndex]->loc] = game->players[playerIndex]->currSpot;
+
             // free up the memory storing the player information
+            mem_free(game->players[playerIndex]->username);
+            mem_free(game->players[playerIndex]->localMap);
             mem_free(game->players[playerIndex]);
+
+            broadcastDisplay();
 
             // return false to keep looping
             return false; 
@@ -637,34 +640,7 @@ static bool handleKEY(const addr_t from, const char* content)
 
                 }
 
-                // update the local maps of all players and send display message
-                char *displayMessage = (char *)mem_malloc(8 + NR * NC + 1);
-                for (int i = 0; i < 26; i++) {
-                  
-                    if (game->players[i] != NULL) {
-                        grid_update_vis(game->mainGrid, game->players[i]->localMap, game->players[i]->loc, NR, NC);
-                        sprintf(displayMessage, "DISPLAY\n%s", game->players[i]->localMap);
-
-                        // replace the player's letterID with '@'
-                        displayMessage[8 + game->players[i]->loc] = '@';
-
-                        message_send(game->players[i]->address, displayMessage);
-                      
-                    }
-                  
-                }
-              
-                mem_free(displayMessage);
-
-                // send updated complete map to spectator if there is one
-                if (message_isAddr(game->spectator)) {
-
-                    char *displayMessage = (char *)mem_malloc(8 + NR * NC + 1);
-                    sprintf(displayMessage, "DISPLAY\n%s", game->mainGrid);
-                    message_send(game->spectator, displayMessage);
-                    mem_free(displayMessage);
-
-                }
+                broadcastDisplay();
 
                 // return false to keep looping
                 return false; 
@@ -837,37 +813,7 @@ static bool handleKEY(const addr_t from, const char* content)
 
             // only send messages if the player actually moved
             if (didMove) {
-
-                // update the local maps of all players and send display message
-                for (int i = 0; i < 26; i++) {
-
-                    if (game->players[i] != NULL) {
-
-                        grid_update_vis(game->mainGrid, game->players[i]->localMap, game->players[i]->loc, NR, NC);
-
-                        char *displayMessage = (char *)mem_malloc(8 + NR * NC + 1);
-                        sprintf(displayMessage, "DISPLAY\n%s", game->players[i]->localMap);
-
-                        // replace the player's letterID with '@'
-                        displayMessage[8 + game->players[i]->loc] = '@';
-                        
-                        message_send(game->players[i]->address, displayMessage);
-                        mem_free(displayMessage);
-
-                    }
-
-                }
-
-                // send updated complete map to spectator if there is one
-                if (message_isAddr(game->spectator)) {
-
-                    char *displayMessage = (char *)mem_malloc(8 + NR * NC + 1);
-                    sprintf(displayMessage, "DISPLAY\n%s", game->mainGrid);
-                    message_send(game->spectator, displayMessage);
-                    mem_free(displayMessage);
-
-                }
-
+                broadcastDisplay();
             }
 
             // return false to keep looping
@@ -942,4 +888,34 @@ static bool gameOver(void)
 
     return true;
 
+}
+
+
+
+/* A function that is called when the mainGrid is updated. It updates the local maps of all players and send display messages
+ * and send updated complete map to spectator if there is one
+ */
+static void broadcastDisplay() {
+    // update the local maps of all players and send display message
+    char *displayMessage = (char *)mem_malloc(8 + NR * NC + 1);
+    for (int i = 0; i < 26; i++) {
+        if (game->players[i] != NULL) {
+            grid_update_vis(game->mainGrid, game->players[i]->localMap, game->players[i]->loc, NR, NC);
+            sprintf(displayMessage, "DISPLAY\n%s", game->players[i]->localMap);
+
+            // replace the player's letterID with '@'
+            displayMessage[8 + game->players[i]->loc] = '@';
+
+            message_send(game->players[i]->address, displayMessage);
+        }  
+    }
+    mem_free(displayMessage);
+
+    // send updated complete map to spectator if there is one
+    if (message_isAddr(game->spectator)) {
+        char *displayMessage = (char *)mem_malloc(8 + NR * NC + 1);
+        sprintf(displayMessage, "DISPLAY\n%s", game->mainGrid);
+        message_send(game->spectator, displayMessage);
+        mem_free(displayMessage);
+    }
 }
