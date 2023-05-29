@@ -56,6 +56,7 @@ static bool gameOver(void);
 static void broadcastDisplay(void);
 static void broadcastGold(int playerIndex, int goldCollected);
 
+
 /*********************** global ***********************/
 /**************** constants ****************/
 static const int MaxNameLength = 50;   // max number of chars in playerName
@@ -202,7 +203,6 @@ static void game_delete(void)
     counters_delete(game->nuggetsInPile);
     // free the game struct
     mem_free(game);
-
 }
 
 
@@ -261,8 +261,8 @@ static player_t* player_new(void)
  * Caller is responsible for:
  *   initializing char* mapFile and int randSeed before calling this function.
  */
-static int parseArgs(const int argc, char* argv[], char* mapFile) {
-
+static int parseArgs(const int argc, char* argv[], char* mapFile)
+{
     if (argc != 2 && argc != 3) {
         fprintf(stderr, "Error: incorrect number of arguments. Usage: %s map.txt [seed] \n", argv[0]);
         return 2;
@@ -308,7 +308,6 @@ static int parseArgs(const int argc, char* argv[], char* mapFile) {
     game_scatter_gold();
 
     return 0;
-
 }
 
 
@@ -342,8 +341,8 @@ static bool handleMessage(void* arg, const addr_t from, const char* message)
     message_send(from, "ERROR cannot recognize message.\n");
     log_s("Sending error message to %s. \n", message_stringAddr(from));
     return false;
-
 }
+
 
 /* A function to handle incoming PLAY messages from the client
  * and add a player to the game if there is space.
@@ -421,6 +420,7 @@ static bool handlePLAY(const addr_t from, const char* content)
     return false;
 }
 
+
 /* A function to handle incoming SPECTATE messages from the client
  * and add a spectator to the game if there is space.
  *
@@ -470,8 +470,8 @@ static bool handleSPECTATE(const addr_t from, const char* content)
     free(DISPLAYmessage);
 
     return false;
-
 }
+
 
 /*
 *   A function to handle KEY messages and updates the game based on the 
@@ -479,7 +479,6 @@ static bool handleSPECTATE(const addr_t from, const char* content)
 */
 static bool handleKEY(const addr_t from, const char* content)
 {
-
     // check to see which player the message is from
     // if playerIndex is still -1, then it must be spectator; else is player
     int playerIndex = -1;
@@ -797,21 +796,17 @@ static bool handleKEY(const addr_t from, const char* content)
             return false; 
 
         } else {
-
             // if any other keystroke send error message
             message_send(game->spectator, "ERROR Invalid spectator keystroke");
             log_s("Sending error message to %s. \n", message_stringAddr(game->spectator));
 
             // return false to keep looping
             return false; 
-
         }
-
     }
-
     return false;
-
 }
+
 
 /* A function that sends a QUIT message to every client 
 * with a scoreboard when the game is over.
@@ -821,7 +816,6 @@ static bool handleKEY(const addr_t from, const char* content)
 */
 static bool gameOver(void) 
 {
-
     char* QUITmessage = (char*)mem_malloc_assert((17+game->numPlayers*(15+MaxNameLength)) * sizeof(char), "Error: Memory allocation failed. \n");
     int len = 0;
     len += sprintf(QUITmessage, "QUIT GAME OVER:\n");
@@ -843,15 +837,13 @@ static bool gameOver(void)
     free(QUITmessage);
 
     return true;
-
 }
-
 
 
 /* A function that is called when the mainGrid is updated. It updates the local maps of all players and send display messages
  * and send updated complete map to spectator if there is one
  */
-static void broadcastDisplay() {
+static void broadcastDisplay(void) {
     // update the local maps of all players and send display message
     char *displayMessage = (char *)mem_malloc(8 + NR * NC + 1);
     for (int i = 0; i < 26; i++) {
@@ -880,6 +872,10 @@ static void broadcastDisplay() {
     }
 }
 
+
+/* A function that is called when someone collects gold. It sends GOLD messages to all players
+ * and to spectator if there is one
+ */
 static void broadcastGold(int playerIndex, int goldCollected) {
     // send a gold message to all players
     for (int i = 0; i < 26; i++) {

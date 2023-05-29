@@ -11,10 +11,10 @@ We avoid repeating information that is provided in the requirements spec.
 ## Plan for division of labor
 
 While all group members are responsible for the entirety of the project, we assign certain tasks for certain group members to prioritize and complete first:
-* Kevin - Server module + Bresenham algorithm in Grid module
-* James - Client module
-* Selena - Grid module
-* Steven - Server module & Grid module (particularly where both modules intersect)
+* Kevin - handleKEY in server.c + Bresenham algorithm in grid.c
+* James - client.c
+* Selena - grid.c and global variables, main, parsearg, and handleMessage in server.c
+* Steven - handlePLAY, handleSPECTATE, and gameOver in server.c
 
 We will be responsible for unit testing our individual modules in order to ensure that they function as intended, but we will conduct integration and system tests together in order to check aggregate performance. Even though we are dividing up the code, each group member should be available to help another group member on their code if necessary. 
 
@@ -179,9 +179,14 @@ A function to handle the end of the game and sends a message to each client with
 static bool gameOver();
 ```
 
-A function to update the main grid when a player moves.
+A function to tell everyone to update their display.
 ```c
-static char* updateMainGrid(const int playerIndex, const int old_loc);
+static void broadcastDisplay(void);
+```
+
+A function to tell everyone to update when someone collects gold.
+```c
+static void broadcastGold(int playerIndex, int goldCollected);
 ```
 
 ### Detailed pseudo code
@@ -245,22 +250,20 @@ static char* updateMainGrid(const int playerIndex, const int old_loc);
 	if message came from player
 		if the keystroke denotes a valid movement command
 			update the grid for the player
-			send updated DISPLAY message back to all players (not sure if this is correct)
+			send updated DISPLAY message back to all players and spectator (if there is one)
 			if goldRemaining == 0
 				return gameOver()
 		else if the keystroke is Q
 			send a QUIT message to the client 
-			close communication socket with client
-			delete the corresponding player struct of the client
+			clean up the client
 		else
 			send an ERROR message to the client
 	else if message came from spectator
 		if the keystroke is Q
-			send a QUIT message to the client
-			close communication socket with the client
-			delete the corresponding player struct of the client
+			send a QUIT message to the spectator
+			clean up the spectator
 		else
-			send an ERROR Message to the client 
+			send an ERROR Message to the spectator 
 	return false
 
 #### `gameOver`:
@@ -269,15 +272,40 @@ static char* updateMainGrid(const int playerIndex, const int old_loc);
 		send a QUIT message to every client with a scoreboard
 	return true
 
-#### `updateMainGrid`:
+#### `broadcastDisplay`:
 
-	if the player is stepping onto another player
-		swap the two players, updating their stored spot type data
-	else if the player is stepping onto gold
-		update the gold and send a gold message to everyone
-	else if the player is stepping on to a spot
-		move the player and restore the spot they're stepping from to its previous character
+	allocate memory for a DISPLAY message
+	loop over the players list
+	if the player is not NULL
+		update their localMap
+		generate a DISPLAY message for them
+		send the message
+		log
+	free the DISPLAY message
+	if there is a spectator
+		allocate memory for a DISPLAY message
+		generate a DISPLAY message for them
+		send the message
+		log
+		free the DISPLAY message
 
+#### `broadcastGold`:
+	loop over the players list
+	if the player is not NULL
+		allocate memory for a DISPLAY message
+		if it is the player who collects the gold
+			generate a suitable DISPLAY message for them
+		else
+			generate a suitable DISPLAY message for them
+		send the message
+		log
+	free the DISPLAY message
+	if there is a spectator
+		allocate memory for a DISPLAY message
+		generate a DISPLAY message for them
+		send the message
+		log
+		free the DISPLAY message
 
 ---
 
@@ -461,7 +489,7 @@ void grid_update_vis(char** mainGrid, char** localMap, int loc);
 
 	return x+NC*y
 
-#### `isVisible`:
+#### `grid_isVisible`:
 
 	start_x = grid_1dto2d_x(start_loc)
 	start_y = grid_1dto2d_y(start_loc)
