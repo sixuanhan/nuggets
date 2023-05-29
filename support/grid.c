@@ -11,6 +11,7 @@ Sixuan Han and Kevin Cao, May 22 2023
 #include <string.h>
 #include <stdbool.h>
 #include <ctype.h>
+#include <math.h>
 #include "../libcs50/file.h"
 
 
@@ -53,7 +54,105 @@ bool grid_isVisible(char* grid, int start_loc, int end_loc, int NR, int NC)
     int end_x = grid_1dto2d_x(end_loc, NR, NC);
     int end_y = grid_1dto2d_y(end_loc, NR, NC);
 
+    // obtain the slope
+    int dx = start_x - end_x;
+    int dy = start_y - end_y;
+    float slope = ((float) dy) / ((float) dx);
 
+    int start = (dx > 0) ? 1 : -1;
+
+    if (dx != 0) {
+
+        // loop and increment the ray through just its x component
+        while (abs(start) < abs(dx)) {
+
+            // update the y as we trace the ray
+            float y_intercept = ((float) start) * slope + ((float) end_y);
+            
+            // if the ray lands directly on a cell
+            if (y_intercept == round(y_intercept)) {
+
+                // check if the ray can traverse through the point
+                char mapChar = grid[grid_2dto1d(end_x + start, (int) y_intercept, NR, NC)];
+                if (mapChar != '.' && mapChar != '*' && !isalpha(mapChar)) {
+
+                    return false;
+
+                }
+
+            } else {
+
+                // if the ray is passing between cells
+
+                // check the transparency of the cells that the ray is sandwiched between
+                char overChar = grid[grid_2dto1d(end_x + start, round(y_intercept - 0.5f), NR, NC)];
+                char underChar = grid[grid_2dto1d(end_x + start, round(y_intercept + 0.5f), NR, NC)];
+
+                if (overChar != '.' && overChar != '*' && !isalpha(overChar) && underChar != '.'
+                    && underChar != '*' && !isalpha(underChar)) {
+
+                    return false;
+
+                }
+
+            }
+
+            // increment the x
+            start += (dx > 0) ? 1 : -1;
+
+        }
+
+    }
+
+    // now isolate the y component instead when raytracing
+
+    slope = ((float) dx) / ((float) dy);
+    start = (dy > 0) ? 1 : -1;
+
+    if (dy != 0) {
+
+        while (abs(start) < abs(dy)) {
+
+            // update the x as we trace the ray
+            float x_intercept = ((float) start) * slope + ((float) end_x);
+
+            // if the ray lands directly on a cell
+            if (x_intercept == round(x_intercept)) {
+
+                // check if the ray can traverse through the point
+                char mapChar = grid[grid_2dto1d((int) x_intercept, end_x + start, NR, NC)];
+                if (mapChar != '.' && mapChar != '*' && !isalpha(mapChar)) {
+
+                    return false;
+
+                }
+
+            } else {
+
+                // if the ray is passing between cells
+
+                // check the transparency of the cells that the ray is sandwiched between
+                char leftChar = grid[grid_2dto1d(round(x_intercept - 0.5f), end_y + start, NR, NC)];
+                char rightChar = grid[grid_2dto1d(round(x_intercept + 0.5f), end_y + start, NR, NC)];
+                if (leftChar != '.' && leftChar != '*' && !isalpha(leftChar) && rightChar != '.'
+                    && rightChar != '*' && !isalpha(rightChar)) {
+
+                    return false;
+
+                }
+
+            }
+
+            // increment the y
+            start += (dy > 0) ? 1 : -1;
+
+        }
+
+    }
+
+    return true;
+
+    /*
     // implement modified bresenham raytracing algorithm between these 2 coordinates
     int dx = abs(start_x - end_x);
     int dy = abs(start_y - end_y);
@@ -104,6 +203,8 @@ bool grid_isVisible(char* grid, int start_loc, int end_loc, int NR, int NC)
             y += sy;
         }
     }
+    */
+
 }
 
 /********************** grid_update_vis() *********************/
@@ -112,17 +213,22 @@ void grid_update_vis(char* mainGrid, char* localMap, int loc, int NR, int NC)
 {
     // loop through and check the visibility of each coordinate in mainGrid
     for (int i = 0; i < NR * NC; i++) {
+
         if (mainGrid[i] == '\n') {
             continue;
         }
         
         // if the character/location is visible, then copy that to localMap to make it visible to the client
-        // if (grid_isVisible(mainGrid, i, loc, NR, NC)) {
+        if (grid_isVisible(mainGrid, i, loc, NR, NC)) {
+
             localMap[i] = mainGrid[i];
-        // }
+
+        }
+
         // if an occupant location is not visible, show it as an empty room spot
         // else if (localMap[i] == '*' || isalpha(localMap[i])) {
         //     localMap[i] = '.';
         // }
+
     }
 }
