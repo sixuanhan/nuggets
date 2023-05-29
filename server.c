@@ -506,6 +506,7 @@ static bool handleKEY(const addr_t from, const char* content)
             mem_free(game->players[playerIndex]->username);
             mem_free(game->players[playerIndex]->localMap);
             mem_free(game->players[playerIndex]);
+            game->players[playerIndex] = NULL;
 
             broadcastDisplay();
 
