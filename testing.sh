@@ -20,3 +20,7 @@ rm -f unreadable.txt
 
 #testing: seed argument is not int
 ./server maps/main.txt abc
+
+#testing: invalid map
+prof/maps/checkmap maps/small.txt
+
