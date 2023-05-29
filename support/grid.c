@@ -54,14 +54,15 @@ bool grid_isVisible(char* grid, int start_loc, int end_loc, int NR, int NC)
     int end_x = grid_1dto2d_x(end_loc, NR, NC);
     int end_y = grid_1dto2d_y(end_loc, NR, NC);
 
-    // obtain the slope
     int dx = start_x - end_x;
     int dy = start_y - end_y;
-    float slope = ((float) dy) / ((float) dx);
+    float slope;
 
     int start = (dx > 0) ? 1 : -1;
 
     if (dx != 0) {
+
+        slope = ((float) dy) / ((float) dx);
 
         // loop and increment the ray through just its x component
         while (abs(start) < abs(dx)) {
@@ -106,10 +107,11 @@ bool grid_isVisible(char* grid, int start_loc, int end_loc, int NR, int NC)
 
     // now isolate the y component instead when raytracing
 
-    slope = ((float) dx) / ((float) dy);
     start = (dy > 0) ? 1 : -1;
 
     if (dy != 0) {
+
+        slope = ((float) dx) / ((float) dy);
 
         while (abs(start) < abs(dy)) {
 
@@ -120,7 +122,7 @@ bool grid_isVisible(char* grid, int start_loc, int end_loc, int NR, int NC)
             if (x_intercept == round(x_intercept)) {
 
                 // check if the ray can traverse through the point
-                char mapChar = grid[grid_2dto1d((int) x_intercept, end_x + start, NR, NC)];
+                char mapChar = grid[grid_2dto1d((int) x_intercept, end_y + start, NR, NC)];
                 if (mapChar != '.' && mapChar != '*' && !isalpha(mapChar)) {
 
                     return false;
@@ -224,11 +226,12 @@ void grid_update_vis(char* mainGrid, char* localMap, int loc, int NR, int NC)
             localMap[i] = mainGrid[i];
 
         }
-
         // if an occupant location is not visible, show it as an empty room spot
-        // else if (localMap[i] == '*' || isalpha(localMap[i])) {
-        //     localMap[i] = '.';
-        // }
+        else if (localMap[i] == '*' || isalpha(localMap[i])) {
+
+            localMap[i] = '.';
+
+        }
 
     }
 }
