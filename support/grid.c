@@ -74,7 +74,6 @@ bool grid_isVisible(char* grid, int start_loc, int end_loc, int NR, int NC)
             if (y_intercept == round(y_intercept)) {
 
                 // check if the ray can traverse through the point
-                // char mapChar = grid[grid_2dto1d(end_x + start, (int) y_intercept, NR, NC)];
                 char mapChar = grid[grid_2dto1d(end_x + start, round(y_intercept), NR, NC)];
                 if (mapChar != '.' && mapChar != '*' && !isalpha(mapChar)) {
 
@@ -87,8 +86,8 @@ bool grid_isVisible(char* grid, int start_loc, int end_loc, int NR, int NC)
                 // if the ray is passing between cells
 
                 // check the transparency of the cells that the ray is sandwiched between
-                char overChar = grid[grid_2dto1d(end_x + start, round(y_intercept - 0.5f), NR, NC)];
-                char underChar = grid[grid_2dto1d(end_x + start, round(y_intercept + 0.5f), NR, NC)];
+                char overChar = grid[grid_2dto1d(end_x + start, floor(y_intercept), NR, NC)];
+                char underChar = grid[grid_2dto1d(end_x + start, ceil(y_intercept), NR, NC)];
 
                 if (overChar != '.' && overChar != '*' && !isalpha(overChar) && underChar != '.'
                     && underChar != '*' && !isalpha(underChar)) {
@@ -123,7 +122,7 @@ bool grid_isVisible(char* grid, int start_loc, int end_loc, int NR, int NC)
             if (x_intercept == round(x_intercept)) {
 
                 // check if the ray can traverse through the point
-                char mapChar = grid[grid_2dto1d((round(x_intercept), end_y + start, NR, NC)];
+                char mapChar = grid[grid_2dto1d(round(x_intercept), end_y + start, NR, NC)];
                 if (mapChar != '.' && mapChar != '*' && !isalpha(mapChar)) {
 
                     return false;
@@ -135,8 +134,8 @@ bool grid_isVisible(char* grid, int start_loc, int end_loc, int NR, int NC)
                 // if the ray is passing between cells
 
                 // check the transparency of the cells that the ray is sandwiched between
-                char leftChar = grid[grid_2dto1d(round(x_intercept - 0.5f), end_y + start, NR, NC)];
-                char rightChar = grid[grid_2dto1d(round(x_intercept + 0.5f), end_y + start, NR, NC)];
+                char leftChar = grid[grid_2dto1d(floor(x_intercept), end_y + start, NR, NC)];
+                char rightChar = grid[grid_2dto1d(ceil(x_intercept), end_y + start, NR, NC)];
                 if (leftChar != '.' && leftChar != '*' && !isalpha(leftChar) && rightChar != '.'
                     && rightChar != '*' && !isalpha(rightChar)) {
 
