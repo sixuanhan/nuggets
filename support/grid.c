@@ -75,7 +75,7 @@ bool grid_isVisible(char* grid, int start_loc, int end_loc, int NR, int NC)
 
                 // check if the ray can traverse through the point
                 // char mapChar = grid[grid_2dto1d(end_x + start, (int) y_intercept, NR, NC)];
-                char mapChar = grid[grid_2dto1d(end_x + start, round(y_intercept + 0.01f), NR, NC)];
+                char mapChar = grid[grid_2dto1d(end_x + start, round(y_intercept), NR, NC)];
                 if (mapChar != '.' && mapChar != '*' && !isalpha(mapChar)) {
 
                     return false;
@@ -123,7 +123,7 @@ bool grid_isVisible(char* grid, int start_loc, int end_loc, int NR, int NC)
             if (x_intercept == round(x_intercept)) {
 
                 // check if the ray can traverse through the point
-                char mapChar = grid[grid_2dto1d((round(x_intercept + 0.01f), end_y + start, NR, NC)];
+                char mapChar = grid[grid_2dto1d((round(x_intercept), end_y + start, NR, NC)];
                 if (mapChar != '.' && mapChar != '*' && !isalpha(mapChar)) {
 
                     return false;
