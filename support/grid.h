@@ -7,7 +7,7 @@
  */
 
 #include <stdbool.h>
-#include "../libcs50/file.h"
+#include "file.h"
 
 /**************** functions ****************/
 

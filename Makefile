@@ -42,8 +42,8 @@ client: $(OBJS) $(LLIBS)
 client.o: $S/grid.h $S/log.h $S/message.h $L/counters.h $L/file.h $L/mem.h
 
 
-test: testing.sh
-	bash -v testing.sh >& testing.out
+test: testingServer.sh
+	bash -v testingServer.sh >& testingServer.out
 
 
 clean:

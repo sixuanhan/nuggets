@@ -1,0 +1,85 @@
+ml () {  module ml "$@"
+}
+module () {  _module_raw "$@" 2>&1
+}
+_module_raw () {  eval `/usr/bin/tclsh8.6 /usr/lib/x86_64-linux-gnu/modulecmd.tcl bash "$@"`;
+ _mlstatus=$?;
+ return $_mlstatus
+}
+# testing for server
+# Author: Sixuan Han
+# Date: May 24 2023
+
+make all
+make[1]: Entering directory '/thayerfs/home/f004n7k/cs50-dev/nuggets2-team13-the-ohio-state-university'
+cd libcs50; cp libcs50-given.a libcs50.a
+make -C support
+make[2]: Entering directory '/thayerfs/home/f004n7k/cs50-dev/nuggets2-team13-the-ohio-state-university/support'
+gcc -Wall -pedantic -std=c11 -ggdb   -c -o message.o message.c
+gcc -Wall -pedantic -std=c11 -ggdb   -c -o log.o log.c
+gcc -Wall -pedantic -std=c11 -ggdb   -c -o grid.o grid.c
+ar cr support.a message.o log.o grid.o
+gcc -Wall -pedantic -std=c11 -ggdb   -c -o miniclient.o miniclient.c
+gcc -Wall -pedantic -std=c11 -ggdb miniclient.o message.o log.o  -o miniclient
+gcc -Wall -pedantic -std=c11 -ggdb   -c -o miniserver.o miniserver.c
+gcc -Wall -pedantic -std=c11 -ggdb miniserver.o message.o log.o  -o miniserver
+gcc -Wall -pedantic -std=c11 -ggdb -DUNIT_TEST message.c log.o -o messagetest
+make[2]: Leaving directory '/thayerfs/home/f004n7k/cs50-dev/nuggets2-team13-the-ohio-state-university/support'
+make server
+make[2]: Entering directory '/thayerfs/home/f004n7k/cs50-dev/nuggets2-team13-the-ohio-state-university'
+gcc -Wall -pedantic -std=c11 -ggdb  -Isupport -Ilibcs50   -c -o server.o server.c
+gcc -Wall -pedantic -std=c11 -ggdb  -Isupport -Ilibcs50   -c -o client.o client.c
+gcc -Wall -pedantic -std=c11 -ggdb  -Isupport -Ilibcs50 server.o support/support.a libcs50/libcs50-given.a  -lm -lncurses -o server
+make[2]: Leaving directory '/thayerfs/home/f004n7k/cs50-dev/nuggets2-team13-the-ohio-state-university'
+make client
+make[2]: Entering directory '/thayerfs/home/f004n7k/cs50-dev/nuggets2-team13-the-ohio-state-university'
+gcc -Wall -pedantic -std=c11 -ggdb  -Isupport -Ilibcs50 client.o support/support.a libcs50/libcs50-given.a  -lm -lncurses -o client
+make[2]: Leaving directory '/thayerfs/home/f004n7k/cs50-dev/nuggets2-team13-the-ohio-state-university'
+make[1]: Leaving directory '/thayerfs/home/f004n7k/cs50-dev/nuggets2-team13-the-ohio-state-university'
+
+# edge cases for incorrect args
+#testing: zero argument
+./server
+Error: incorrect number of arguments. Usage: ./server map.txt [seed] 
+
+#testing: three argument
+./server maps/main.txt 1 2
+Error: incorrect number of arguments. Usage: ./server map.txt [seed] 
+
+#testing: map file does not exist
+./server maps/no-map.txt 1
+Error: cannot read map file. 
+
+#testing: unreadable map file
+touch unreadable.txt
+chmod -r unreadable.txt
+./server unreadable.txt 1
+Error: cannot read map file. 
+rm -f unreadable.txt
+
+#testing: seed argument is not int
+./server maps/main.txt abc
+Error: seed argument is not int. 
+
+make clean
+make[1]: Entering directory '/thayerfs/home/f004n7k/cs50-dev/nuggets2-team13-the-ohio-state-university'
+rm -rf *.dSYM
+rm -f *~ *.o
+rm -f server
+rm -f client
+rm -f core
+rm -f vgcore*
+make -C libcs50 clean
+make[2]: Entering directory '/thayerfs/home/f004n7k/cs50-dev/nuggets2-team13-the-ohio-state-university/libcs50'
+rm -f core
+rm -f libcs50.a *~ *.o
+make[2]: Leaving directory '/thayerfs/home/f004n7k/cs50-dev/nuggets2-team13-the-ohio-state-university/libcs50'
+make -C support clean
+make[2]: Entering directory '/thayerfs/home/f004n7k/cs50-dev/nuggets2-team13-the-ohio-state-university/support'
+rm -f core
+rm -rf *~ *.o *.gch *.dSYM
+rm -f *.log
+rm -f support.a
+rm -f miniclient miniserver messagetest
+make[2]: Leaving directory '/thayerfs/home/f004n7k/cs50-dev/nuggets2-team13-the-ohio-state-university/support'
+make[1]: Leaving directory '/thayerfs/home/f004n7k/cs50-dev/nuggets2-team13-the-ohio-state-university'
