@@ -6,9 +6,9 @@ _module_raw () {  eval `/usr/bin/tclsh8.6 /usr/lib/x86_64-linux-gnu/modulecmd.tc
  _mlstatus=$?;
  return $_mlstatus
 }
-# testing for server
-# Author: Sixuan Han
-# Date: May 24 2023
+# Testing for client
+# Author: James Quirk
+# Date: May 31, 2023
 
 make all
 make[1]: Entering directory '/thayerfs/home/f005cqz/cs50-dev/nuggets2-team13-the-ohio-state-university'
@@ -37,29 +37,21 @@ gcc -Wall -pedantic -std=c11 -ggdb  -Isupport -Ilibcs50 client.o support/support
 make[2]: Leaving directory '/thayerfs/home/f005cqz/cs50-dev/nuggets2-team13-the-ohio-state-university'
 make[1]: Leaving directory '/thayerfs/home/f005cqz/cs50-dev/nuggets2-team13-the-ohio-state-university'
 
-# edge cases for incorrect args
-#testing: zero argument
-./server
-Error: incorrect number of arguments. Usage: ./server map.txt [seed] 
+#testing: zero arguments
+./client
+Error: incorrect number of arguments. Format: ./client hostname port [playername]
 
-#testing: three argument
-./server maps/main.txt 1 2
-Error: incorrect number of arguments. Usage: ./server map.txt [seed] 
+#testing: two arguments
+./client plank
+Error: incorrect number of arguments. Format: ./client hostname port [playername]
 
-#testing: map file does not exist
-./server maps/no-map.txt 1
-Error: cannot read map file. 
+#testing: five arguments
+./client plank 34523 james quirk
+Error: incorrect number of arguments. Format: ./client hostname port [playername]
 
-#testing: unreadable map file
-touch unreadable.txt
-chmod -r unreadable.txt
-./server unreadable.txt 1
-Error: cannot read map file. 
-rm -f unreadable.txt
-
-#testing: seed argument is not int
-./server maps/main.txt abc
-Error: seed argument is not int. 
+#testing: port is negative
+./client plank -34532
+Error: incorrect input for port number. Must be a positive integer.
 
 make clean
 make[1]: Entering directory '/thayerfs/home/f005cqz/cs50-dev/nuggets2-team13-the-ohio-state-university'

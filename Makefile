@@ -42,8 +42,9 @@ client: $(OBJS) $(LLIBS)
 client.o: $S/grid.h $S/log.h $S/message.h $L/counters.h $L/file.h $L/mem.h
 
 
-test: testingServer.sh
+test: testingClient.sh testingServer.sh
 	bash -v testingServer.sh >& testingServer.out
+	bash -v testingClient.sh >& testingClient.out
 
 valgrind:
 	$(VALGRIND) ./server maps/main.txt
