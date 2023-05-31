@@ -24,11 +24,11 @@ This is the outline of the data structures, functional breakdown, and pseudo cod
 
 ### Data structures
 
-The client is a bare-bones receiver and communicator of strings as inputs and ouputs, so no additional data structures are required.
+The client contains a `game` data structure that stores relevant factors to the operation of certain methods throughout the file. These include **NC**, the number of columns in the grid; **NR**, the number of rows in the grid; **letter**, the letter corresponding to the client; **init**, a boolean that indicates whether the game has just begun for the client or not; **spect**, a boolean indicating whether or not a client is a spectator; **r**, **p**, and **n**, the variables used in the `handleGOLD` function as described below; **log**, the location of the log file; and **ServerHost** and **ServerPort**, the host and port of the server as defined on the command line.
 
 ### Definition of function prototypes
 
-A function to parse the command-line arguments, initialize the game struct, and initialize the message module. It returns 0.
+A function to parse the command-line arguments, initialize the game struct, and initialize the message module. It returns 0 if the client is a spectator, 1 if the client is a player, and another integer if an error is found with parsing the arguments.
 ```c
 static int parseArgs(const int argc, char* argv[]);
 ```
@@ -38,17 +38,17 @@ A function that reads and processes keystrokes from stdin using `ncurses`. It re
 static bool handleInput(void* arg);
 ```
 
-A function that passes the message that is received from the server to the relevant function. It returns a handleXYZ function's return.
+A function that passes the message that is received from the server to the relevant function. It returns a handleXYZ function's boolean.
 ```c
 static bool handleMessage(void* arg, const addr_t from, const char* message);
 ```
 
-A function that connects the client to the server and returns the letter that corresponds to their player. It returns false.
+A function that connects the client to the server and stores the letter that corresponds to their player. It returns false.
 ```c
 static bool handleOK(const char* message);
 ```
 
-A function that notifies the client of the size of the grid as a constant integer. It returns false.
+A function that notifies the client of the size of the grid as two constant integers. It returns false.
 ```c
 static bool handleGRID(const char* message);
 ```
@@ -80,10 +80,10 @@ A function to parse the command-line arguments, initialize the game struct, and 
 
 #### `parseArgs`:
 
-	validate commandline
-	initialize message module
-	print assigned port number
-	decide whether spectator or player
+	validate number of arguments
+	check if the port is a positive integer
+	initialize game module
+	return 0 if spectator, 1 if player
 
 
 #### `handleInput`:
