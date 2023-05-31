@@ -11,7 +11,7 @@ We avoid repeating information that is provided in the requirements spec.
 ## Plan for division of labor
 
 While all group members are responsible for the entirety of the project, we assign certain tasks for certain group members to prioritize and complete first:
-* Kevin - handleKEY in server.c + Bresenham algorithm in grid.c
+* Kevin - handleKEY in server.c + visibility algorithm in grid.c
 * James - client.c
 * Selena - grid.c and global variables, main, parsearg, and handleMessage in server.c
 * Steven - handlePLAY, handleSPECTATE, and gameOver in server.c, specs and scrum management
@@ -458,12 +458,12 @@ int grid_2dto1d(int x, int y, int NR, int NC);
 
 This function checks if a point in the grid located at `end_loc` is visible from a player located at the `start_loc`.
 ``` c
-bool grid_isVisible(char** grid, int start_loc, int end_loc, int NR, int NC);
+bool grid_isVisible(char* grid, int start_loc, int end_loc, int NR, int NC);
 ```
 
 This function updates the visibility of a player according to the `mainGrid`, the previous `localMap` and the new location and updates the `localMap`.
 ``` c
-void grid_update_vis(char** mainGrid, char** localMap, int loc);
+void grid_update_vis(char* mainGrid, char** localMap, int loc);
 ```
 
 ### Detailed pseudo code
@@ -483,7 +483,7 @@ void grid_update_vis(char** mainGrid, char** localMap, int loc);
 
 #### `grid_1dto2d_y`:
 
-	return int(loc/NC)
+	return loc/NC
 
 #### `grid_2dto1d`:
 
@@ -491,33 +491,42 @@ void grid_update_vis(char** mainGrid, char** localMap, int loc);
 
 #### `grid_isVisible`:
 
-	start_x = grid_1dto2d_x(start_loc)
-	start_y = grid_1dto2d_y(start_loc)
-	end_x = grid_1dto2d_x(end_loc)
-	end_y = grid_1dto2d_y(end_loc)
-	set dx to the magnitude of the difference between the x coordinates
-	set dy to the magnitude of the difference between the y coordinates
-	sx = -1 if start_x > end_x; sx = 1 otherwise
-	sy = -1 if start_y > end_y; sy = 1 otherwise
-	error1 = dx - dy
-	loop continuously
-		if start_x reached end_x and start_y reached end_y
-			return true
-		if grid[grid_2dto1d(start_x, start_y)] is "-", "|", "+", " ", or "#"
-			return false 
-		error2 = 2 * error1
-		if error2 > -dy:
-			decrement error1 by dy
-			increment start_x by sx
-		if error2 < dx:
-			increment error1 by dx
-			decrement start_y by sy
+	extract x and y components of the starting point
+	extract x and y components of the ending point
+	find the difference between the x components and the y components
+	calculate the change in y that occurs from a 1 step increment in x when tracing the ray between the two points
+	determine whether we step in the positive or negative x direction to go from ending point to the starting point
+	if both points do not share the same x component
+		loop through each point on the ray by stepping one unit in the x direction
+			calculate the exact floating-point value of y if we step one unit in the x direction
+			if we land on an exact point in the grid
+				check whether the ray can traverse through that point
+					return false if the ray cannot
+			else the ray must be passing between two points in the grid
+				check whether the ray can traverse through both points
+					return false if the ray cannot traverse through either point
+			increment the x by one step in the correct direction
+	calculate the change in x that occurs from a 1 step increment in y when tracing the ray between the two points
+	determine whether we step in the positive or negative y direction to grom ending point to the start point
+	if both points do not share the same y component
+		loop through each point on the ray by stepping one unit in the y direction
+			calculate the exact floating-point value of x if we step one unit the y direction
+			if we land on an exact point in the grid
+				check whether ray can traverse through that point
+					return false if the ray cannot
+			else the ray must be passing between two points in the grid
+				check whether the ray can traverse through both points
+					return false if the ray cannot traverse through either point
+			increment the y by one step in the correct direction
+	return true
 
 #### `grid_update_vis`:
 
 	for each index in localMap
-		if isVisible(mainGrid, start_loc, index)
+		if isVisible(mainGrid, start_loc, index) or the character/location is \n
 			copy mainGrid[index] onto localMap[index]
+		else if a previously marked gold spot or player is no longer visible
+			copy an empty room spot '.' onto the localMap[index]
 
 ---
 
