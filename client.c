@@ -56,7 +56,8 @@ static void game_delete(void);
 
 /**************** main ***************/
 
-int main(const int argc, char* argv[]) {
+int main(const int argc, char* argv[]) 
+{
     char* message;
 
     int parsed = parseArgs(argc, argv); // 1 if player, 0 if spectaor; any other int is an error
@@ -116,7 +117,8 @@ int main(const int argc, char* argv[]) {
  * Caller is responsible for:
  *   passing a valid host and port number
  */
-static int parseArgs(const int argc, char* argv[]) {
+static int parseArgs(const int argc, char* argv[]) 
+{
     int port; // integer corresponding to string of port
 
     // if the number of arguments is incorrect
@@ -152,7 +154,8 @@ static int parseArgs(const int argc, char* argv[]) {
  * Caller is responsible for:
  *   nothing
  */
-static void game_new(void) {
+static void game_new(void) 
+{
     game = mem_malloc(sizeof(game_t)); // allocate memory for the structure
     game->init = true; // indicate the first loop of the program
     game->n = 0; // set the value of gold collected on initialization to 0
@@ -167,7 +170,8 @@ static void game_new(void) {
  * Caller is responsible for:
  *   nothing
  */
-static void game_delete(void) {
+static void game_delete(void) 
+{
     mem_free(game);
 }
 
@@ -180,7 +184,8 @@ static void game_delete(void) {
  * Caller is responsible for:
  *   knowing the keys that correspond to actions in the game
  */
-static bool handleInput(void* arg) {
+static bool handleInput(void* arg) 
+{
     // store the character input by the user
     char c = getch();
 
@@ -205,7 +210,8 @@ static bool handleInput(void* arg) {
  * Caller is responsible for:
  *   knowing the format of the messages that must be sent
  */
-static bool handleMessage(void* arg, const addr_t from, const char* message) {
+static bool handleMessage(void* arg, const addr_t from, const char* message) 
+{
     // log message and sender
     flog_s(game->log, "Received message from %s, ", message_stringAddr(from));
     flog_s(game->log, "message: %s\n", message);
@@ -254,7 +260,8 @@ static bool handleMessage(void* arg, const addr_t from, const char* message) {
  * Caller is responsible for:
  *   sending the message in the format "OK <letter>"
  */
-static bool handleOK(const char* message) {
+static bool handleOK(const char* message) 
+{
     // if the message format is followed
     if (sscanf(message, "OK %c", &game->letter) == 1) {
         flog_c(game->log, "OK message logs client at letter: %c\n", game->letter); // log the addition of a new client
@@ -277,7 +284,8 @@ static bool handleOK(const char* message) {
  * Caller is responsible for:
  *   sending the message in the format "GRID <rows> <columns>"
  */
-static bool handleGRID(const char* message) {
+static bool handleGRID(const char* message) 
+{
     // if format matches
     if (sscanf(message, "GRID %d %d", &game->NR, &game->NC) != 2) {
         fprintf(stderr, "ERROR: Grid message could not be parsed."); // indicate grid has been stored
@@ -295,7 +303,8 @@ static bool handleGRID(const char* message) {
  * Caller is responsible for:
  *   properly formatting and assigning the n, p, and r variables
  */
-static bool handleGOLD(const char* message) {
+static bool handleGOLD(const char* message) 
+{
     // if format matches
     if (sscanf(message, "GOLD %d %d %d", &game->n, &game->p, &game->r) == 3) {
         move(0,0); // set the GOLD line to be the first line on the screen
@@ -323,7 +332,8 @@ static bool handleGOLD(const char* message) {
  * Caller is responsible for:
  *   properly formatting the message and the map's string
  */
-static bool handleDISPLAY(const char* message) {
+static bool handleDISPLAY(const char* message) 
+{
     if (game->init) { // if first loop through the game
         initscr(); // initialize the screen
 
@@ -381,7 +391,8 @@ static bool handleDISPLAY(const char* message) {
  * Caller is responsible for:
  *   properly formatting the message and the quit reason
  */
-static bool handleQUIT(const char* content) {
+static bool handleQUIT(const char* content) 
+{
     // if the user is a player
     if (!game->spect && game->letter) {
         flog_c(game->log, "Player %c quitting... ", game->letter); // note that they are quitting
@@ -408,7 +419,8 @@ static bool handleQUIT(const char* content) {
  * Caller is responsible for:
  *   passing the error message in the correct format
  */
-static bool handleERROR(const char* content) {
+static bool handleERROR(const char* content) 
+{
     // store the error information
     flog_s(game->log, "ERROR: %s\n", content);
     move(0, 0);

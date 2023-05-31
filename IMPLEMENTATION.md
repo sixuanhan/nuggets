@@ -11,9 +11,9 @@ We avoid repeating information that is provided in the requirements spec.
 ## Plan for division of labor
 
 While all group members are responsible for the entirety of the project, we assign certain tasks for certain group members to prioritize and complete first:
-* Kevin - handleKEY in server.c + visibility algorithm in grid.c
+* Kevin - handleKEY in server.c and visibility algorithm in grid.c
 * James - client.c
-* Selena - grid.c and global variables, main, parsearg, and handleMessage in server.c
+* Selena - grid.c, main, parsearg, and handleMessage in server.c
 * Steven - handlePLAY, handleSPECTATE, and gameOver in server.c, specs and scrum management
 
 We will be responsible for unit testing our individual modules in order to ensure that they function as intended, but we will conduct integration and system tests together in order to check aggregate performance. Even though we are dividing up the code, each group member should be available to help another group member on their code if necessary. 
@@ -247,24 +247,56 @@ static void broadcastGold(int playerIndex, int goldCollected);
 
 #### `handleKEY`:
 
+	check where the message came from 
 	if message came from player
-		if the keystroke denotes a valid movement command
-			update the grid for the player
-			send updated DISPLAY message back to all players and spectator (if there is one)
-			if goldRemaining == 0
-				return gameOver()
-		else if the keystroke is Q
-			send a QUIT message to the client 
-			clean up the client
-		else
-			send an ERROR message to the client
-	else if message came from spectator
+		if the keystroke is Q
+			send a QUIT message to the player
+			clean up the player's stored info
+		else if the keystroke denotes a valid undercase movement command
+			check if the movement was valid
+				if the player steps on another player
+					update both players' locations and the spots they are located on
+					update the main grid
+				else if the player moves onto a gold pile
+					update the gold 
+					send a GOLD message to all clients
+					update the main grid
+					turn the gold pile into a regular room spot
+					if no gold remains
+						return true to exit the message loop and end the game
+				else 
+					simply update the player's movement on the map
+				send DISPLAY message to all clients 
+				return false to keep looping in the message loop
+		else if the keystroke denotes a valid uppercase movement command
+			keep looping one step at a time until the player can no longer travel in the desired direction
+				update the player's stored location
+				if the player steps on another player
+					update both players' locations and the spots they are located on
+					update the main grid
+				else if the player moves onto a gold pile
+					update the gold
+					send a GOLD message to all clients
+					update the main grid
+					turn the gold pile into a regular room spot
+					if no gold reamains
+						return true to exit the message loop and end the game
+				else 
+					simply update the player's movement on the map
+				if the player was actually able to move
+					send a DISPLAY message to all clients
+			return false to keep looping in the message loop
+		else the keystroke command must be invalid
+			send an ERROR messsage to the client
+			return false to keep looping in the message loop
+	else the message must have come from the spectator
 		if the keystroke is Q
 			send a QUIT message to the spectator
-			clean up the spectator
-		else
-			send an ERROR Message to the spectator 
-	return false
+			free up the memory storing the spectator's address
+			return false to keep looping in the message loop
+		else the keystroke command must be invalid
+			send an ERROR message to the spectator
+			return false to keep looping in the message loop 
 
 #### `gameOver`:
 

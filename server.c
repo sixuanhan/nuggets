@@ -141,7 +141,8 @@ static void game_new(void) {
 
 /* This function will generate a random number in the range [min, max].
  */
-static int randRange(int min, int max) {
+static int randRange(int min, int max) 
+{
     return min + rand() % (max-min+1);
 }
 
@@ -150,7 +151,8 @@ static int randRange(int min, int max) {
  * on random room spots; each pile shall have a random number of nuggets. 
  * It will store the information in nuggetsInPile and also update the mainGrid in the game struct.
  */
-static void game_scatter_gold(void) {
+static void game_scatter_gold(void) 
+{
     int goldRemaining = GoldTotal;
     int numPiles = randRange(GoldMinNumPiles, GoldMaxNumPiles);
     int numPilesRemaining = numPiles;
@@ -607,7 +609,7 @@ static bool handleKEY(const addr_t from, const char* content)
 
                 } else {
 
-                    // otherwise simply update the player's movement on the map
+                    // otherwise just update the player's movement on the map
                     char newSpot = game->mainGrid[game->players[playerIndex]->loc];
                     game->mainGrid[game->players[playerIndex]->loc] = game->players[playerIndex]->letterID;
                     game->mainGrid[old_loc] = game->players[playerIndex]->currSpot;
@@ -834,7 +836,8 @@ static bool gameOver(void)
 /* A function that is called when the mainGrid is updated. It updates the local maps of all players and send display messages
  * and send updated complete map to spectator if there is one
  */
-static void broadcastDisplay(void) {
+static void broadcastDisplay(void) 
+{
     // update the local maps of all players and send display message
     char *displayMessage = (char *)mem_malloc(8 + NR * NC + 1);
     for (int i = 0; i < 26; i++) {
@@ -867,7 +870,8 @@ static void broadcastDisplay(void) {
 /* A function that is called when someone collects gold. It sends GOLD messages to all players
  * and to spectator if there is one
  */
-static void broadcastGold(int playerIndex, int goldCollected) {
+static void broadcastGold(int playerIndex, int goldCollected) 
+{
     // send a gold message to all players
     for (int i = 0; i < 26; i++) {
         if (game->players[i] != NULL) {
