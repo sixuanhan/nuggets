@@ -14,7 +14,7 @@ While all group members are responsible for the entirety of the project, we assi
 * Kevin - handleKEY in server.c + Bresenham algorithm in grid.c
 * James - client.c
 * Selena - grid.c and global variables, main, parsearg, and handleMessage in server.c
-* Steven - handlePLAY, handleSPECTATE, and gameOver in server.c
+* Steven - handlePLAY, handleSPECTATE, and gameOver in server.c, specs and scrum management
 
 We will be responsible for unit testing our individual modules in order to ensure that they function as intended, but we will conduct integration and system tests together in order to check aggregate performance. Even though we are dividing up the code, each group member should be available to help another group member on their code if necessary. 
 
@@ -546,5 +546,4 @@ Moreover, it should be noted that we also use valgrind to test for memory leaks 
 
 ## Limitations
 
-> Bulleted list of any limitations of your implementation.
-> This section may not be relevant when you first write your Implementation Plan, but could be relevant after completing the implementation.
+The end product meets the specs of the project and has no known issues.
