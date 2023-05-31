@@ -533,13 +533,14 @@ void grid_update_vis(char* mainGrid, char** localMap, int loc);
 ## Testing
 
 ### Unit Testing
-Each unit/module will be tested independently at first before being aggregated together. The grid module will be tested independently first, and then client and the server will be tested. Individual functions within each unit/module will be tested to ensure that they work properly. 
+Each unit/module were tested independently at first before being aggregated together. The grid module was tested independently first, and then client and the server were tested. Individual functions within each unit/module were tested to ensure that they work properly. 
 
 ### Integration Testing
-We will test our client with the given server, and then test our server with the given client. We can again log the messages being sent back and forth between the client and the server to ensure that the messages are being sent properly. 
+We tested our client with the given server, and then tested our server with the given client. We logged the messages being sent back and forth between the client and the server to ensure that the messages were being sent properly. 
+We had a few hard coded invalid command line calls of the server and the client in testingClient.sh and testingServer.sh. Run `make test` to test.
 
 ### System Testing
-We run the client and server together on the same device and on different devices and test all functions and edge cases. The game will be played and tested numerous times to ensure that not only do all the desired game mechanics work as intended, but also the game behaves properly in special edge cases. 
+We ran the client and server together on the same device and on different devices, with different maps, and test all functions and edge cases. The game will be played and tested numerous times to ensure that not only do all the desired game mechanics work as intended, but also the game behaves properly in special edge cases. 
 
 The following are some examples of "special" cases that we consider testing:
 * Invalid keystrokes
