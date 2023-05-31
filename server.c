@@ -98,10 +98,6 @@ int main(const int argc, char* argv[])
     }
     printf("\nServer is ready at port %i \n", port);
 
-    // log NR and NC
-    log_d("NR=%d\n", NR);
-    log_d("NC=%d\n", NC);
-
     bool ok = message_loop(NULL, 0, NULL, NULL, handleMessage);
     gameOver();
     message_done();
@@ -292,11 +288,9 @@ static int parseArgs(const int argc, char* argv[], char* mapFile)
     // find NR and NC
     NR = file_numLines(fp);
     char* line = file_readLine(fp);
-    NC = strlen(line);
+    NC = strlen(line)+1;
     free(line);
     fclose(fp);
-
-    printf("NR=%d, NC=%d\n", NR, NC);
 
     // initialize game
     game_new();
@@ -516,18 +510,18 @@ static bool handleKEY(const addr_t from, const char* content)
                 case 'y':
                     
                     // move the player up and to the left
-                    new_loc = game->players[playerIndex]->loc - NC - 2;
+                    new_loc = game->players[playerIndex]->loc - NC - 1;
                     break;
 
                 case 'k':
                     // move the player upwards
-                    new_loc = game->players[playerIndex]->loc - NC - 1;
+                    new_loc = game->players[playerIndex]->loc - NC;
                     break;
 
                 case 'u':
 
                     // move the player up and to the right
-                    new_loc = game->players[playerIndex]->loc - NC;
+                    new_loc = game->players[playerIndex]->loc - NC + 1;
                     break;
 
                 case 'h':
@@ -545,19 +539,19 @@ static bool handleKEY(const addr_t from, const char* content)
                 case 'b':
 
                     // move the player down and to the left
-                    new_loc = game->players[playerIndex]->loc + NC;
+                    new_loc = game->players[playerIndex]->loc + NC - 1;
                     break;
 
                 case 'j':
 
                     // move the player downwards
-                    new_loc = game->players[playerIndex]->loc + NC + 1;
+                    new_loc = game->players[playerIndex]->loc + NC;
                     break;
 
                 case 'n':
 
                     // move the player down and to the right
-                    new_loc = game->players[playerIndex]->loc + NC + 2;
+                    new_loc = game->players[playerIndex]->loc + NC + 1;
                     break;
 
             }
@@ -648,19 +642,19 @@ static bool handleKEY(const addr_t from, const char* content)
                     case 'Y':
                         
                         // move the player up and to the left
-                        new_loc = game->players[playerIndex]->loc - NC - 2;
+                        new_loc = game->players[playerIndex]->loc - NC - 1;
                         break;
 
                     case 'K':
 
                         // move the player upwards
-                        new_loc = game->players[playerIndex]->loc - NC - 1;
+                        new_loc = game->players[playerIndex]->loc - NC;
                         break;
 
                     case 'U':
 
                         // move the player up and to the right
-                        new_loc = game->players[playerIndex]->loc - NC;
+                        new_loc = game->players[playerIndex]->loc - NC + 1;
                         break;
 
                     case 'H':
@@ -678,19 +672,19 @@ static bool handleKEY(const addr_t from, const char* content)
                     case 'B':
 
                         // move the player down and to the left
-                        new_loc = game->players[playerIndex]->loc + NC;
+                        new_loc = game->players[playerIndex]->loc + NC - 1;
                         break;
 
                     case 'J':
 
                         // move the player downwards
-                        new_loc = game->players[playerIndex]->loc + NC + 1;
+                        new_loc = game->players[playerIndex]->loc + NC;
                         break;
 
                     case 'N':
 
                         // move the player down and to the right
-                        new_loc = game->players[playerIndex]->loc + NC + 2;
+                        new_loc = game->players[playerIndex]->loc + NC + 1;
                         break;
 
                 }
