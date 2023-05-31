@@ -56,7 +56,7 @@ bool grid_isVisible(char* grid, int start_loc, int end_loc, int NR, int NC)
     int dy = start_y - end_y;
 
     // sets a range limit on vision (a diameter of five spots)
-    if (sqrt(dx ** 2 + dy ** 2) > 2.5) {
+    if (sqrt(dx * dx + dy * dy) > 2.5) {
 
         return false;
             
