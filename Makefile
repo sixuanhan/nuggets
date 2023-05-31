@@ -45,6 +45,8 @@ client.o: $S/grid.h $S/log.h $S/message.h $L/counters.h $L/file.h $L/mem.h
 test: testing.sh
 	bash -v testing.sh >& testing.out
 
+valgrind:
+	$(VALGRIND) ./server maps/main.txt
 
 clean:
 	rm -rf *.dSYM

@@ -197,7 +197,8 @@ static bool handleOK(const char* message) {
 }
 
 static bool handleGRID(const char* message) {
-    if (sscanf(message, "GRID %d %d", &game->NR, &game->NC) != 2) { // REVISIT: why problem?
+    
+    if (sscanf(message, "GRID %d %d", &game->NR, &game->NC) != 2) {
         fprintf(stderr, "ERROR: Grid message could not be parsed.");
     }
     
@@ -224,12 +225,28 @@ static bool handleGOLD(const char* message) {
 static bool handleDISPLAY(const char* message) {
     if (game->init) {
         initscr(); // initialize the screen
+
+        int row, col;
+
+        getmaxyx(stdscr, row, col);
+
+        while (row < game->NR + 1 || col < game->NC) {
+            mvprintw(0, 0, "%d: row, %d: col\n", row, col);
+            mvprintw(1, 0, "Window is not large enough. Enlarge to size %dx%d then press ENTER\n", game->NR + 1, game->NC);
+            
+            if (getch() == '\n') {
+                refresh();
+                getmaxyx(stdscr, row, col);
+            }
+        }
+
         cbreak();  // accept keystrokes immediately
         noecho();
         game->init = false;
     }
 
     if (game->n == 0) {
+        flog_e(game->log, "No new gold\n");
         move(0, 0);
         refresh();
         if (!game->spect) {

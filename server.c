@@ -488,7 +488,7 @@ static bool handleKEY(const addr_t from, const char* content)
     if (playerIndex != -1) {
         if (key == 'Q') {
             // send a QUIT message to the player who quit 
-            message_send(game->players[playerIndex]->address, "QUIT Thanks for playing!");
+            message_send(game->players[playerIndex]->address, "QUIT Thanks for playing!\n");
             log_s("Sending quit message to %s \n", message_stringAddr(game->players[playerIndex]->address));
             
             game->mainGrid[game->players[playerIndex]->loc] = game->players[playerIndex]->currSpot;
@@ -778,7 +778,7 @@ static bool handleKEY(const addr_t from, const char* content)
         if (key == 'Q') {
 
             // send a QUIT message to the player who quit 
-            message_send(game->spectator, "QUIT Thanks for watching!");
+            message_send(game->spectator, "QUIT Thanks for watching!\n");
             log_s("Sending error message to %s. \n", message_stringAddr(game->spectator));
 
             // free up the memory storing the spectator's address
