@@ -581,6 +581,13 @@ static bool handleKEY(const addr_t from, const char* content)
                     game->mainGrid[game->players[playerIndex]->loc] = game->players[playerIndex]->letterID;
                     game->mainGrid[old_loc] = game->players[otherIndex]->letterID;
 
+                    // steal the other player's gold
+                    int stolenGold = game->players[otherIndex]->gold;
+                    game->players[playerIndex]->gold += stolenGold;
+                    game->players[otherIndex]->gold = 0;
+
+                    broadcastGold(playerIndex, stolenGold);
+
                 } else if (game->mainGrid[game->players[playerIndex]->loc] == '*') {
                     // check if the player moves onto a gold pile
                     // update gold
@@ -714,6 +721,13 @@ static bool handleKEY(const addr_t from, const char* content)
                     // update the visualization
                     game->mainGrid[game->players[playerIndex]->loc] = game->players[playerIndex]->letterID;
                     game->mainGrid[old_loc] = game->players[otherIndex]->letterID;
+
+                    // steal the other player's gold
+                    int stolenGold = game->players[otherIndex]->gold;
+                    game->players[playerIndex]->gold += stolenGold;
+                    game->players[otherIndex]->gold = 0;
+
+                    broadcastGold(playerIndex, stolenGold);
 
                 } else if (game->mainGrid[game->players[playerIndex]->loc] == '*') {
 
