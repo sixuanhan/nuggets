@@ -13,6 +13,13 @@ Each C file that includes `log.h` can call `message_init` with its own file desc
 Provides a message-passing abstraction among Internet hosts.
 See `message.h` for interface details, and the `UNIT_TEST` at the bottom of `message.c` for a simple usage example.
 
+## 'grid' module
+
+Implements a grid, which is a string with NRxNC characters represending the map, as well as some helper functions.
+See `grid.h` for details.
+
+
+
 > **Note:** the unit test within `message.c` is not typical usage, because it supports a client and the server running the *same code*.
 > More typically, the client and server programs will be separate programs, each with its own handlers.
 > See the top of `message.h` for typical client and server structures.

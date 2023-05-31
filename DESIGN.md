@@ -9,7 +9,7 @@
 * Steven Mendley
 
 According to the [Requirements Spec](REQUIREMENTS.md), the Nuggets game requires two standalone programs: a client and a server.
-Our design also includes x, y, z modules.
+Our design also includes the grid module.
 We describe each program and module separately.
 We do not describe the `support` library nor the modules that enable features that go beyond the spec.
 We avoid repeating information that is provided in the requirements spec.
@@ -85,14 +85,11 @@ The client will run as follows:
 	initialize the 'message' module
 	send a message to the server, requesting connection
 	call message_loop(), to await the server
-		handleInput()
-		handleMessage()
 	shut down when the client tells it to
 	clean up
 
 #### handleInput
 	read the keystroke from stdin
-	check the validity of the keystroke
 	send a corresponding message to the server
 	return a boolean that indicates whether to exit the loop
 
@@ -170,6 +167,8 @@ So that the user can access error messages, there will be an additional file or 
 
 `gameOver`: Prints “Game Over” to all clients and prints the score table.
 
+`updateMainGrid`: Updates the main grid as a player moves, correcting the spot the player moved from.
+
 
 ### Pseudo code for logic/algorithmic flow
 
@@ -179,25 +178,26 @@ The server will run as follows:
    	execute from a command line per the requirement spec
 	parse the command line, validate parameters
 		if invalid, then send an error message and exit
-	call initializeGame() to set up data structures
+	set up data structures
 	initialize the 'message' module
 	print the port number on which we wait
 	call message_loop(), to await clients
 		handleMessage() to continuously listen for message sent by clients
-	call gameOver() to inform all clients the game has ended
 	clean up
 
-#### initializeGame
-	create the map with the desired gold drops
-	initializes a new `game` data structure and loads in the starting game data
-	sets up the server connection 
-
 #### handleMessage
-	listen for messages sent from the clients that are connected by the server
-	update the `game` data structure accordingly from the contents of the message
-	if none of handleXYZ functions are able to process the client message
-		log an error
-		send back an ERROR message to the client 
+	if the first word of the message is the same as "PLAY "
+		extract the message part
+		return handlePLAY
+	else if the first word of the message is the same as "SPECTATE "
+		return handleSPECTATE
+	else if the first word of the message is the same as "KEY "
+		extract the message part
+		return handleKEY
+	else
+		log error
+		send an ERROR message to the client
+		do not exit message loop
 
 #### handlePLAY
 	check the validity of the player's name and whether there is still space for another player given *MaxPlayers* players
@@ -249,19 +249,19 @@ There will be a static data structure, `player`, that holds:
 
 `username`: their username
 
-`ID`: their numerical ID
-
-`letter`: their letter ID
+`letterID`: their letter ID
 
 `gold`: how many gold nuggets they have
 
-`locX`: their x coordinate
+`loc`: their one dimensional coordinate
 
-`locY`: their y coordinate
+`localMap`: the grid that this player sees
+
+`address`: their address
 
 There will be a static global data structure, `game`, which stores important variables corresponding to information relevant to the game in both the client and the server. The `game` will hold:
 
-`grid`: the game grid
+`mainGrid`: the main game grid that sees everything
 
 `numPlayers`: the number of players who have joined
 
@@ -269,78 +269,42 @@ There will be a static global data structure, `game`, which stores important var
 
 `players`: an array of `player` structs
 
-The `grid` struct is a two-dimensional array of size NRxNC. Each entry of the array is a `gridcell` struct. Find details in the grid module.
+`spectator`: the address of the spectator
+
+`nuggetsInPile`: a counters that holds the one dimensional coordinate of all piles and the number of nuggets in each pile
 
 ---
 
 ## the Grid module
 
-**grid.c** provides a module that helps with the grid part for both the client and the server. There will be a `grid` struct that is a two-dimensional array of size NRxNC. Each entry of the array is a `gridcell` struct. 
+**grid.c** provides a module that helps with the grid part for both the client and the server. 
+
 
 ### Functional decomposition
 
-`gridcell_new`:  this function initializes a new gridcell.
+`grid_load`: this function takes the map file and loads the information into a grid.
 
-`grid_new`: this function initializes a new grid of the given size.
+`grid_1dto2d_x`: this function takes a one dimensional coordinate, transforms it to a two dimensional coordinate according to the size of the grid, and returns the x value.
 
-`grid_load`: this function takes the map file and loads the information into a `grid` struct.
+`grid_1dto2d_y`: this function takes a one dimensional coordinate, transforms it to a two dimensional coordinate according to the size of the grid, and returns the y value.
 
-`grid_get_location_spot`: this function takes a coordinate (x, y) and returns the spot type on the coordinate in the grid.
+`grid_2dto1d`: this function takes a two dimensional coordinate and transforms it to a one dimensional coordinate according to the size of the grid.
 
-`grid_get_location_nuggets`: this function takes a coordinate (x, y) and returns the number of nuggets on the coordinate in the grid.
+`grid_isVisible`: This function checks if a point in the grid located at `end_loc` is visible from a player located at the `start_loc`.
 
-`grid_get_location_vis`: this function takes a coordinate (x, y) and returns the visibility on the coordinate in the grid.
-
-`grid_set_location_spot`: this function takes a coordinate (x, y) and a spot type, and replaces the gridcell on the coordinate in the grid.
-
-`grid_set_location_nuggets`: this function takes a coordinate (x, y) and a spot type, and replaces the gridcell on the coordinate in the grid.
-
-`grid_set_location_vis_for_player`: this function takes a coordinate (x, y) and a spot type, and replaces the visibility for that player on the coordinate in the grid.
-
-`grid_update_vis_for_player`:this function is called when a player's visibility changes, which is when they take a step. It takes a coordinate (x, y) and a player, and updates the visibility for that player. It should utilize line-tracing algorithms (e.g. Bresenham) in order to calculate and help update the set of which grid cells are visible to the player. 
-
-`grid_out`: this function takes a `grid` and a client as input and outputs a string representing the `grid` that the client should display. This function should also implement visibility. 
-
-`grid_iterate`: this function is the iterate helper function that loops over each gridcell in it.
-
-`grid_delete`: this function deletes the entire grid and all gridcells for clean up.
+`grid_update_vis`: this function is called when a player moves. It takes a coordinate, a player's local grid, and the main game grid, and rewrites the player's new local grid given their updated position.
 
 
 ### Pseudo code for logic/algorithmic flow
 
-#### grid_load
+See [Implementation Spec](IMPLEMENTATION.md).
 
-	reads the input file line by line
-	for each line
-		for each character
-			initialize a gridcell for that coordinate
-			stores the character in the gridcell
-
-#### grid_out
-
-	initialize a string buffer for output
-	for each coordinate in the grid
-		if the gridcell is visible to the player
-			write the character of the gridcell to the string
-		else
-			if the gridcell is an empty room spot or an occupant character
-				write an empty room spot to the string
-			else
-				write a solid rock spot to the string
-	return the string
 
 
 ### Major data structures
 
-The `grid` struct is basically a wrapper for a two-dimensional array of `gridcell` structs. 
+The grid itself is just a string with NRxNC characters represending the map.
 
-The `gridcell` struct contains the following information:
-
-`spot`: the character of the spot
-
-`nugs`: the amount of gold value of the spot
-
-`vis`: an array the visibility of the spot for each player
 
 ## Testing
 

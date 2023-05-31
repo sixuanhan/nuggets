@@ -17,7 +17,7 @@ MAKE = make
 ############# default rule ###########
 all: $(LIB) $(TESTS) 
 
-$(LIB): message.o log.o
+$(LIB): message.o log.o grid.o
 	ar cr $(LIB) $^
 
 messagetest: message.c message.h log.h log.o
@@ -33,6 +33,7 @@ miniclient.o: message.h
 miniserver.o: message.h
 message.o: message.h
 log.o: log.h
+grid.o: grid.h ../libcs50/file.h
 
 ############# clean ###########
 clean:
