@@ -456,7 +456,7 @@ static player_t* player_new(void);
 	update the player's map to show @
 	remember the current spot that the player is standing on
 	update the player's map to show the player's letterID
-	call grid_update_vis
+	call updateVis
 
 
 
@@ -495,7 +495,7 @@ bool grid_isVisible(char* grid, int start_loc, int end_loc, int NR, int NC);
 
 This function updates the visibility of a player according to the `mainGrid`, the previous `localMap` and the new location and updates the `localMap`. Note that this function is in server.c rather than grid.c.
 ``` c
-void grid_update_vis(char* mainGrid, char* localMap, int loc, int NR, int NC);
+void updateVis(char* mainGrid, char* localMap, int loc, int NR, int NC);
 ```
 
 ### Detailed pseudo code
@@ -552,7 +552,7 @@ void grid_update_vis(char* mainGrid, char* localMap, int loc, int NR, int NC);
 			increment the y by one step in the correct direction
 	return true
 
-#### `grid_update_vis`:
+#### `updateVis`:
 
 	for each index in localMap
 		if isVisible(mainGrid, start_loc, index) or the character/location is \n
