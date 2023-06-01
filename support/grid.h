@@ -56,7 +56,6 @@ int grid_1dto2d_y(int loc, int NR, int NC);
  */
 int grid_2dto1d(int x, int y, int NR, int NC);
 
-
 /**************** grid_isVisible ****************/
 /* This function checks if a point in the grid located at `end_loc` is visible from a player located at the `start_loc`.
  *
@@ -64,13 +63,3 @@ int grid_2dto1d(int x, int y, int NR, int NC);
  *   providing two one dimensional locations within the range of the grid.
  */
 bool grid_isVisible(char* grid, int start_loc, int end_loc, int NR, int NC);
-
-
-/**************** grid_update_vis ****************/
-/* This function updates the visibility of a player according to the mainGrid, 
- * the previous localMap and the new location and updates the localMap.
- *
- * Caller is responsible for:
- *   providing a one dimensional location within the range of the grid.
- */
-void grid_update_vis(char* mainGrid, char* localMap, int loc, int NR, int NC);
