@@ -166,8 +166,9 @@ static void game_scatter_gold(void)
         }
         // grab a random amount of nuggets and drop until we're down to the last pile
         if (numPilesRemaining != 1) {
-            // the nuggets in a pile is 50%~150% the average size.
-            goldDropNuggets = randRange(GoldTotal/numPiles*0.5, GoldTotal/numPiles*1.5);
+            // the nuggets in a pile is 50%~150% the average size or half of the remaining gold
+            // whichever is less
+            goldDropNuggets = (randRange(GoldTotal/numPiles*0.5, GoldTotal/numPiles*1.5) < goldRemaining/numPilesRemaining) ? randRange(GoldTotal/numPiles*0.5, GoldTotal/numPiles*1.5) : goldRemaining/numPilesRemaining;
         }
         // drop all remaining nuggets when we are at the last pile
         else {
@@ -433,7 +434,7 @@ static bool handleSPECTATE(const addr_t from, const char* content)
         return false;
     }
     if (message_isAddr(game->spectator)) {
-        message_send(game->spectator, "QUIT You have been replaced by a new spectator.");
+        message_send(game->spectator, "QUIT You have been replaced by a new spectator.\n");
         log_s("Sending quit message to %s \n", message_stringAddr(game->spectator));
     }
     game->spectator = from;
@@ -581,6 +582,15 @@ static bool handleKEY(const addr_t from, const char* content)
                     game->mainGrid[game->players[playerIndex]->loc] = game->players[playerIndex]->letterID;
                     game->mainGrid[old_loc] = game->players[otherIndex]->letterID;
 
+                    /* Extra Credit (Stealing nuggets) */
+                    // steal nuggets from the other player
+                    int stolenGold = (game->players[otherIndex]->gold < 20) ? game->players[otherIndex]->gold : 20;
+                    game->players[playerIndex]->gold += stolenGold;
+                    game->players[otherIndex]->gold -= stolenGold;
+
+                    broadcastGold(playerIndex, stolenGold);
+                    /* Extra Credit ends here */
+
                 } else if (game->mainGrid[game->players[playerIndex]->loc] == '*') {
                     // check if the player moves onto a gold pile
                     // update gold
@@ -714,6 +724,15 @@ static bool handleKEY(const addr_t from, const char* content)
                     // update the visualization
                     game->mainGrid[game->players[playerIndex]->loc] = game->players[playerIndex]->letterID;
                     game->mainGrid[old_loc] = game->players[otherIndex]->letterID;
+
+                    /* Extra Credit (Stealing nuggets) */
+                    // steal nuggets from the other player
+                    int stolenGold = (game->players[otherIndex]->gold < 20) ? game->players[otherIndex]->gold : 20;
+                    game->players[playerIndex]->gold += stolenGold;
+                    game->players[otherIndex]->gold -= stolenGold;
+
+                    broadcastGold(playerIndex, stolenGold);
+                    /* Extra Credit ends here */
 
                 } else if (game->mainGrid[game->players[playerIndex]->loc] == '*') {
 

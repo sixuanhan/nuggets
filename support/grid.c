@@ -15,7 +15,7 @@ Sixuan Han and Kevin Cao, May 22 2023
 #include "../libcs50/file.h"
 
 
-/**************** functions ****************/
+/*************** grid_load() *******************/
 /* see grid.h for more information */
 void grid_load(FILE* fp, char* grid, int NR, int NC) 
 {
@@ -27,21 +27,29 @@ void grid_load(FILE* fp, char* grid, int NR, int NC)
     }
 }
 
+/*************** grid_1dto2d_x() *******************/
+/* see grid.h for more information */
 int grid_1dto2d_x(int loc, int NR, int NC) 
 {
     return loc%NC;
 }
 
+/*************** grid_1dto2d_y() *******************/
+/* see grid.h for more information */
 int grid_1dto2d_y(int loc, int NR, int NC) 
 {
     return loc/NC;
 }
 
+/*************** grid_2dto1d() *******************/
+/* see grid.h for more information */
 int grid_2dto1d(int x, int y, int NR, int NC) 
 {
     return x+NC*y;
 }
 
+/*************** grid_isVisible() *******************/
+/* see grid.h for more information */
 bool grid_isVisible(char* grid, int start_loc, int end_loc, int NR, int NC)
 {
     // converts starting location index to the 2d coordinate
@@ -54,6 +62,16 @@ bool grid_isVisible(char* grid, int start_loc, int end_loc, int NR, int NC)
 
     int dx = start_x - end_x;
     int dy = start_y - end_y;
+
+    /* Extra Credit (Vision Limits) */
+    // sets a range limit on vision (a diameter of five spots)
+    if (sqrt(dx * dx + dy * dy) > 2.5) {
+
+        return false;
+            
+    }
+    /* Extra Credit ends here */
+
     float slope;
 
     int start = (dx > 0) ? 1 : -1;
@@ -123,5 +141,3 @@ bool grid_isVisible(char* grid, int start_loc, int end_loc, int NR, int NC)
     }
     return true;
 }
-
-

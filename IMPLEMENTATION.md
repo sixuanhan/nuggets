@@ -257,6 +257,8 @@ static void broadcastGold(int playerIndex, int goldCollected);
 				if the player steps on another player
 					update both players' locations and the spots they are located on
 					update the main grid
+					have the player steal the other players' gold (extra credit feature)
+					send a GOLD message to all clients (extra credit feature)
 				else if the player moves onto a gold pile
 					update the gold 
 					send a GOLD message to all clients
@@ -274,6 +276,8 @@ static void broadcastGold(int playerIndex, int goldCollected);
 				if the player steps on another player
 					update both players' locations and the spots they are located on
 					update the main grid
+					have the player steal the other players' gold (extra credit feature)
+					send a GOLD message to all clients (extra credit feature)
 				else if the player moves onto a gold pile
 					update the gold
 					send a GOLD message to all clients
@@ -526,6 +530,8 @@ void updateVis(char* mainGrid, char* localMap, int loc, int NR, int NC);
 	extract x and y components of the starting point
 	extract x and y components of the ending point
 	find the difference between the x components and the y components
+	if the distance between the two points is greater than 2.5 (extra credit feature)
+		return false
 	calculate the change in y that occurs from a 1 step increment in x when tracing the ray between the two points
 	determine whether we step in the positive or negative x direction to go from ending point to the starting point
 	if both points do not share the same x component
