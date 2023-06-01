@@ -405,6 +405,11 @@ This function will initialize a new player struct and return its pointer.
 static player_t* player_new(void);
 ```
 
+This function updates the visibility of a player according to the `mainGrid`, the previous `localMap` and the new location and updates the `localMap`. 
+``` c
+static void updateVis(char* localMap, int loc);
+```
+
 
 ### Detailed pseudo code
 
@@ -431,7 +436,8 @@ static player_t* player_new(void);
 		if the coordinate does not represent an empty room spot in mainGrid
 			continue
 		if we are not down to the last pile
-			randomly pick a number in [GoldTotal/numPiles*0.5, GoldTotal/numPiles*1.5] to be the number of nuggets dropped on that coordinate
+			the nuggets in a pile is 50%~150% the average size or the remaining the average size, whichever is less
+			randomly drop that number of nuggets dropped on that coordinate
 		else
 			drop all remaining nuggets
 		store the (coordinate, numberOfNuggets) information in nuggetsInPile
@@ -461,6 +467,17 @@ static player_t* player_new(void);
 	remember the current spot that the player is standing on
 	update the player's map to show the player's letterID
 	call updateVis
+
+#### `updateVis`:
+
+	for each index in localMap
+		if isVisible(mainGrid, start_loc, index) or the character/location is \n
+			copy mainGrid[index] onto localMap[index]
+		else if a previously marked gold spot or player is no longer visible
+			if it is another player
+				copy that player's currSpot onto the localMap[index]
+			else
+				copy an empty room spot '.' onto the localMap[index]
 
 
 
@@ -495,11 +512,6 @@ int grid_2dto1d(int x, int y, int NR, int NC);
 This function checks if a point in the grid located at `end_loc` is visible from a player located at the `start_loc`.
 ``` c
 bool grid_isVisible(char* grid, int start_loc, int end_loc, int NR, int NC);
-```
-
-This function updates the visibility of a player according to the `mainGrid`, the previous `localMap` and the new location and updates the `localMap`. Note that this function is in server.c rather than grid.c.
-``` c
-void updateVis(char* mainGrid, char* localMap, int loc, int NR, int NC);
 ```
 
 ### Detailed pseudo code
@@ -558,13 +570,6 @@ void updateVis(char* mainGrid, char* localMap, int loc, int NR, int NC);
 			increment the y by one step in the correct direction
 	return true
 
-#### `updateVis`:
-
-	for each index in localMap
-		if isVisible(mainGrid, start_loc, index) or the character/location is \n
-			copy mainGrid[index] onto localMap[index]
-		else if a previously marked gold spot or player is no longer visible
-			copy an empty room spot '.' onto the localMap[index]
 
 ---
 

@@ -55,7 +55,7 @@ static bool handleKEY(const addr_t from, const char* content);
 static bool gameOver(void);
 static void broadcastDisplay(void);
 static void broadcastGold(int playerIndex, int goldCollected);
-void updateVis(char* mainGrid, char* localMap, int loc, int NR, int NC);
+static void updateVis(char* localMap, int loc);
 
 /*********************** global ***********************/
 /**************** constants ****************/
@@ -166,7 +166,7 @@ static void game_scatter_gold(void)
         }
         // grab a random amount of nuggets and drop until we're down to the last pile
         if (numPilesRemaining != 1) {
-            // the nuggets in a pile is 50%~150% the average size or half of the remaining gold
+            // the nuggets in a pile is 50%~150% the average size or the remaining the average size
             // whichever is less
             goldDropNuggets = (randRange(GoldTotal/numPiles*0.5, GoldTotal/numPiles*1.5) < goldRemaining/numPilesRemaining) ? randRange(GoldTotal/numPiles*0.5, GoldTotal/numPiles*1.5) : goldRemaining/numPilesRemaining;
         }
@@ -239,7 +239,7 @@ static player_t* player_new(void)
     game->mainGrid[player->loc]=player->letterID;
 
     // update their local map according to their visibility
-    updateVis(game->mainGrid, player->localMap, player->loc, NR, NC);
+    updateVis(player->localMap, player->loc);
 
     return player;
 }
@@ -861,7 +861,7 @@ static void broadcastDisplay(void)
     char *displayMessage = (char *)mem_malloc(8 + NR * NC + 1);
     for (int i = 0; i < 26; i++) {
         if (game->players[i] != NULL) {
-            updateVis(game->mainGrid, game->players[i]->localMap, game->players[i]->loc, NR, NC);
+            updateVis(game->players[i]->localMap, game->players[i]->loc);
             sprintf(displayMessage, "DISPLAY\n%s", game->players[i]->localMap);
 
             // replace the player's letterID with '@'
@@ -922,13 +922,13 @@ static void broadcastGold(int playerIndex, int goldCollected)
 
 /* update the localmap according to visibility
  */
-void updateVis(char* mainGrid, char* localMap, int loc, int NR, int NC) 
+static void updateVis(char* localMap, int loc) 
 {
     // loop through and check the visibility of each coordinate in mainGrid
     for (int i = 0; i < NR * NC; i++) {
         // if the character/location is visible, then copy that to localMap to make it visible to the client
-        if (mainGrid[i] == '\n' || grid_isVisible(mainGrid, i, loc, NR, NC)) {
-            localMap[i] = mainGrid[i];
+        if (game->mainGrid[i] == '\n' || grid_isVisible(game->mainGrid, i, loc, NR, NC)) {
+            localMap[i] = game->mainGrid[i];
         }
 
         // if an occupant location is not visible, show it as an empty room spot
@@ -936,7 +936,8 @@ void updateVis(char* mainGrid, char* localMap, int loc, int NR, int NC)
             if (isalpha(localMap[i])) {
                 localMap[i] = game->players[localMap[i]-'A']->currSpot;
             }
-            else {localMap[i] = '.';
+            else {
+                localMap[i] = '.';
             }
         }
     }

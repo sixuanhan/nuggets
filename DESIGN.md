@@ -88,42 +88,10 @@ The client will run as follows:
 	shut down when the client tells it to
 	clean up
 
-#### handleInput
-	read the keystroke from stdin
-	send a corresponding message to the server
-	return a boolean that indicates whether to exit the loop
+#### other functions
 
-#### handleMessage
-	parse the first part of the message to identify which type of message it is
-	call the `handleXYZ` function that handles that type of message specifically
-	return a boolean that indicates whether to exit the loop
+We have detailed pseudocodes for other functions in [Implementation Spec](IMPLEMENTATION.md).
 
-#### handleOK
-	prints out the OK message
-
-#### handleGRID
-	parse through the GRID message that the client receives from the server
-	extract the grid size from the message
-	if the current window size is too small
-		inform the user to about the minimum required window size
-		wait for the user to enlarge the window 
-
-#### handleGOLD
-	parse through the GOLD message that the client receives from the server
-	extract `n`, `p`, and `r`, as denoted in the functional decomposition
-	update the top line of display regarding the game status
-
-#### handleDISPLAY
-	parse through the DISPLAY message that the client receives from the server
-	output the updated map that is displayed to the client 
-
-#### handleQUIT
-	take the QUIT message and inform the user of the quit and the reason for the quit
-	break out of the message_loop() (break command may appear outside of function but called immediately after this function is called)
-
-#### handleERROR
-	print out the ERROR message received from the client
-	log the error 
 
 ### Major data structures
 The client shall use the `ncurses` library to arrange its interactive display and allow the program to read one character from the keyboard when told that stdin has input ready.
@@ -171,6 +139,7 @@ So that the user can access error messages, there will be an additional file or 
 
 `broadcastGold`: Tells everyone to update when someone collects gold.
 
+`updateVis`: this function is called when a player moves. It takes a coordinate, a player's local grid, and the main game grid, and rewrites the player's new local grid given their updated position. *Extra credit*: We set a range limit on vision of a diameter of five spots.
 
 
 ### Pseudo code for logic/algorithmic flow
@@ -204,6 +173,8 @@ There will be a static data structure, `player`, that holds:
 `gold`: how many gold nuggets they have
 
 `loc`: their one dimensional coordinate
+
+`currSpot`: the spot type that they player's standing on
 
 `localMap`: the grid that this player sees
 
@@ -241,8 +212,6 @@ There will be a static global data structure, `game`, which stores important var
 `grid_2dto1d`: this function takes a two dimensional coordinate and transforms it to a one dimensional coordinate according to the size of the grid.
 
 `grid_isVisible`: This function checks if a point in the grid located at `end_loc` is visible from a player located at the `start_loc`.
-
-`grid_update_vis`: this function is called when a player moves. It takes a coordinate, a player's local grid, and the main game grid, and rewrites the player's new local grid given their updated position. *Extra credit*: We set a range limit on vision of a diameter of five spots.
 
 
 ### Pseudo code for logic/algorithmic flow

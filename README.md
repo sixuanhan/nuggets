@@ -13,3 +13,20 @@ When all gold nuggets are collected, the game ends and a summary is printed.
 See the [support library](support/README.md) for some useful modules.
 
 See the [maps](maps/README.md) for some draft maps.
+
+## Usage
+
+``` bash
+$ make
+$ ./server map.txt [seed] 2>server.log
+$ ./client hostname port [playername] 2>client.log
+```
+
+Examples:
+``` bash
+$ make
+$ ./server maps/main.txt 2>server.log
+$ ./client localhost 12345 selena 2>client.log
+```
+
+Provide a playername to join as a player; otherwise you will join as a spectator.
