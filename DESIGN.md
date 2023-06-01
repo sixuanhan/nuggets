@@ -36,10 +36,10 @@ The *client* acts in one of two modes:
 
 As required by the requirements spec, the user can connect to the server and join the game through the terminal command-line:
 ```bash
-./client hostname port [playername]
+./client hostname port [playername] 2>client.log
 ```
 
-When the game is running, it can also process user keyboard commands that allow the user to interact with the game. The exact list of valid keystrokes for the user depends on whether the user is a spectator or a player, and is also listed out in the requirements spec. 
+When the game is running, it can also process user keyboard commands that allow the user to interact with the game. The exact list of valid keystrokes for the user depends on whether the user is a spectator or a player, and is also listed out in the requirements spec. While the game can still technically run without logging our stderr output, the game should be run with it.
 
 See the requirements spec for more info regarding both the command-line and interactive UI.
 
