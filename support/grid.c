@@ -55,12 +55,14 @@ bool grid_isVisible(char* grid, int start_loc, int end_loc, int NR, int NC)
     int dx = start_x - end_x;
     int dy = start_y - end_y;
 
+    /* Extra Credit (Vision Limits) */
     // sets a range limit on vision (a diameter of five spots)
     if (sqrt(dx * dx + dy * dy) > 2.5) {
 
         return false;
             
     }
+    /* Extra Credit ends here */
 
     float slope;
 

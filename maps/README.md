@@ -11,6 +11,9 @@ Feel free to add your own.
 * `main.txt`: an interesting map for playing and testing.
 * `narrow.txt`: a very narrow map that will fit in a very narrow window; what happens to the top line of your client's display?
 * `small.txt`: a simple, small map; also too-few empty spots.
+* `theOSU.txt`: a cool map that spells out our team's namesake; the letters are relatively narrow and are connected by tunnels. 
+* `visdemo.txt`: a simple, small map that contains just one room with a tunnel that connects from one part of the room to another part of the room.
+
 
 Several maps were contributed buy CS50 teams:
 
