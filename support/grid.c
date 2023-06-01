@@ -15,7 +15,7 @@ Sixuan Han and Kevin Cao, May 22 2023
 #include "../libcs50/file.h"
 
 
-/**************** functions ****************/
+/*************** grid_load() *******************/
 /* see grid.h for more information */
 void grid_load(FILE* fp, char* grid, int NR, int NC) 
 {
@@ -27,21 +27,29 @@ void grid_load(FILE* fp, char* grid, int NR, int NC)
     }
 }
 
+/*************** grid_1dto2d_x() *******************/
+/* see grid.h for more information */
 int grid_1dto2d_x(int loc, int NR, int NC) 
 {
     return loc%NC;
 }
 
+/*************** grid_1dto2d_y() *******************/
+/* see grid.h for more information */
 int grid_1dto2d_y(int loc, int NR, int NC) 
 {
     return loc/NC;
 }
 
+/*************** grid_2dto1d() *******************/
+/* see grid.h for more information */
 int grid_2dto1d(int x, int y, int NR, int NC) 
 {
     return x+NC*y;
 }
 
+/*************** grid_isVisible() *******************/
+/* see grid.h for more information */
 bool grid_isVisible(char* grid, int start_loc, int end_loc, int NR, int NC)
 {
     // converts starting location index to the 2d coordinate
@@ -134,6 +142,8 @@ bool grid_isVisible(char* grid, int start_loc, int end_loc, int NR, int NC)
     return true;
 }
 
+/*************** grid_update_vis() *******************/
+/* see grid.h for more information */
 void grid_update_vis(char* mainGrid, char* localMap, int loc, int NR, int NC) 
 {
     // loop through and check the visibility of each coordinate in mainGrid
