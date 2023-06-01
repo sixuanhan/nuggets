@@ -581,10 +581,10 @@ static bool handleKEY(const addr_t from, const char* content)
                     game->mainGrid[game->players[playerIndex]->loc] = game->players[playerIndex]->letterID;
                     game->mainGrid[old_loc] = game->players[otherIndex]->letterID;
 
-                    // steal the other player's gold
-                    int stolenGold = game->players[otherIndex]->gold;
+                    // steal 20 nuggets from the other player
+                    int stolenGold = (game->players[otherIndex]->gold < 20) ? game->players[otherIndex]->gold : 20;
                     game->players[playerIndex]->gold += stolenGold;
-                    game->players[otherIndex]->gold = 0;
+                    game->players[otherIndex]->gold -= stolenGold;
 
                     broadcastGold(playerIndex, stolenGold);
 
