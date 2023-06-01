@@ -434,7 +434,7 @@ static bool handleSPECTATE(const addr_t from, const char* content)
         return false;
     }
     if (message_isAddr(game->spectator)) {
-        message_send(game->spectator, "QUIT You have been replaced by a new spectator.");
+        message_send(game->spectator, "QUIT You have been replaced by a new spectator.\n");
         log_s("Sending quit message to %s \n", message_stringAddr(game->spectator));
     }
     game->spectator = from;
