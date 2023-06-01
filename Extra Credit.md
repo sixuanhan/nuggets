@@ -1,5 +1,7 @@
 ## Extra Credit 
 
+The extra credit functionality is marked clearly within the code and should be able to be commented out if the game without any additional functionality is to be played. In order to quickly find where in our code the extra credit functionality was implemented, a simple ctrl+f "/* Extra credit ends here */" should be able to quickly bring you where they are. 
+
 ### Our additions
 
 #### A range limit on vision
