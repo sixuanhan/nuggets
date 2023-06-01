@@ -66,7 +66,7 @@ int grid_2dto1d(int x, int y, int NR, int NC);
 bool grid_isVisible(char* grid, int start_loc, int end_loc, int NR, int NC);
 
 
-/**************** grid_2dto1d ****************/
+/**************** grid_update_vis ****************/
 /* This function updates the visibility of a player according to the mainGrid, 
  * the previous localMap and the new location and updates the localMap.
  *
