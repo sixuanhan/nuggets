@@ -36,10 +36,10 @@ The *client* acts in one of two modes:
 
 As required by the requirements spec, the user can connect to the server and join the game through the terminal command-line:
 ```bash
-./client hostname port [playername]
+./client hostname port [playername] 2>client.log
 ```
 
-When the game is running, it can also process user keyboard commands that allow the user to interact with the game. The exact list of valid keystrokes for the user depends on whether the user is a spectator or a player, and is also listed out in the requirements spec. 
+When the game is running, it can also process user keyboard commands that allow the user to interact with the game. The exact list of valid keystrokes for the user depends on whether the user is a spectator or a player, and is also listed out in the requirements spec. While the game can still technically run without logging our stderr output, the game should be run with it.
 
 See the requirements spec for more info regarding both the command-line and interactive UI.
 
@@ -167,7 +167,10 @@ So that the user can access error messages, there will be an additional file or 
 
 `gameOver`: Prints “Game Over” to all clients and prints the score table.
 
-`updateMainGrid`: Updates the main grid as a player moves, correcting the spot the player moved from.
+`broadcastDisplay`: Tells everyone to update their display.
+
+`broadcastGold`: Tells everyone to update when someone collects gold.
+
 
 
 ### Pseudo code for logic/algorithmic flow
@@ -185,63 +188,10 @@ The server will run as follows:
 		handleMessage() to continuously listen for message sent by clients
 	clean up
 
-#### handleMessage
-	if the first word of the message is the same as "PLAY "
-		extract the message part
-		return handlePLAY
-	else if the first word of the message is the same as "SPECTATE "
-		return handleSPECTATE
-	else if the first word of the message is the same as "KEY "
-		extract the message part
-		return handleKEY
-	else
-		log error
-		send an ERROR message to the client
-		do not exit message loop
+#### other functions
 
-#### handlePLAY
-	check the validity of the player's name and whether there is still space for another player given *MaxPlayers* players
-	if there is not enough space or the player's real name is invalid
-		server should respond with a quit message and terminate the initialization of a new player
-	else
-		initialize a new `player` data structure with a random room spot location in the grid
-		add the new `player` data struture to the array of players in the overarching `game` data structure
-		send ok message, grid message, gold message, and display message to the new player
+We have detailed pseudocodes for other functions in [Implementation Spec](IMPLEMENTATION.md).
 
-#### handleSPECTATE
-	if there already is a spectator spectating the game
-		send a a quit message to the current spectator 
-		replace the current spectator with the new spectator
-	else
-		initialize a new `player` data structure with NULL username
-		add this new `player` data structure to the array of players in the overarching `game` data structure
-		send grid message, gold message, and display message to the new player
-
-#### handleKEY
-	if the keystroke came from a player
-		if the keystroke is a valid keystroke for a player
-			if the keystroke is a movement command
-				if the player is allowed to move to the desired location
-					move the player to the location and update the game accordingly (which includes updating the stored `grid` and the amount of gold remaining if the player finds a nugget)
-					send a message updating all clients including the spectator
-					if the goldRemaining in the game is 0
-						call gameOver
-			else the keystroke is to quit `Q`
-				send quit message to the player
-				close their port and handle their exit accordingly
-		else
-			send ERROR message to client 
-	else the keystroke came from the spectator
-		if the keystroke is `Q` (the only valid spectator keystroke)
-			send quit message to the spectator 
-			close spectator's port and handle spectator's exit accordingly
-		else
-			send ERROR message to client
-
-#### gameOver
-	server should prepare a tabular summary of the end results of the game
-	send a quit message to all clients
-	close the server connection
 
 ### Major data structures
 
@@ -292,7 +242,7 @@ There will be a static global data structure, `game`, which stores important var
 
 `grid_isVisible`: This function checks if a point in the grid located at `end_loc` is visible from a player located at the `start_loc`.
 
-`grid_update_vis`: this function is called when a player moves. It takes a coordinate, a player's local grid, and the main game grid, and rewrites the player's new local grid given their updated position.
+`grid_update_vis`: this function is called when a player moves. It takes a coordinate, a player's local grid, and the main game grid, and rewrites the player's new local grid given their updated position. *Extra credit*: We set a range limit on vision of a diameter of five spots.
 
 
 ### Pseudo code for logic/algorithmic flow
@@ -309,13 +259,14 @@ The grid itself is just a string with NRxNC characters represending the map.
 ## Testing
 
 ### Unit Testing
-Each unit/module will be tested independently at first before being aggregated together. The grid module will be tested independently first, and then client and the server will be tested. Individual functions within each unit/module will be tested to ensure that they work properly. 
+Each unit/module were tested independently at first before being aggregated together. The grid module was tested independently first, and then client and the server were tested. Individual functions within each unit/module were tested to ensure that they work properly. 
 
 ### Integration Testing
-We will test our client with the given server, and then test our server with the given client. We can again log the messages being sent back and forth between the client and the server to ensure that the messages are being sent properly. 
+We tested our client with the given server, and then tested our server with the given client. We logged the messages being sent back and forth between the client and the server to ensure that the messages were being sent properly. 
+We had a few hard coded invalid command line calls of the server and the client in testingClient.sh and testingServer.sh. Run `make test` to test.
 
 ### System Testing
-We run the client and server together on the same device and on different devices and test all functions and edge cases. The game will be played and tested numerous times to ensure that not only do all the desired game mechanics work as intended, but also the game behaves properly in special edge cases. 
+We ran the client and server together on the same device and on different devices, with different maps, and test all functions and edge cases. The game will be played and tested numerous times to ensure that not only do all the desired game mechanics work as intended, but also the game behaves properly in special edge cases. 
 
 The following are some examples of "special" cases that we consider testing:
 * Invalid keystrokes
@@ -329,9 +280,9 @@ Moreover, it should be noted that we also use valgrind to test for memory leaks 
 
 ## Group Roles & Division of Work
 While all group members are responsible for the entirety of the project, we assign certain tasks for certain group members to prioritize and complete first:
-* Kevin - Server module + Bresenham algorithm in Grid module
-* James - Client module
-* Selena - Grid module
-* Steven - Server module & Grid module (particularly where both modules intersect)
+* Kevin - handleKEY in server.c and visibility algorithm in grid.c
+* James - client.c
+* Selena - grid.c, main, parsearg, and handleMessage in server.c
+* Steven - handlePLAY, handleSPECTATE, and gameOver in server.c, specs and scrum management
 
 We will be responsible for unit testing our individual modules in order to ensure that they function as intended, but we will conduct integration and system tests together in order to check aggregate performance. Even though we are dividing up the code, each group member should be available to help another group member on their code if necessary. 
