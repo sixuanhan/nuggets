@@ -55,7 +55,7 @@ static bool handleKEY(const addr_t from, const char* content);
 static bool gameOver(void);
 static void broadcastDisplay(void);
 static void broadcastGold(int playerIndex, int goldCollected);
-
+void updateVis(char* mainGrid, char* localMap, int loc, int NR, int NC);
 
 /*********************** global ***********************/
 /**************** constants ****************/
@@ -239,7 +239,7 @@ static player_t* player_new(void)
     game->mainGrid[player->loc]=player->letterID;
 
     // update their local map according to their visibility
-    grid_update_vis(game->mainGrid, player->localMap, player->loc, NR, NC);
+    updateVis(game->mainGrid, player->localMap, player->loc, NR, NC);
 
     return player;
 }
@@ -861,7 +861,7 @@ static void broadcastDisplay(void)
     char *displayMessage = (char *)mem_malloc(8 + NR * NC + 1);
     for (int i = 0; i < 26; i++) {
         if (game->players[i] != NULL) {
-            grid_update_vis(game->mainGrid, game->players[i]->localMap, game->players[i]->loc, NR, NC);
+            updateVis(game->mainGrid, game->players[i]->localMap, game->players[i]->loc, NR, NC);
             sprintf(displayMessage, "DISPLAY\n%s", game->players[i]->localMap);
 
             // replace the player's letterID with '@'
@@ -916,5 +916,28 @@ static void broadcastGold(int playerIndex, int goldCollected)
         log_s("Sending message to %s, ", message_stringAddr(game->spectator));
         log_s("message: %s\n", goldMessage);
         mem_free(goldMessage);
+    }
+}
+
+
+/* update the localmap according to visibility
+ */
+void updateVis(char* mainGrid, char* localMap, int loc, int NR, int NC) 
+{
+    // loop through and check the visibility of each coordinate in mainGrid
+    for (int i = 0; i < NR * NC; i++) {
+        // if the character/location is visible, then copy that to localMap to make it visible to the client
+        if (mainGrid[i] == '\n' || grid_isVisible(mainGrid, i, loc, NR, NC)) {
+            localMap[i] = mainGrid[i];
+        }
+
+        // if an occupant location is not visible, show it as an empty room spot
+        else if (localMap[i] == '*' || isalpha(localMap[i])) {
+            if (isalpha(localMap[i])) {
+                localMap[i] = game->players[localMap[i]-'A']->currSpot;
+            }
+            else {localMap[i] = '.';
+            }
+        }
     }
 }
