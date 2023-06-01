@@ -166,8 +166,9 @@ static void game_scatter_gold(void)
         }
         // grab a random amount of nuggets and drop until we're down to the last pile
         if (numPilesRemaining != 1) {
-            // the nuggets in a pile is 50%~150% the average size.
-            goldDropNuggets = randRange(GoldTotal/numPiles*0.5, GoldTotal/numPiles*1.5);
+            // the nuggets in a pile is 50%~150% the average size or half of the remaining gold
+            // whichever is less
+            goldDropNuggets = (randRange(GoldTotal/numPiles*0.5, GoldTotal/numPiles*1.5) < goldRemaining/numPilesRemaining) ? randRange(GoldTotal/numPiles*0.5, GoldTotal/numPiles*1.5) : goldRemaining/numPilesRemaining;
         }
         // drop all remaining nuggets when we are at the last pile
         else {
